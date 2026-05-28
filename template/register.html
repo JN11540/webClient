@@ -269,6 +269,7 @@
 
   </div>
   <script>
+    const API_URL = 'https://therapistclinical-production.up.railway.app';
     async function submitRegister() {
       const get = name => document.querySelector(`[name="${name}"]`).value.trim();
 
@@ -301,7 +302,7 @@
         phone: get('phone') || null,
       };
 
-      const res = await fetch('/clinicians', {
+      const res = await fetch(`${API_URL}/clinicians`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

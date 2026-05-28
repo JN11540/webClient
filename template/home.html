@@ -336,6 +336,7 @@
   </div>
 
   <script>
+    const API_URL = 'https://therapistclinical-production.up.railway.app';
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
       return match ? decodeURIComponent(match[1]) : null;
@@ -350,7 +351,7 @@
       }
 
       try {
-        const res = await fetch(`/clinicians/${clinicianId}`, {
+        const res = await fetch(`${API_URL}/clinicians/${clinicianId}`, {
           headers: { 'Authorization': `Bearer ${sessionId}` },
         });
 
@@ -380,7 +381,7 @@
       if (!clinicianId || !sessionId) return;
 
       try {
-        const res = await fetch(`/clinicians/${clinicianId}/patients`, {
+        const res = await fetch(`${API_URL}/clinicians/${clinicianId}/patients`, {
           headers: { 'Authorization': `Bearer ${sessionId}` },
         });
         const data = await res.json();
@@ -436,7 +437,7 @@
       if (!confirm('確定要刪除此個案？')) return;
       const sessionId = getCookie('session_id');
       try {
-        const res = await fetch(`/patients/${patientId}`, {
+        const res = await fetch(`${API_URL}/patients/${patientId}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${sessionId}` },
         });

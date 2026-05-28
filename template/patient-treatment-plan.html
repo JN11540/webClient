@@ -355,6 +355,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 </div>
 
 <script>
+    const API_URL = 'https://therapistclinical-production.up.railway.app';
 function getCookie(name) {
   const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
   return m ? decodeURIComponent(m[1]) : null;
@@ -390,7 +391,7 @@ async function init() {
 
 async function loadExercises() {
   try {
-    const res = await fetch('/exercises', { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/exercises`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
     const data = await res.json();
     if (data.result) exercises = data.data;
   } catch(e) { console.error(e); }
@@ -398,7 +399,7 @@ async function loadExercises() {
 
 async function loadPatient() {
   try {
-    const res = await fetch(`/patients/${patientId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/patients/${patientId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
     const data = await res.json();
     if (!data.result) { showToast(data.message || '載入個案失敗', true); return; }
     const p = data.data;
@@ -444,7 +445,7 @@ const SIDE_LBL = {0:'左膝', 1:'右膝'};
 
 async function loadMeasurements() {
   try {
-    const res = await fetch(`/patients/${patientId}/measurements`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/patients/${patientId}/measurements`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
     const data = await res.json();
     if (!data.result) return;
     renderCompare(buildCompareData(data.data));
@@ -826,7 +827,7 @@ async function submitPlan() {
     });
   });
   try {
-    const res = await fetch('/treatments/full', {
+    const res = await fetch(`${API_URL}/treatments/full`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionId}` },
       body: JSON.stringify({ name: planName, patient_id: parseInt(patientId), start_time: dateToTs(startDate), end_time: dateToTs(endDate), contents }),

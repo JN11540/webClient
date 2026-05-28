@@ -527,6 +527,7 @@
   </div>
 
   <script>
+    const API_URL = 'https://therapistclinical-production.up.railway.app';
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
       return match ? decodeURIComponent(match[1]) : null;
@@ -616,7 +617,7 @@
       if (!measurementId || !sessionId) { alert('缺少評量 ID 或 session'); return; }
 
       try {
-        const res = await fetch(`/measurements/${measurementId}/full`, {
+        const res = await fetch(`${API_URL}/measurements/${measurementId}/full`, {
           headers: { 'Authorization': `Bearer ${sessionId}` },
         });
         const data = await res.json();
@@ -714,7 +715,7 @@
 
       const sessionId = getCookie('session_id');
       try {
-        const res = await fetch('/measurements/full', {
+        const res = await fetch(`${API_URL}/measurements/full`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

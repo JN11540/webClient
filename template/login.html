@@ -23,6 +23,7 @@
     </div>
   </div>
   <script>
+    const API_URL = 'https://therapistclinical-production.up.railway.app';
     async function submitLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -32,7 +33,7 @@
         return;
       }
 
-      const res = await fetch('/auth/login', {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

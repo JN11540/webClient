@@ -450,6 +450,7 @@
   </div>
 
   <script>
+    const API_URL = 'https://therapistclinical-production.up.railway.app';
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
       return match ? decodeURIComponent(match[1]) : null;
@@ -484,7 +485,7 @@
       }
 
       try {
-        const res = await fetch(`/patients/${patientId}`, {
+        const res = await fetch(`${API_URL}/patients/${patientId}`, {
           headers: { 'Authorization': `Bearer ${sessionId}` },
         });
         const data = await res.json();
@@ -574,7 +575,7 @@
       if (!confirm('確定要刪除此評量？此操作無法復原。')) return;
       const sessionId = getCookie('session_id');
       try {
-        const res = await fetch(`/measurements/${measurementId}/full`, {
+        const res = await fetch(`${API_URL}/measurements/${measurementId}/full`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${sessionId}` },
         });
@@ -741,7 +742,7 @@
       if (!patientId || !sessionId) return;
 
       try {
-        const res = await fetch(`/patients/${patientId}/measurements`, {
+        const res = await fetch(`${API_URL}/patients/${patientId}/measurements`, {
           headers: { 'Authorization': `Bearer ${sessionId}` },
         });
         const data = await res.json();
@@ -917,7 +918,7 @@
       if (!confirm('確定刪除此治療計畫？')) return;
       const sessionId = getCookie('session_id');
       try {
-        await fetch(`/treatments/${id}/full`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${sessionId}` } });
+        await fetch(`${API_URL}/treatments/${id}/full`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${sessionId}` } });
         loadPlans();
       } catch(e) { alert(e.message); }
     }
@@ -926,17 +927,17 @@
       const sessionId = getCookie('session_id');
       if (!patientId || !sessionId) return;
       try {
-        const exRes = await fetch('/exercises', { headers: { 'Authorization': `Bearer ${sessionId}` } });
+        const exRes = await fetch(`${API_URL}/exercises`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
         const exData = await exRes.json();
         const exerciseMap = {};
         (exData.data || []).forEach(e => { exerciseMap[e.id] = e.name; });
 
-        const tRes = await fetch(`/treatments/patient/${patientId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+        const tRes = await fetch(`${API_URL}/treatments/patient/${patientId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
         const tData = await tRes.json();
         if (!tData.result) return;
 
         const fullPlans = await Promise.all((tData.data || []).map(async t => {
-          const fRes = await fetch(`/treatments/${t.id}/full`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+          const fRes = await fetch(`${API_URL}/treatments/${t.id}/full`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
           const fData = await fRes.json();
           return fData.result ? fData.data : t;
         }));
@@ -972,7 +973,7 @@
       }, 1000);
 
       // API 呼叫 + 倒數同步進行，兩者都完成才顯示結果
-      const apiPromise = fetch(`/treatments/${planId}/send-email`, {
+      const apiPromise = fetch(`${API_URL}/treatments/${planId}/send-email`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${sessionId}` },
       }).then(r => r.json()).catch(e => ({ result: false, message: e.message }));
