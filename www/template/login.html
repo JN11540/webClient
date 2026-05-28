@@ -40,6 +40,8 @@
       });
 
       if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('clinician_id', String(data.clinician_id));
         location.href = 'home.html';
       } else {
         const data = await res.json().catch(() => ({}));
