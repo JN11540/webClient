@@ -350,10 +350,6 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-      return match ? decodeURIComponent(match[1]) : null;
-    }
 
     function field(name) {
       return document.querySelector(`[name="${name}"]`);
@@ -370,15 +366,10 @@
     const patientId = new URLSearchParams(location.search).get('id');
 
     async function loadPatient() {
-      const sessionId = getCookie('session_id');
-      if (!patientId || !sessionId) {
-        alert('缺少個案 ID 或 session');
-        return;
-      }
 
       try {
         const res = await fetch(`${API_URL}/patients/${patientId}`, {
-          headers: { 'Authorization': `Bearer ${sessionId}` },
+          headers: {},
         });
         const data = await res.json();
         if (!data.result) {
@@ -418,11 +409,6 @@
     }
 
     async function submitEdit() {
-      const sessionId = getCookie('session_id');
-      if (!patientId || !sessionId) {
-        alert('缺少個案 ID 或 session');
-        return;
-      }
 
       const body = {
         id: parseInt(patientId),
@@ -450,7 +436,6 @@
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionId}`,
           },
           body: JSON.stringify(body),
         });
