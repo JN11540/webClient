@@ -648,7 +648,7 @@ function renderTable(rows) {
 /* ── Logout ── */
 function logout() {
   fetch(`${API_URL}/auth/logout`, { method: 'POST', headers: { 'Authorization': `Bearer ${null}` } })
-    .finally(() => location.href = '/');
+    .finally(() => location.href = 'login.html');
 }
 
 init();

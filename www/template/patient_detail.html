@@ -424,7 +424,7 @@
     <div class="card" id="planCard">
       <div class="plan-section-hd">
         <div class="sec-hd" style="border:none;padding:0;margin:0;">治療計畫</div>
-        <button class="btn-add" onclick="location.href='/patient-treatment-plan?id=' + patientId">＋ 新增計畫</button>
+        <button class="btn-add" onclick="location.href='patient-treatment-plan.html?id=' + patientId">＋ 新增計畫</button>
       </div>
       <div class="plan-list" id="planList"></div>
       <div class="placeholder" id="planEmpty" style="display:none;">尚未新增治療計畫</div>
@@ -434,7 +434,7 @@
     <div class="card">
       <div class="compare-hd">
         <div class="sec-hd" style="border:none;padding:0;margin:0;">治療前後比較</div>
-        <button class="btn-add" onclick="location.href='/add-assessment?id=' + patientId">＋ 新增評量</button>
+        <button class="btn-add" onclick="location.href='add_assessment.html?id=' + patientId">＋ 新增評量</button>
       </div>
       <div id="compare-content">
         <div class="empty-state">
@@ -489,7 +489,7 @@
 
         document.getElementById('case-name').textContent = p.name || '—';
         document.getElementById('btn-edit').onclick = () => {
-          location.href = `/edit-patient?id=${patientId}`;
+          location.href = `edit_patient.html?id=${patientId}`;
         };
 
         set('f-name', p.name);
@@ -555,7 +555,7 @@
             <div class="assessment-card-name">${m.name}</div>
             <div class="assessment-card-date">${tsToDateStr(m.measured_at)}</div>
             <div class="assessment-card-btns">
-              <button class="assessment-card-btn-edit" onclick="location.href='/edit-assessment?id=${patientId}&measurementId=${m.id}'">✎ 編輯</button>
+              <button class="assessment-card-btn-edit" onclick="location.href='edit_assessment.html?id=${patientId}&measurementId=${m.id}'">✎ 編輯</button>
               <button class="assessment-card-btn-del" onclick="deleteAssessment(${m.id})">刪除</button>
             </div>
           </div>`).join('')
@@ -826,7 +826,7 @@
             <span class="plan-card-name">治療名稱：${escHtml(plan.name)}</span>
           </div>
           <div class="plan-card-actions">
-            <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='/edit_patient-treatment-plan?id=${patientId}&planId=${plan.id}'">編輯</button>
+            <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='edit_patient-treatment-plan.html?id=${patientId}&planId=${plan.id}'">編輯</button>
             <button class="plan-card-btn plan-card-btn-del" onclick="deletePlan(${plan.id})">刪除</button>
             <button class="plan-card-btn plan-card-btn-export" onclick="exportPlan(${plan.id})">匯出</button>
           </div>`;

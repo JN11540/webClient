@@ -213,7 +213,7 @@
 
     <!-- 頁首 -->
     <div class="page-header">
-      <button class="btn-back" onclick="location.href='/patient-detail?id=' + patientId">← 返回個案詳細</button>
+      <button class="btn-back" onclick="location.href='patient_detail.html?id=' + patientId">← 返回個案詳細</button>
       <div class="page-title">編輯個案</div>
       <div class="header-spacer"></div>
     </div>
@@ -342,7 +342,7 @@
     <!-- 按鈕列 -->
     <div class="required-note"><span>✱</span> 為必填欄位</div>
     <div class="btn-row">
-      <button class="btn-cancel" onclick="location.href='/patient-detail?id=' + patientId">取消</button>
+      <button class="btn-cancel" onclick="location.href='patient_detail.html?id=' + patientId">取消</button>
       <button class="btn-submit" onclick="submitEdit()">儲存變更</button>
     </div>
 
@@ -441,7 +441,7 @@
         });
         const data = await res.json();
         if (data.result) {
-          location.href = `/patient-detail?id=${patientId}`;
+          location.href = `patient_detail.html?id=${patientId}`;
         } else {
           alert(data.message);
         }

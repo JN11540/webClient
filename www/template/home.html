@@ -395,7 +395,7 @@
         grid.innerHTML = patients.map(p => {
           const age = new Date().getFullYear() - new Date(p.date_of_birth * 1000).getFullYear();
           return `
-            <div class="case-card" onclick="location.href='/patient-detail?id=${p.patient_id}'" style="cursor:pointer;">
+            <div class="case-card" onclick="location.href='patient_detail.html?id=${p.patient_id}'" style="cursor:pointer;">
               <div class="case-name">${p.name}</div>
               <div class="case-info">
                 <div class="case-info-row">
