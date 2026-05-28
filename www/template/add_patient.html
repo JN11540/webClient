@@ -350,22 +350,12 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-      return match ? decodeURIComponent(match[1]) : null;
-    }
 
     function field(name) {
       return document.querySelector(`[name="${name}"]`);
     }
 
     async function submitPatient() {
-      const clinicianId = getCookie('clinician_id');
-      const sessionId = getCookie('session_id');
-      if (!clinicianId || !sessionId) {
-        alert('cookie 不存在：clinician_id 或 session_id 遺失');
-        return;
-      }
 
       const name = field('name').value.trim();
       const email = field('email').value.trim();
@@ -376,10 +366,6 @@
       const genderEl = document.querySelector('[name="gender"]:checked');
       const diagnosis = field('diagnosis').value.trim();
 
-      if (!name || !email || !height || !weight || !phone || !dob || !genderEl || !diagnosis) {
-        alert('請填寫所有必填欄位（姓名、Email、身高、體重、電話、出生日期、性別、診斷）');
-        return;
-      }
 
       const dobTimestamp = Math.floor(new Date(dob).getTime() / 1000);
 
@@ -411,7 +397,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionId}`,
           },
           body: JSON.stringify(body),
         });

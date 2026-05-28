@@ -275,16 +275,11 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
 /* ── Helpers ── */
-function getCookie(name) {
-  const m = document.cookie.match('(?:^|; )' + name + '=([^;]*)');
-  return m ? decodeURIComponent(m[1]) : '';
-}
 
 function apiFetch(path, opts = {}) {
-  const sessionId = getCookie('session_id');
   return fetch(API_URL + path, {
     ...opts,
-    headers: { 'Authorization': `Bearer ${sessionId}`, 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
   }).then(r => r.json());
 }
 
@@ -310,7 +305,6 @@ function showToast(msg, err) {
 }
 
 /* ── State ── */
-const clinicianId = parseInt(getCookie('clinician_id'));
 let exerciseMap    = {};   // {id: name}
 let patientList    = [];
 let planList       = [];   // TreatmentListItem[] (each has contents[])
@@ -652,7 +646,7 @@ function renderTable(rows) {
 
 /* ── Logout ── */
 function logout() {
-  fetch(`${API_URL}/auth/logout`, { method: 'POST', headers: { 'Authorization': `Bearer ${getCookie('session_id')}` } })
+  fetch(`${API_URL}/auth/logout`, { method: 'POST', headers: { 'Authorization': `Bearer ${null}` } })
     .finally(() => location.href = '/');
 }
 

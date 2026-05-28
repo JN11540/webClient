@@ -419,10 +419,6 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
 /* ── Helpers ── */
-function getCookie(name) {
-  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return m ? decodeURIComponent(m[1]) : null;
-}
 function tsToDateStr(ts) {
   if (!ts) return '—';
   const d = new Date(ts * 1000);
@@ -436,8 +432,6 @@ function fmtWithDay(dateStr) {
   return dateStr + '（' + WEEKDAYS[d.getDay()] + '）';
 }
 
-const sessionId  = getCookie('session_id');
-const clinicianId = getCookie('clinician_id');
 let exercises = [];        // [{id, name}]
 let weekData  = [];
 let currentPatientId  = null;
@@ -451,7 +445,7 @@ async function init() {
 async function loadClinicianAvatar() {
   if (!clinicianId) return;
   try {
-    const res = await fetch(`${API_URL}/clinicians/${clinicianId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/clinicians/${clinicianId}`, { headers: {} });
     const data = await res.json();
     if (data.result && data.data.name) {
       document.getElementById('sidebarAvatar').textContent = data.data.name.charAt(0);
@@ -461,7 +455,7 @@ async function loadClinicianAvatar() {
 
 async function loadExercises() {
   try {
-    const res = await fetch(`${API_URL}/exercises`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/exercises`, { headers: {} });
     const data = await res.json();
     if (data.result) exercises = data.data;
   } catch(e) { console.error(e); }
@@ -470,7 +464,7 @@ async function loadExercises() {
 async function loadPatients() {
   if (!clinicianId) return;
   try {
-    const res = await fetch(`${API_URL}/clinicians/${clinicianId}/patients`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/clinicians/${clinicianId}/patients`, { headers: {} });
     const data = await res.json();
     if (!data.result) return;
     const sel = document.getElementById('patientSelect');
@@ -495,7 +489,7 @@ async function onPatientChange() {
   }
   currentPatientId = v;
   try {
-    const res = await fetch(`${API_URL}/patients/${v}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/patients/${v}`, { headers: {} });
     const data = await res.json();
     if (!data.result) return;
     const p = data.data;
@@ -528,7 +522,7 @@ const SIDE_LBL = {0:'左膝', 1:'右膝'};
 
 async function loadMeasurements(patientId) {
   try {
-    const res = await fetch(`${API_URL}/patients/${patientId}/measurements`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/patients/${patientId}/measurements`, { headers: {} });
     const data = await res.json();
     if (!data.result) return;
     renderCompare(buildCompareData(data.data));
@@ -944,7 +938,7 @@ async function submitPlan() {
   try {
     const res = await fetch(`${API_URL}/treatments/full`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionId}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name:       planName,
         patient_id: parseInt(currentPatientId),

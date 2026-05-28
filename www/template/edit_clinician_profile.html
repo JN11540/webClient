@@ -229,26 +229,16 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-      return match ? decodeURIComponent(match[1]) : null;
-    }
 
     function field(name) {
       return document.querySelector(`[name="${name}"]`);
     }
 
     async function loadProfile() {
-      const clinicianId = getCookie('clinician_id');
-      const sessionId = getCookie('session_id');
-      if (!clinicianId || !sessionId) {
-        alert('cookie 不存在：clinician_id 或 session_id 遺失');
-        return;
-      }
 
       try {
         const res = await fetch(`${API_URL}/clinicians/${clinicianId}`, {
-          headers: { 'Authorization': `Bearer ${sessionId}` },
+          headers: {},
         });
         const data = await res.json();
         if (!data.result) {
@@ -272,12 +262,6 @@
     }
 
     async function submitEdit() {
-      const clinicianId = getCookie('clinician_id');
-      const sessionId = getCookie('session_id');
-      if (!clinicianId || !sessionId) {
-        alert('cookie 不存在：clinician_id 或 session_id 遺失');
-        return;
-      }
 
       const yearsRaw = field('years_of_experience').value;
       const body = {
@@ -298,7 +282,6 @@
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionId}`,
           },
           body: JSON.stringify(body),
         });
