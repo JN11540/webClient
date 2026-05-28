@@ -42,7 +42,7 @@
 
       if (res.type === 'opaqueredirect') {
         // 307 收到，cookie 已由 browser 寫入，手動導向
-        location.href = '/home';
+        location.href = 'home.html';
       } else {
         try {
           const data = await res.json();
