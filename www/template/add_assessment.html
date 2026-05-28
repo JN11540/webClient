@@ -250,7 +250,7 @@
 
     <!-- 頁首 -->
     <div class="topbar">
-      <button class="btn-back" onclick="location.href='/patient-detail?id=' + patientId">← 返回個案詳細</button>
+      <button class="btn-back" onclick="location.href='patient_detail.html?id=' + patientId">← 返回個案詳細</button>
       <div class="page-title">新增評量</div>
       <div style="width:80px;"></div>
     </div>
@@ -520,7 +520,7 @@
     <div class="required-note"><span>✱</span> 為必填欄位</div>
 
     <div class="btn-row">
-      <button class="btn-cancel" onclick="location.href='/patient-detail?id=' + patientId">取消</button>
+      <button class="btn-cancel" onclick="location.href='patient_detail.html?id=' + patientId">取消</button>
       <button class="btn-save" onclick="submitAssessment()">儲存評量</button>
     </div>
 
@@ -638,7 +638,7 @@
         });
         const data = await res.json();
         if (data.result) {
-          location.href = `/patient-detail?id=${patientId}`;
+          location.href = `patient_detail.html?id=${patientId}`;
         } else {
           alert(data.message);
         }

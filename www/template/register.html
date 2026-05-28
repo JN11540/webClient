@@ -310,7 +310,7 @@
 
       const data = await res.json();
       if (data.result) {
-        location.href = '/';
+        location.href = 'login.html';
       } else {
         alert(data.message || '註冊失敗');
       }
