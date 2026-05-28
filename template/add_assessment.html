@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增評量</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
+      background: #EBF4FC;
+      min-height: 100vh;
+      padding: 32px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-back {
+      font-size: 12px;
+      color: #378ADD;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .btn-back:hover { color: #185FA5; }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #0C447C;
+    }
+
+    .required { color: #E24B4A; font-size: 11px; }
+    .optional { color: #B4B2A9; font-size: 11px; font-weight: 400; }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      border: 0.5px solid #B5D4F4;
+      padding: 16px 20px;
+    }
+
+    .sec-hd {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #185FA5;
+      padding-bottom: 8px;
+      border-bottom: 0.5px solid #E6F1FB;
+      margin-bottom: 12px;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 0.5px solid #EBF4FC;
+      gap: 10px;
+    }
+    .field-row:last-child { border-bottom: none; }
+
+    .field-label {
+      font-size: 12px;
+      color: #378ADD;
+      width: 160px;
+      flex-shrink: 0;
+    }
+
+    .field-input {
+      flex: 1;
+      background: #EBF4FC;
+      border: 1px solid #B5D4F4;
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: #0C447C;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .field-input:focus { border-color: #185FA5; background: #daeaf8; }
+
+    .side-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      padding: 10px 0 6px;
+    }
+
+    .side-opt {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #0C447C;
+      font-weight: 500;
+    }
+
+    .side-opt input[type="checkbox"] {
+      accent-color: #185FA5;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .grid-table { width: 100%; }
+
+    .grid-header {
+      display: grid;
+      gap: 6px;
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+      border-bottom: 0.5px solid #EBF4FC;
+    }
+
+    .grid-header-cell {
+      font-size: 10px;
+      color: #378ADD;
+      font-weight: 500;
+    }
+
+    .grid-row {
+      display: grid;
+      gap: 6px;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 0.5px solid #EBF4FC;
+    }
+    .grid-row:last-child { border-bottom: none; }
+
+    .grid-side {
+      font-size: 12px;
+      color: #0C447C;
+      font-weight: 500;
+    }
+
+    .grid-input {
+      background: #EBF4FC;
+      border: 1px solid #B5D4F4;
+      border-radius: 5px;
+      padding: 6px 8px;
+      font-size: 12px;
+      color: #0C447C;
+      outline: none;
+      font-family: inherit;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    .grid-input:focus { border-color: #185FA5; background: #daeaf8; }
+
+    .vas-header  { grid-template-columns: 60px 1fr 1fr; }
+    .vas-row     { grid-template-columns: 60px 1fr 1fr; }
+    .tug-header  { grid-template-columns: 60px 1fr 1fr 1fr; }
+    .tug-row     { grid-template-columns: 60px 1fr 1fr 1fr; }
+    .sls-header  { grid-template-columns: 60px 1fr 1fr; }
+    .sls-row     { grid-template-columns: 60px 1fr 1fr; }
+    .tc-header   { grid-template-columns: 60px 1fr; }
+    .tc-row      { grid-template-columns: 60px 1fr; }
+    .romf-header { grid-template-columns: 60px 1fr 1fr 1fr; }
+    .romf-row    { grid-template-columns: 60px 1fr 1fr 1fr; }
+    .mmt-header  { grid-template-columns: 110px 1fr 1fr; }
+    .mmt-row     { grid-template-columns: 110px 1fr 1fr; }
+
+    .mmt-item { font-size: 12px; color: #0C447C; }
+
+    .mmt-select {
+      background: #EBF4FC;
+      border: 1px solid #B5D4F4;
+      border-radius: 5px;
+      padding: 6px 8px;
+      font-size: 12px;
+      color: #0C447C;
+      outline: none;
+      font-family: inherit;
+      width: 100%;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .mmt-select:focus { border-color: #185FA5; background: #daeaf8; }
+
+    .sub-hd {
+      font-size: 9px;
+      color: #378ADD;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      font-size: 13px;
+      background: white;
+      color: #185FA5;
+      border: 1px solid #B5D4F4;
+      border-radius: 6px;
+      padding: 10px 22px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-cancel:hover { background: #E6F1FB; }
+
+    .btn-save {
+      font-size: 13px;
+      background: #185FA5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 28px;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-save:hover { background: #0C447C; }
+    .btn-save:active { background: #042C53; }
+
+    .required-note {
+      font-size: 10px;
+      color: #378ADD;
+      text-align: right;
+    }
+    .required-note span { color: #E24B4A; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- 頁首 -->
+    <div class="topbar">
+      <button class="btn-back" onclick="location.href='/patient-detail?id=' + patientId">← 返回個案詳細</button>
+      <div class="page-title">新增評量</div>
+      <div style="width:80px;"></div>
+    </div>
+
+    <!-- 評量基本資料 -->
+    <div class="card">
+      <div class="sec-hd">評量基本資料</div>
+      <div class="field-row">
+        <label class="field-label">評量名稱 <span class="required">✱</span></label>
+        <input class="field-input" type="text" name="name" placeholder="例：初次評估">
+      </div>
+      <div class="field-row">
+        <label class="field-label">評估日期 <span class="required">✱</span></label>
+        <input class="field-input" type="date" name="assessment_date">
+      </div>
+    </div>
+
+    <!-- 主觀量表 -->
+    <div class="card">
+      <div class="sec-hd">主觀量表</div>
+      <div class="field-row">
+        <label class="field-label">SF-36 總分 <span class="optional">選填</span></label>
+        <input class="field-input" type="number" name="sf_36_total" min="0" max="100">
+      </div>
+      <div class="field-row">
+        <label class="field-label">WOMAC 總分（0–96）<span class="optional">選填</span></label>
+        <input class="field-input" type="number" name="womac_total" min="0" max="96">
+      </div>
+      <div class="field-row">
+        <label class="field-label">KOOS 總分 <span class="optional">選填</span></label>
+        <input class="field-input" type="number" name="koos_total" min="0">
+      </div>
+    </div>
+
+    <!-- 客觀量表 -->
+    <div class="card">
+      <div class="sec-hd">客觀量表</div>
+
+      <!-- 側別選擇 -->
+      <div class="side-row">
+        <label class="side-opt">
+          <input type="checkbox" id="include-right" checked>
+          右膝
+        </label>
+        <label class="side-opt">
+          <input type="checkbox" id="include-left">
+          左膝
+        </label>
+      </div>
+
+      <!-- VAS -->
+      <div class="sec-hd" style="margin-top:12px; font-size:9px;">疼痛量表（VAS）<span class="optional" style="text-transform:none;letter-spacing:0;">選填</span></div>
+      <div class="grid-table">
+        <div class="grid-header vas-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">測試前（0–10）</div>
+          <div class="grid-header-cell">測試後（0–10）</div>
+        </div>
+        <div class="grid-row vas-row" id="vas-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="vas_right_before" min="0" max="10">
+          <input class="grid-input" type="number" name="vas_right_after" min="0" max="10">
+        </div>
+        <div class="grid-row vas-row" id="vas-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="vas_left_before" min="0" max="10">
+          <input class="grid-input" type="number" name="vas_left_after" min="0" max="10">
+        </div>
+      </div>
+
+      <!-- TUG -->
+      <div class="sec-hd" style="margin-top:14px; font-size:9px;">計時起走測試（TUG）</div>
+      <div class="grid-table">
+        <div class="grid-header tug-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+          <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
+          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+        </div>
+        <div class="grid-row tug-row" id="tug-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="tug_right_time" min="0" step="0.1">
+          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="tug_right_device" style="accent-color:#185FA5;"> 有使用輔具</label>
+          <input class="grid-input" type="text" name="tug_right_comment">
+        </div>
+        <div class="grid-row tug-row" id="tug-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="tug_left_time" min="0" step="0.1">
+          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="tug_left_device" style="accent-color:#185FA5;"> 有使用輔具</label>
+          <input class="grid-input" type="text" name="tug_left_comment">
+        </div>
+      </div>
+
+      <!-- FTSST -->
+      <div class="sec-hd" style="margin-top:14px; font-size:9px;">五次坐站測試（FTSST）</div>
+      <div class="grid-table">
+        <div class="grid-header tug-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+          <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
+          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+        </div>
+        <div class="grid-row tug-row" id="ftsst-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="ftsst_right_time" min="0" step="0.1">
+          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="ftsst_right_device" style="accent-color:#185FA5;"> 有使用輔具</label>
+          <input class="grid-input" type="text" name="ftsst_right_comment">
+        </div>
+        <div class="grid-row tug-row" id="ftsst-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="ftsst_left_time" min="0" step="0.1">
+          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="ftsst_left_device" style="accent-color:#185FA5;"> 有使用輔具</label>
+          <input class="grid-input" type="text" name="ftsst_left_comment">
+        </div>
+      </div>
+
+      <!-- 10MWT -->
+      <div class="sec-hd" style="margin-top:14px; font-size:9px;">10公尺步行測試（10MWT）</div>
+      <div class="grid-table">
+        <div class="grid-header tug-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+          <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
+          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+        </div>
+        <div class="grid-row tug-row" id="mwt-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="mwt_right_time" min="0" step="0.1">
+          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="mwt_right_device" style="accent-color:#185FA5;"> 有使用輔具</label>
+          <input class="grid-input" type="text" name="mwt_right_comment">
+        </div>
+        <div class="grid-row tug-row" id="mwt-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="mwt_left_time" min="0" step="0.1">
+          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="mwt_left_device" style="accent-color:#185FA5;"> 有使用輔具</label>
+          <input class="grid-input" type="text" name="mwt_left_comment">
+        </div>
+      </div>
+
+      <!-- SLS -->
+      <div class="sec-hd" style="margin-top:14px; font-size:9px;">單腳站立平衡測試（SLS）</div>
+      <div class="grid-table">
+        <div class="grid-header sls-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+        </div>
+        <div class="grid-row sls-row" id="sls-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="sls_right_time" min="0" step="0.1">
+          <input class="grid-input" type="text" name="sls_right_comment">
+        </div>
+        <div class="grid-row sls-row" id="sls-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="sls_left_time" min="0" step="0.1">
+          <input class="grid-input" type="text" name="sls_left_comment">
+        </div>
+      </div>
+
+      <!-- 大腿圍 -->
+      <div class="sec-hd" style="margin-top:14px; font-size:9px;">大腿圍 <span class="optional" style="text-transform:none;letter-spacing:0;">選填</span></div>
+      <div class="grid-table">
+        <div class="grid-header tc-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">大腿圍（cm）</div>
+        </div>
+        <div class="grid-row tc-row" id="tc-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="tc_right" min="0" step="0.1">
+        </div>
+        <div class="grid-row tc-row" id="tc-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="tc_left" min="0" step="0.1">
+        </div>
+      </div>
+
+      <!-- ROM -->
+      <div class="sec-hd" style="margin-top:14px; font-size:9px;">關節活動度（ROM）</div>
+      <div class="sub-hd">膝屈曲 <span class="required">✱</span></div>
+      <div class="grid-table">
+        <div class="grid-header romf-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">Min（°）</div>
+          <div class="grid-header-cell">Max（°）</div>
+          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+        </div>
+        <div class="grid-row romf-row" id="romf-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="rom_right_flexion_min">
+          <input class="grid-input" type="number" name="rom_right_flexion_max">
+          <input class="grid-input" type="text" name="rom_right_flexion_comment">
+        </div>
+        <div class="grid-row romf-row" id="romf-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="rom_left_flexion_min">
+          <input class="grid-input" type="number" name="rom_left_flexion_max">
+          <input class="grid-input" type="text" name="rom_left_flexion_comment">
+        </div>
+      </div>
+      <div class="sub-hd">膝伸直 <span class="optional">選填</span></div>
+      <div class="grid-table">
+        <div class="grid-header romf-header">
+          <div class="grid-header-cell"></div>
+          <div class="grid-header-cell">Min（°）</div>
+          <div class="grid-header-cell">Max（°）</div>
+          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+        </div>
+        <div class="grid-row romf-row" id="rome-right-row">
+          <div class="grid-side">右膝</div>
+          <input class="grid-input" type="number" name="rom_right_extension_min">
+          <input class="grid-input" type="number" name="rom_right_extension_max">
+          <input class="grid-input" type="text" name="rom_right_extension_comment">
+        </div>
+        <div class="grid-row romf-row" id="rome-left-row" style="display:none;">
+          <div class="grid-side">左膝</div>
+          <input class="grid-input" type="number" name="rom_left_extension_min">
+          <input class="grid-input" type="number" name="rom_left_extension_max">
+          <input class="grid-input" type="text" name="rom_left_extension_comment">
+        </div>
+      </div>
+
+      <!-- MMT -->
+      <div class="sec-hd" style="margin-top:14px; font-size:9px;">徒手肌力測試（MMT）</div>
+      <div class="grid-table">
+        <div class="grid-header mmt-header">
+          <div class="grid-header-cell">項目</div>
+          <div class="grid-header-cell" id="mmt-hd-right">右膝</div>
+          <div class="grid-header-cell" id="mmt-hd-left" style="display:none;">左膝</div>
+        </div>
+        <div class="grid-row mmt-row">
+          <div class="mmt-item">膝屈曲 <span class="required">✱</span></div>
+          <select class="mmt-select" name="mmt_right_knee_flexion" id="mmt-right-knee-flexion">
+            <option value="">—</option>
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+          </select>
+          <select class="mmt-select" name="mmt_left_knee_flexion" id="mmt-left-knee-flexion" style="display:none;">
+            <option value="">—</option>
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+          </select>
+        </div>
+        <div class="grid-row mmt-row">
+          <div class="mmt-item">膝伸直 <span class="required">✱</span></div>
+          <select class="mmt-select" name="mmt_right_knee_extension" id="mmt-right-knee-extension">
+            <option value="">—</option>
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+          </select>
+          <select class="mmt-select" name="mmt_left_knee_extension" id="mmt-left-knee-extension" style="display:none;">
+            <option value="">—</option>
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="required-note"><span>✱</span> 為必填欄位</div>
+
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="location.href='/patient-detail?id=' + patientId">取消</button>
+      <button class="btn-save" onclick="submitAssessment()">儲存評量</button>
+    </div>
+
+  </div>
+
+  <script>
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function f(name) { return document.querySelector(`[name="${name}"]`); }
+    function intOrNull(name) { const v = f(name).value; return v !== '' ? parseInt(v) : null; }
+    function floatOrNull(name) { const v = f(name).value; return v !== '' ? parseFloat(v) : null; }
+
+    const patientId = new URLSearchParams(location.search).get('id');
+
+    const rightCb = document.getElementById('include-right');
+    const leftCb  = document.getElementById('include-left');
+
+    const rightIds = [
+      'vas-right-row', 'tug-right-row', 'ftsst-right-row', 'mwt-right-row',
+      'sls-right-row', 'tc-right-row', 'romf-right-row', 'rome-right-row',
+      'mmt-right-knee-flexion', 'mmt-right-knee-extension', 'mmt-hd-right',
+    ];
+    const leftIds = [
+      'vas-left-row', 'tug-left-row', 'ftsst-left-row', 'mwt-left-row',
+      'sls-left-row', 'tc-left-row', 'romf-left-row', 'rome-left-row',
+      'mmt-left-knee-flexion', 'mmt-left-knee-extension', 'mmt-hd-left',
+    ];
+
+    function toggle(ids, show) {
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = show ? '' : 'none';
+      });
+    }
+
+    rightCb.addEventListener('change', () => toggle(rightIds, rightCb.checked));
+    leftCb.addEventListener('change',  () => toggle(leftIds,  leftCb.checked));
+
+    function buildSide(side) {
+      const p = side === 1 ? 'right' : 'left';
+      const label = side === 1 ? '右膝' : '左膝';
+
+      const tugTime   = f(`tug_${p}_time`).value;
+      const ftsstTime = f(`ftsst_${p}_time`).value;
+      const mwtTime   = f(`mwt_${p}_time`).value;
+      const slsTime   = f(`sls_${p}_time`).value;
+      const flexMin   = f(`rom_${p}_flexion_min`).value;
+      const flexMax   = f(`rom_${p}_flexion_max`).value;
+      const kneeFlexion = f(`mmt_${p}_knee_flexion`).value;
+      const kneeExt     = f(`mmt_${p}_knee_extension`).value;
+
+      if (!tugTime || !ftsstTime || !mwtTime || !slsTime || !flexMin || !flexMax || kneeFlexion === '' || kneeExt === '') {
+        alert(`${label}：TUG 時間、FTSST 時間、10MWT 時間、SLS 時間、膝屈曲 ROM Min/Max（必填）、MMT 膝屈曲/膝伸直（必填）`);
+        return null;
+      }
+
+      return {
+        side,
+        vas_before_test: intOrNull(`vas_${p}_before`),
+        vas_after_test:  intOrNull(`vas_${p}_after`),
+        tug_time_seconds:        parseFloat(tugTime),
+        tug_assistive_device:    f(`tug_${p}_device`).checked   ? true : null,
+        tug_comment:             f(`tug_${p}_comment`).value.trim() || null,
+        ftsst_time_seconds:      parseFloat(ftsstTime),
+        ftsst_assistive_device:  f(`ftsst_${p}_device`).checked ? true : null,
+        ftsst_comment:           f(`ftsst_${p}_comment`).value.trim() || null,
+        mwt_10_time_seconds:     parseFloat(mwtTime),
+        mwt_10_assistive_device: f(`mwt_${p}_device`).checked   ? true : null,
+        mwt_10_comment:          f(`mwt_${p}_comment`).value.trim() || null,
+        sls_time_seconds:        parseFloat(slsTime),
+        sls_comment:             f(`sls_${p}_comment`).value.trim() || null,
+        thigh_circumference:     floatOrNull(`tc_${p}`),
+        rom_knee_flexion_min:       parseInt(flexMin),
+        rom_knee_flexion_max:       parseInt(flexMax),
+        rom_knee_flexion_comment:   f(`rom_${p}_flexion_comment`).value.trim()   || null,
+        rom_knee_extension_min:     intOrNull(`rom_${p}_extension_min`),
+        rom_knee_extension_max:     intOrNull(`rom_${p}_extension_max`),
+        rom_knee_extension_comment: f(`rom_${p}_extension_comment`).value.trim() || null,
+        mmt_knee_flexion:  parseInt(kneeFlexion),
+        mmt_knee_extension: parseInt(kneeExt),
+      };
+    }
+
+    async function submitAssessment() {
+      const name = f('name').value.trim();
+      const date = f('assessment_date').value;
+
+      if (!name || !date) {
+        alert('請填寫評量名稱與評估日期');
+        return;
+      }
+
+      if (!rightCb.checked && !leftCb.checked) {
+        alert('請至少選擇一側（右膝或左膝）進行評量');
+        return;
+      }
+
+      const objective = [];
+      if (rightCb.checked) { const s = buildSide(1); if (!s) return; objective.push(s); }
+      if (leftCb.checked)  { const s = buildSide(0); if (!s) return; objective.push(s); }
+
+      const sf36  = f('sf_36_total').value;
+      const womac = f('womac_total').value;
+      const koos  = f('koos_total').value;
+
+      const body = {
+        patient_id:  parseInt(patientId),
+        name,
+        measured_at: Math.floor(new Date(date).getTime() / 1000),
+        sf_36_total: sf36  !== '' ? parseInt(sf36)  : null,
+        womac_total: womac !== '' ? parseInt(womac) : null,
+        koos_total:  koos  !== '' ? parseInt(koos)  : null,
+        objective,
+      };
+
+      const sessionId = getCookie('session_id');
+      try {
+        const res = await fetch('/measurements/full', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionId}`,
+          },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (data.result) {
+          location.href = `/patient-detail?id=${patientId}`;
+        } else {
+          alert(data.message);
+        }
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+  </script>
+</body>
+</html>

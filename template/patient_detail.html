@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個案詳細資料</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
+      background: #EBF4FC;
+      min-height: 100vh;
+      padding: 32px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── 頁首 ── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-back {
+      font-size: 12px;
+      color: #378ADD;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .btn-back:hover { color: #185FA5; }
+
+    .case-name {
+      font-size: 22px;
+      font-weight: 500;
+      color: #0C447C;
+    }
+
+    .topbar-actions { display: flex; gap: 8px; }
+
+    .btn-edit-patient {
+      font-size: 12px;
+      background: #E6F1FB;
+      color: #185FA5;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-edit-patient:hover { background: #B5D4F4; }
+
+    /* ── 卡片 ── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      border: 0.5px solid #B5D4F4;
+      padding: 18px 22px;
+    }
+
+    .sec-hd {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #185FA5;
+      padding-bottom: 8px;
+      border-bottom: 0.5px solid #E6F1FB;
+      margin-bottom: 14px;
+    }
+
+    /* ── 個案基本資料 ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px 20px;
+      margin-bottom: 14px;
+    }
+
+    .info-field { display: flex; flex-direction: column; gap: 3px; }
+
+    .info-lbl { font-size: 10px; color: #378ADD; }
+
+    .info-val {
+      font-size: 14px;
+      font-weight: 500;
+      color: #0C447C;
+    }
+
+    .info-val.empty { color: #B4B2A9; font-weight: 400; }
+
+    .divider {
+      border: none;
+      border-top: 0.5px solid #E6F1FB;
+      margin: 12px 0;
+    }
+
+    .info-block { display: flex; flex-direction: column; gap: 8px; }
+    .info-row { display: flex; flex-direction: column; gap: 3px; }
+    .info-lbl-sm { font-size: 10px; color: #378ADD; }
+    .info-txt { font-size: 13px; color: #0C447C; line-height: 1.6; }
+    .info-txt.empty { color: #B4B2A9; }
+
+    /* ── 空白預留 ── */
+    .placeholder {
+      font-size: 12px;
+      color: #B5D4F4;
+      text-align: center;
+      padding: 20px;
+      border: 0.5px dashed #B5D4F4;
+      border-radius: 8px;
+    }
+
+    /* ── 治療前後比較 ── */
+    .compare-hd {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .btn-group { display: flex; gap: 8px; }
+
+    .btn-add {
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 5px;
+      border: none;
+      background: #185FA5;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-add:hover { background: #0C447C; }
+
+    .assessment-cards { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+    .assessment-card {
+      background: #EBF4FC;
+      border: 0.5px solid #B5D4F4;
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .assessment-card-num {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #378ADD;
+      white-space: nowrap;
+      min-width: 72px;
+    }
+
+    .assessment-card-name { font-size: 13px; font-weight: 500; color: #0C447C; flex: 1; }
+    .assessment-card-date { font-size: 11px; color: #378ADD; white-space: nowrap; }
+    .assessment-card-btns { display: flex; gap: 6px; margin-left: auto; }
+
+    .assessment-card-btn-edit {
+      font-size: 9px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 0.5px solid #B5D4F4;
+      background: white;
+      color: #185FA5;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .assessment-card-btn-edit:hover { background: #E6F1FB; }
+
+    .assessment-card-btn-del {
+      font-size: 9px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 0.5px solid #F7C1C1;
+      background: #FCEBEB;
+      color: #A32D2D;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .assessment-card-btn-del:hover { background: #F7C1C1; }
+
+    /* ── 空狀態 ── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 40px 20px;
+    }
+
+    .empty-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #E6F1FB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .empty-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: #378ADD;
+    }
+
+    .empty-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: #0C447C;
+    }
+
+    .empty-sub {
+      font-size: 12px;
+      color: #378ADD;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* ── 治療前後比較：子標題 ── */
+    .sub-lbl {
+      font-size: 11px;
+      font-weight: 500;
+      color: #185FA5;
+      margin: 14px 0 8px;
+      padding-left: 8px;
+      border-left: 2px solid #B5D4F4;
+    }
+
+    /* ── 表格 ── */
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table th { background: #E6F1FB; color: #185FA5; padding: 7px 10px; text-align: left; font-weight: 500; border-bottom: 0.5px solid #B5D4F4; }
+    table td { padding: 7px 10px; color: #0C447C; border-bottom: 0.5px solid #EBF4FC; }
+    table tr:last-child td { border-bottom: none; }
+    table tr:hover td { background: #F5FAFF; }
+
+
+    /* ════ 治療計畫 ════ */
+    .plan-section-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .plan-list { display:flex; flex-direction:column; gap:10px; }
+    .plan-card { border:0.5px solid #B5D4F4; border-radius:10px; overflow:hidden; background:#F5FAFF; }
+    .plan-card-header { display:flex; align-items:center; gap:12px; padding:10px 14px; background:#EBF4FC; border-bottom:0.5px solid #D4E9F8; }
+    .plan-card-header-title { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
+    .plan-card-name { font-size:13px; font-weight:600; color:#0C447C; flex:1; min-width:0; }
+    .plan-card-actions { display:flex; gap:5px; flex-shrink:0; }
+    .plan-card-btn { font-size:9px; padding:3px 10px; border-radius:4px; cursor:pointer; font-family:inherit; transition:background .15s; }
+    .plan-card-btn-edit { border:0.5px solid #B5D4F4; background:#E6F1FB; color:#185FA5; }
+    .plan-card-btn-edit:hover { background:#B5D4F4; }
+    .plan-card-btn-del { border:0.5px solid #F7C1C1; background:#FCEBEB; color:#A32D2D; }
+    .plan-card-btn-del:hover { background:#F7C1C1; }
+    .plan-card-btn-export { border:0.5px solid #B5D4F4; background:#E6F1FB; color:#185FA5; }
+    .plan-card-btn-export:hover { background:#B5D4F4; }
+    .export-overlay { position:fixed; inset:0; background:rgba(20,40,80,.45); z-index:9000; display:flex; align-items:center; justify-content:center; }
+    .export-modal { background:#fff; border-radius:14px; box-shadow:0 8px 32px rgba(26,61,107,.18); width:320px; max-width:92vw; padding:32px 28px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; }
+    .export-modal-title { font-size:15px; font-weight:600; color:#0C447C; }
+    .export-countdown { font-size:52px; font-weight:700; color:#185FA5; line-height:1; }
+    .export-status { font-size:13px; color:#378ADD; min-height:20px; }
+    .export-result { font-size:13px; font-weight:500; color:#0C447C; line-height:1.6; }
+    .export-confirm-btn { padding:8px 28px; background:#185FA5; color:#fff; border:none; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; margin-top:4px; transition:background .15s; }
+    .export-confirm-btn:hover { background:#0C447C; }
+    .export-confirm-btn.err { background:#A32D2D; }
+    .export-confirm-btn.err:hover { background:#7a1f1f; }
+    .plan-card-body { display:block; padding:0; }
+    .plan-meta-bar { display:flex; align-items:stretch; border-bottom:0.5px solid #E6F1FB; background:white; }
+    .plan-meta-item { flex:1; padding:10px 14px; display:flex; flex-direction:column; gap:2px; }
+    .plan-meta-label { font-size:9px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#9BBCDC; }
+    .plan-meta-value { font-size:12px; font-weight:600; color:#0C447C; }
+    .plan-meta-divider { width:0.5px; background:#E6F1FB; flex-shrink:0; }
+    .plan-schedule-wrap { padding:14px 14px 16px; }
+    .plan-schedule-label { font-size:10px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#185FA5; margin-bottom:10px; }
+    .plan-table-wrap { border:0.5px solid #B5D4F4; border-radius:8px; overflow:hidden; }
+    .plan-table { width:100%; border-collapse:collapse; font-size:12px; }
+    .plan-table thead tr { background:#185FA5; }
+    .plan-table th { padding:8px 12px; font-size:11px; font-weight:600; color:#fff; letter-spacing:.05em; text-align:left; border:none; background:transparent; }
+    .plan-table th.col-week { width:130px; text-align:center; }
+    .plan-table tbody tr { border-bottom:0.5px solid #E6F1FB; }
+    .plan-table tbody tr:last-child { border-bottom:none; }
+    .plan-table tbody tr:nth-child(even) td { background:#F5FAFF; }
+    .plan-table tbody tr:hover td { background:#EBF4FC; }
+    .plan-table td { padding:12px; vertical-align:top; color:#0C447C; border:none; }
+    .plan-table td.td-week { text-align:center; background:#F0F7FF; border-right:0.5px solid #E6F1FB; }
+    .plan-week-badge { display:inline-block; font-size:10px; font-weight:700; background:#185FA5; color:#fff; padding:2px 9px; border-radius:20px; margin-bottom:5px; }
+    .plan-week-range { font-size:10px; font-weight:600; color:#378ADD; line-height:1.6; }
+    .ex-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+    .ex-item { display:flex; align-items:flex-start; gap:7px; line-height:1.5; }
+    .ex-bullet { width:6px; height:6px; border-radius:50%; background:#185FA5; flex-shrink:0; margin-top:5px; }
+    .ex-name { font-weight:600; color:#0C447C; font-size:12px; }
+    .ex-params { color:#378ADD; font-size:11px; }
+    .ex-day-tags { display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
+    .ex-day-tag { font-size:10px; background:#E6F1FB; color:#185FA5; border-radius:4px; padding:1px 6px; font-weight:500; }
+    .no-ex { color:#B5D4F4; font-style:italic; font-size:12px; }
+
+    @media (max-width: 600px) {
+      .info-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- 頁首 -->
+    <div class="topbar">
+      <button class="btn-back" onclick="location.href='/home'">← 返回首頁</button>
+      <div class="case-name" id="case-name">—</div>
+      <div style="width:80px;"></div>
+    </div>
+
+    <!-- 個案基本資料 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:0.5px solid #E6F1FB; margin-bottom:14px;">
+        <div class="sec-hd" style="border:none; padding:0; margin:0;">個案基本資料</div>
+        <button class="btn-edit-patient" id="btn-edit">✎ 編輯個案</button>
+      </div>
+      <div class="info-grid">
+        <div class="info-field">
+          <div class="info-lbl">姓名</div>
+          <div class="info-val" id="f-name">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">Email</div>
+          <div class="info-val" id="f-email">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">電話</div>
+          <div class="info-val" id="f-phone">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">性別</div>
+          <div class="info-val" id="f-gender">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">出生日期</div>
+          <div class="info-val" id="f-dob">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">職業</div>
+          <div class="info-val" id="f-profession">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">身高</div>
+          <div class="info-val" id="f-height">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">體重</div>
+          <div class="info-val" id="f-weight">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">KL Grade</div>
+          <div class="info-val" id="f-kl-grade">—</div>
+        </div>
+        <div class="info-field">
+          <div class="info-lbl">病程</div>
+          <div class="info-val" id="f-symptom-duration">—</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="info-block">
+        <div class="info-row">
+          <div class="info-lbl-sm">診斷</div>
+          <div class="info-txt" id="f-diagnosis">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl-sm">主訴</div>
+          <div class="info-txt" id="f-chief-complaint">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl-sm">加重因素</div>
+          <div class="info-txt" id="f-aggravating-factors">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl-sm">相關病史</div>
+          <div class="info-txt" id="f-medical-history">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl-sm">影像學結果</div>
+          <div class="info-txt" id="f-imaging-findings">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl-sm">就診流程</div>
+          <div class="info-txt" id="f-visit-flow">—</div>
+        </div>
+        <div class="info-row" style="margin-top: 4px;">
+          <div class="info-lbl-sm">是否有接受其他膝蓋治療</div>
+          <div style="display: flex; gap: 16px; align-items: center; margin-top: 4px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #0C447C;">
+              <input type="radio" name="otherTx" value="yes" id="otherTx-yes"
+                     style="accent-color: #185FA5; width: 14px; height: 14px;" disabled> 是
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #0C447C;">
+              <input type="radio" name="otherTx" value="no" id="otherTx-no" checked
+                     style="accent-color: #185FA5; width: 14px; height: 14px;" disabled> 否
+            </label>
+          </div>
+          <div id="otherTx-txt" class="info-txt"
+               style="display: none; margin-top: 6px; padding: 8px 10px;
+                      border: 0.5px solid #B5D4F4; border-radius: 6px; background: white;
+                      line-height: 1.6;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 治療計畫 -->
+    <div class="card" id="planCard">
+      <div class="plan-section-hd">
+        <div class="sec-hd" style="border:none;padding:0;margin:0;">治療計畫</div>
+        <button class="btn-add" onclick="location.href='/patient-treatment-plan?id=' + patientId">＋ 新增計畫</button>
+      </div>
+      <div class="plan-list" id="planList"></div>
+      <div class="placeholder" id="planEmpty" style="display:none;">尚未新增治療計畫</div>
+    </div>
+
+    <!-- 治療前後比較 -->
+    <div class="card">
+      <div class="compare-hd">
+        <div class="sec-hd" style="border:none;padding:0;margin:0;">治療前後比較</div>
+        <button class="btn-add" onclick="location.href='/add-assessment?id=' + patientId">＋ 新增評量</button>
+      </div>
+      <div id="compare-content">
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 3a1 1 0 110 2 1 1 0 010-2zm4 10H8v-2h8v2zm0-4H8V10h8v2z"/></svg>
+          </div>
+          <div class="empty-title">尚無評量資料</div>
+          <div class="empty-sub">目前還沒有任何評量紀錄<br>點擊右上方按鈕新增第一筆評量</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function tsToDateStr(ts) {
+      const d = new Date(ts * 1000);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function set(id, value, fallback = '—') {
+      const el = document.getElementById(id);
+      if (value != null && value !== '') {
+        el.textContent = value;
+        el.classList.remove('empty');
+      } else {
+        el.textContent = fallback;
+        el.classList.add('empty');
+      }
+    }
+
+    const patientId = new URLSearchParams(location.search).get('id');
+
+    async function loadPatient() {
+      const sessionId = getCookie('session_id');
+      if (!patientId || !sessionId) {
+        alert('缺少個案 ID 或 session');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/patients/${patientId}`, {
+          headers: { 'Authorization': `Bearer ${sessionId}` },
+        });
+        const data = await res.json();
+        if (!data.result) {
+          alert(data.message);
+          return;
+        }
+
+        const p = data.data;
+
+        document.getElementById('case-name').textContent = p.name || '—';
+        document.getElementById('btn-edit').onclick = () => {
+          location.href = `/edit-patient?id=${patientId}`;
+        };
+
+        set('f-name', p.name);
+        set('f-email', p.email);
+        set('f-phone', p.phone);
+        set('f-gender', p.gender === 1 ? '男（Male）' : '女（Female）');
+        set('f-dob', p.date_of_birth ? tsToDateStr(p.date_of_birth) : null);
+        set('f-profession', p.profession);
+        set('f-height', p.height != null ? `${p.height} cm` : null);
+        set('f-weight', p.weight != null ? `${p.weight} kg` : null);
+        set('f-kl-grade', p.kl_grade != null ? `KL ${p.kl_grade}` : null);
+        set('f-symptom-duration', p.symptom_duration_months != null ? `${p.symptom_duration_months} 個月` : null);
+        set('f-diagnosis', p.diagnosis);
+        set('f-chief-complaint', p.chief_complaint);
+        set('f-aggravating-factors', p.aggravating_factors);
+        set('f-medical-history', p.medical_history);
+        set('f-imaging-findings', p.imaging_findings);
+        set('f-visit-flow', p.visit_flow);
+
+        const hasTx = p.other_knee_treatment_comment != null;
+        document.getElementById('otherTx-yes').checked = hasTx;
+        document.getElementById('otherTx-no').checked  = !hasTx;
+        const txDiv = document.getElementById('otherTx-txt');
+        if (hasTx) {
+          txDiv.textContent   = p.other_knee_treatment_comment;
+          txDiv.style.display = 'block';
+        } else {
+          txDiv.style.display = 'none';
+        }
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    const SIDE_LABEL = { 0: '左膝', 1: '右膝' };
+    const MMT_GRADE = ['0','1','2','2+','3-','3','3+','4-','4','4+','5-','5'];
+    function mmtGrade(val) { return val != null ? (MMT_GRADE[val] ?? '—') : '—'; }
+
+    function colHeaders(measurements) {
+      return measurements.map(m => `<th>${m.name}</th>`).join('');
+    }
+
+    function colHeadersWithComment(measurements) {
+      return measurements.map(m => `<th>${m.name}</th><th>${m.name}備註</th>`).join('');
+    }
+
+    function objOf(m, side) {
+      return m.objective.find(o => o.side === side);
+    }
+
+    function romStr(min, max) {
+      return (min != null && max != null) ? `${min}° – ${max}°` : '—';
+    }
+
+    const ORDINAL = ['一','二','三','四','五','六','七','八','九','十'];
+    function ordinal(n) { return `第${n <= 10 ? ORDINAL[n-1] : n}次評量`; }
+
+    function renderAssessmentCards(measurements) {
+      return `<div class="assessment-cards">${
+        measurements.map((m, i) => `
+          <div class="assessment-card">
+            <div class="assessment-card-num">${ordinal(i + 1)}</div>
+            <div class="assessment-card-name">${m.name}</div>
+            <div class="assessment-card-date">${tsToDateStr(m.measured_at)}</div>
+            <div class="assessment-card-btns">
+              <button class="assessment-card-btn-edit" onclick="location.href='/edit-assessment?id=${patientId}&measurementId=${m.id}'">✎ 編輯</button>
+              <button class="assessment-card-btn-del" onclick="deleteAssessment(${m.id})">刪除</button>
+            </div>
+          </div>`).join('')
+      }</div>`;
+    }
+
+    async function deleteAssessment(measurementId) {
+      if (!confirm('確定要刪除此評量？此操作無法復原。')) return;
+      const sessionId = getCookie('session_id');
+      try {
+        const res = await fetch(`/measurements/${measurementId}/full`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${sessionId}` },
+        });
+        const data = await res.json();
+        if (data.result) {
+          loadMeasurements();
+        } else {
+          alert(data.message);
+        }
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function renderSubjective(measurements) {
+      const rows = [
+        ['SF-36 總分',         m => m.sf_36_total ?? '—'],
+        ['WOMAC 總分（0–96）', m => m.womac_total  ?? '—'],
+        ['KOOS 總分',          m => m.koos_total   ?? '—'],
+      ];
+      return `
+        <div class="sub-lbl">主觀量表</div>
+        <table>
+          <thead><tr><th>量表</th>${colHeaders(measurements)}</tr></thead>
+          <tbody>${rows.map(([label, fn]) =>
+            `<tr><td>${label}</td>${measurements.map(m => `<td>${fn(m)}</td>`).join('')}</tr>`
+          ).join('')}</tbody>
+        </table>`;
+    }
+
+    function renderVas(measurements, sides) {
+      const items = sides.flatMap(side => [
+        [SIDE_LABEL[side], '測試前', m => objOf(m, side)?.vas_before_test ?? '—'],
+        [SIDE_LABEL[side], '測試後', m => objOf(m, side)?.vas_after_test  ?? '—'],
+      ]);
+      return `
+        <div class="sub-lbl">疼痛量表（VAS）</div>
+        <table>
+          <thead><tr><th>評估側</th><th>項目</th>${colHeaders(measurements)}</tr></thead>
+          <tbody>${items.map(([side, item, fn]) =>
+            `<tr><td>${side}</td><td>${item}</td>${measurements.map(m => `<td>${fn(m)}</td>`).join('')}</tr>`
+          ).join('')}</tbody>
+        </table>`;
+    }
+
+    function renderFtsst(measurements) {
+      return `
+        <div class="sub-lbl">五次坐站測試（FTSST）</div>
+        <table>
+          <thead><tr><th>項目</th>${colHeadersWithComment(measurements)}</tr></thead>
+          <tbody><tr><td>紀錄時間（是否有使用輔具）</td>${measurements.map(m => {
+            const o = m.objective[0];
+            const val = o ? `${o.ftsst_time_seconds}秒${o.ftsst_assistive_device ? ' / 有使用輔具' : ''}` : '—';
+            const cmt = o?.ftsst_comment ?? '—';
+            return `<td>${val}</td><td>${cmt}</td>`;
+          }).join('')}</tr></tbody>
+        </table>`;
+    }
+
+    function renderTug(measurements) {
+      return `
+        <div class="sub-lbl">計時起走測試（TUG）</div>
+        <table>
+          <thead><tr><th>項目</th>${colHeadersWithComment(measurements)}</tr></thead>
+          <tbody><tr><td>紀錄時間（是否有使用輔具）</td>${measurements.map(m => {
+            const o = m.objective[0];
+            const val = o ? `${o.tug_time_seconds}秒${o.tug_assistive_device ? ' / 有使用輔具' : ''}` : '—';
+            const cmt = o?.tug_comment ?? '—';
+            return `<td>${val}</td><td>${cmt}</td>`;
+          }).join('')}</tr></tbody>
+        </table>`;
+    }
+
+    function renderMwt10(measurements) {
+      return `
+        <div class="sub-lbl">10公尺步行測試（10MWT）</div>
+        <table>
+          <thead><tr><th>項目</th>${colHeadersWithComment(measurements)}</tr></thead>
+          <tbody><tr><td>紀錄時間（是否有使用輔具）</td>${measurements.map(m => {
+            const o = m.objective[0];
+            const val = o ? `${o.mwt_10_time_seconds}秒${o.mwt_10_assistive_device ? ' / 有使用輔具' : ''}` : '—';
+            const cmt = o?.mwt_10_comment ?? '—';
+            return `<td>${val}</td><td>${cmt}</td>`;
+          }).join('')}</tr></tbody>
+        </table>`;
+    }
+
+    function renderSls(measurements, sides) {
+      const items = sides.map(side => [SIDE_LABEL[side], side]);
+      return `
+        <div class="sub-lbl">單腳站立平衡測試（SLS）</div>
+        <table>
+          <thead><tr><th>評估側</th><th>項目</th>${colHeadersWithComment(measurements)}</tr></thead>
+          <tbody>${items.map(([label, side]) =>
+            `<tr><td>${label}</td><td>紀錄時間</td>${measurements.map(m => {
+              const o = objOf(m, side);
+              const val = o?.sls_time_seconds != null ? `${o.sls_time_seconds}秒` : '—';
+              const cmt = o?.sls_comment ?? '—';
+              return `<td>${val}</td><td>${cmt}</td>`;
+            }).join('')}</tr>`
+          ).join('')}</tbody>
+        </table>`;
+    }
+
+    function renderThighCircumference(measurements, sides) {
+      const items = sides.map(side => [SIDE_LABEL[side], side]);
+      return `
+        <div class="sub-lbl">大腿圍（Thigh Circumference）</div>
+        <table>
+          <thead><tr><th>評估側</th><th>項目</th>${colHeaders(measurements)}</tr></thead>
+          <tbody>${items.map(([label, side]) =>
+            `<tr><td>${label}</td><td>維度（cm）</td>${measurements.map(m => {
+              const o = objOf(m, side);
+              return `<td>${o?.thigh_circumference != null ? o.thigh_circumference + ' cm' : '—'}</td>`;
+            }).join('')}</tr>`
+          ).join('')}</tbody>
+        </table>`;
+    }
+
+    function renderRom(measurements, sides) {
+      const items = sides.flatMap(side => [
+        [SIDE_LABEL[side], '膝屈曲',
+          m => { const o = objOf(m, side); return o ? romStr(o.rom_knee_flexion_min, o.rom_knee_flexion_max) : '—'; },
+          m => objOf(m, side)?.rom_knee_flexion_comment ?? '—'],
+        [SIDE_LABEL[side], '膝伸直',
+          m => { const o = objOf(m, side); return o ? romStr(o.rom_knee_extension_min, o.rom_knee_extension_max) : '—'; },
+          m => objOf(m, side)?.rom_knee_extension_comment ?? '—'],
+      ]);
+      return `
+        <div class="sub-lbl">關節活動度（ROM）</div>
+        <table>
+          <thead><tr><th>評估側</th><th>項目</th>${colHeadersWithComment(measurements)}</tr></thead>
+          <tbody>${items.map(([side, item, fn, fnCmt]) =>
+            `<tr><td>${side}</td><td>${item}</td>${measurements.map(m =>
+              `<td>${fn(m)}</td><td>${fnCmt(m)}</td>`
+            ).join('')}</tr>`
+          ).join('')}</tbody>
+        </table>`;
+    }
+
+    function renderMmt(measurements, sides) {
+      const fields = [
+        ['膝屈曲', 'mmt_knee_flexion'],
+        ['膝伸直', 'mmt_knee_extension'],
+      ];
+      const items = sides.flatMap(side =>
+        fields.map(([label, key]) => [
+          SIDE_LABEL[side], label,
+          m => mmtGrade(objOf(m, side)?.[key]),
+        ])
+      );
+      return `
+        <div class="sub-lbl">徒手肌力測試（MMT）</div>
+        <table>
+          <thead><tr><th>評估側</th><th>項目</th>${colHeaders(measurements)}</tr></thead>
+          <tbody>${items.map(([side, item, fn]) =>
+            `<tr><td>${side}</td><td>${item}</td>${measurements.map(m => `<td>${fn(m)}</td>`).join('')}</tr>`
+          ).join('')}</tbody>
+        </table>`;
+    }
+
+    async function loadMeasurements() {
+      const sessionId = getCookie('session_id');
+      if (!patientId || !sessionId) return;
+
+      try {
+        const res = await fetch(`/patients/${patientId}/measurements`, {
+          headers: { 'Authorization': `Bearer ${sessionId}` },
+        });
+        const data = await res.json();
+        if (!data.result) { alert(data.message); return; }
+
+        const measurements = data.data;
+        if (measurements.length === 0) {
+          document.getElementById('compare-content').innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 3a1 1 0 110 2 1 1 0 010-2zm4 10H8v-2h8v2zm0-4H8V10h8v2z"/></svg>
+              </div>
+              <div class="empty-title">尚無評量資料</div>
+              <div class="empty-sub">目前還沒有任何評量紀錄<br>點擊右上方按鈕新增第一筆評量</div>
+            </div>`;
+          return;
+        }
+
+        const sides = [...new Set(measurements.flatMap(m => m.objective.map(o => o.side)))].sort();
+
+        document.getElementById('compare-content').innerHTML =
+          renderAssessmentCards(measurements) +
+          renderSubjective(measurements) +
+          renderVas(measurements, sides) +
+          renderFtsst(measurements) +
+          renderTug(measurements) +
+          renderMwt10(measurements) +
+          renderSls(measurements, sides) +
+          renderThighCircumference(measurements, sides) +
+          renderRom(measurements, sides) +
+          renderMmt(measurements, sides);
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    /* ════ 治療計畫 JS ════ */
+    const WEEK_ORD = ['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function buildWeekData(treatment, exerciseMap) {
+      const ONE_DAY = 86400;
+      const ONE_WEEK = 7 * ONE_DAY;
+      const weeks = [];
+      let ws = treatment.start_time;
+      while (ws <= treatment.end_time) {
+        const we = Math.min(ws + ONE_WEEK - ONE_DAY, treatment.end_time);
+        weeks.push({ start: ws, end: we, items: {} });
+        ws += ONE_WEEK;
+      }
+      (treatment.contents || []).forEach(c => {
+        const wi = weeks.findIndex(w => c.date >= w.start && c.date <= w.end + ONE_DAY - 1);
+        if (wi === -1) return;
+        const key = c.exercise_id;
+        if (!weeks[wi].items[key]) {
+          weeks[wi].items[key] = {
+            name: exerciseMap[c.exercise_id] || `動作 ${c.exercise_id}`,
+            params: `組數：${c.sets}，次數：${c.reps}，組間休息：${c.set_rest_time}秒`,
+            days: []
+          };
+        }
+        const d = new Date(c.date * 1000);
+        weeks[wi].items[key].days.push(`${d.getMonth()+1}/${d.getDate()}`);
+      });
+      return weeks.map(w => ({
+        range: `${tsToDateStr(w.start)} → ${tsToDateStr(w.end)}`,
+        items: Object.values(w.items)
+      }));
+    }
+
+    function renderPlans(plans, exerciseMap) {
+      const list  = document.getElementById('planList');
+      const empty = document.getElementById('planEmpty');
+      list.innerHTML = '';
+      if (!plans.length) { empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+
+      plans.forEach(plan => {
+        const weekData = buildWeekData(plan, exerciseMap);
+        const period = `${tsToDateStr(plan.start_time)} → ${tsToDateStr(plan.end_time)}`;
+        const createdAt = tsToDateStr(plan.created_at);
+
+        const card = document.createElement('div');
+        card.className = 'plan-card';
+
+        const hdr = document.createElement('div');
+        hdr.className = 'plan-card-header';
+        hdr.innerHTML = `
+          <div class="plan-card-header-title">
+            <span class="plan-card-name">治療名稱：${escHtml(plan.name)}</span>
+          </div>
+          <div class="plan-card-actions">
+            <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='/edit_patient-treatment-plan?id=${patientId}&planId=${plan.id}'">編輯</button>
+            <button class="plan-card-btn plan-card-btn-del" onclick="deletePlan(${plan.id})">刪除</button>
+            <button class="plan-card-btn plan-card-btn-export" onclick="exportPlan(${plan.id})">匯出</button>
+          </div>`;
+
+        const body = document.createElement('div');
+        body.className = 'plan-card-body';
+
+        const metaBar = document.createElement('div');
+        metaBar.className = 'plan-meta-bar';
+        metaBar.innerHTML = `
+          <div class="plan-meta-item">
+            <span class="plan-meta-label">治療期間</span>
+            <span class="plan-meta-value">${escHtml(period)}</span>
+          </div>
+          <div class="plan-meta-divider"></div>
+          <div class="plan-meta-item">
+            <span class="plan-meta-label">週數</span>
+            <span class="plan-meta-value">${weekData.length} 週</span>
+          </div>
+          <div class="plan-meta-divider"></div>
+          <div class="plan-meta-item">
+            <span class="plan-meta-label">建立時間</span>
+            <span class="plan-meta-value">${escHtml(createdAt)}</span>
+          </div>`;
+        body.appendChild(metaBar);
+
+        const schedWrap = document.createElement('div');
+        schedWrap.className = 'plan-schedule-wrap';
+        const schedLabel = document.createElement('div');
+        schedLabel.className = 'plan-schedule-label';
+        schedLabel.textContent = '週次治療安排';
+        schedWrap.appendChild(schedLabel);
+
+        const tblWrap = document.createElement('div');
+        tblWrap.className = 'plan-table-wrap';
+        const tbl = document.createElement('table');
+        tbl.className = 'plan-table';
+        tbl.innerHTML = `<thead><tr><th class="col-week">週次</th><th>治療內容</th></tr></thead>`;
+
+        const tbody = document.createElement('tbody');
+        weekData.forEach((week, wi) => {
+          const [ws, we] = week.range.split(' → ');
+          const tr = document.createElement('tr');
+          const tdWeek = document.createElement('td');
+          tdWeek.className = 'td-week';
+          tdWeek.innerHTML = `<span class="plan-week-badge">第${WEEK_ORD[wi]||wi+1}週</span><br><span class="plan-week-range">${escHtml(ws)}<br>→ ${escHtml(we)}</span>`;
+          const tdContent = document.createElement('td');
+          if (!week.items.length) {
+            tdContent.innerHTML = '<span class="no-ex">本週尚未設定治療項目</span>';
+          } else {
+            const ul = document.createElement('ul');
+            ul.className = 'ex-list';
+            week.items.forEach(item => {
+              const li = document.createElement('li');
+              li.className = 'ex-item';
+              const dayTagsHtml = item.days && item.days.length
+                ? `<div class="ex-day-tags">${item.days.map(d=>`<span class="ex-day-tag">${d}</span>`).join('')}</div>`
+                : '';
+              li.innerHTML = `<span class="ex-bullet"></span><span><span class="ex-name">${escHtml(item.name)}</span><span class="ex-params">：${escHtml(item.params)}</span>${dayTagsHtml}</span>`;
+              ul.appendChild(li);
+            });
+            tdContent.appendChild(ul);
+          }
+          tr.appendChild(tdWeek); tr.appendChild(tdContent); tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        tblWrap.appendChild(tbl);
+        schedWrap.appendChild(tblWrap);
+        body.appendChild(schedWrap);
+
+        card.appendChild(hdr); card.appendChild(body);
+        list.appendChild(card);
+      });
+    }
+
+    async function deletePlan(id) {
+      if (!confirm('確定刪除此治療計畫？')) return;
+      const sessionId = getCookie('session_id');
+      try {
+        await fetch(`/treatments/${id}/full`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${sessionId}` } });
+        loadPlans();
+      } catch(e) { alert(e.message); }
+    }
+
+    async function loadPlans() {
+      const sessionId = getCookie('session_id');
+      if (!patientId || !sessionId) return;
+      try {
+        const exRes = await fetch('/exercises', { headers: { 'Authorization': `Bearer ${sessionId}` } });
+        const exData = await exRes.json();
+        const exerciseMap = {};
+        (exData.data || []).forEach(e => { exerciseMap[e.id] = e.name; });
+
+        const tRes = await fetch(`/treatments/patient/${patientId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+        const tData = await tRes.json();
+        if (!tData.result) return;
+
+        const fullPlans = await Promise.all((tData.data || []).map(async t => {
+          const fRes = await fetch(`/treatments/${t.id}/full`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+          const fData = await fRes.json();
+          return fData.result ? fData.data : t;
+        }));
+
+        renderPlans(fullPlans, exerciseMap);
+      } catch(e) { console.error(e); }
+    }
+
+    function exportPlan(planId) {
+      const sessionId = getCookie('session_id');
+      const overlay  = document.getElementById('exportOverlay');
+      const countEl  = document.getElementById('exportCountdown');
+      const statusEl = document.getElementById('exportStatus');
+      const resultEl = document.getElementById('exportResult');
+      const confirmBtn = document.getElementById('exportConfirmBtn');
+
+      // 初始化 modal
+      countEl.style.display  = 'block';
+      statusEl.style.display = 'block';
+      resultEl.style.display = 'none';
+      confirmBtn.style.display = 'none';
+      statusEl.textContent   = '正在寄送中…';
+      confirmBtn.className   = 'export-confirm-btn';
+      overlay.style.display  = 'flex';
+
+      // 倒數 5 秒
+      let remaining = 5;
+      countEl.textContent = remaining;
+      const timer = setInterval(() => {
+        remaining--;
+        countEl.textContent = remaining;
+        if (remaining <= 0) clearInterval(timer);
+      }, 1000);
+
+      // API 呼叫 + 倒數同步進行，兩者都完成才顯示結果
+      const apiPromise = fetch(`/treatments/${planId}/send-email`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${sessionId}` },
+      }).then(r => r.json()).catch(e => ({ result: false, message: e.message }));
+
+      const countdownPromise = new Promise(resolve => setTimeout(resolve, 5000));
+
+      Promise.all([apiPromise, countdownPromise]).then(([data]) => {
+        clearInterval(timer);
+        countEl.style.display  = 'none';
+        statusEl.style.display = 'none';
+        resultEl.style.display = 'block';
+        confirmBtn.style.display = 'inline-block';
+        const ok = data.result;
+        resultEl.textContent = data.message || (ok ? '匯出成功' : '匯出失敗');
+        if (!ok) confirmBtn.classList.add('err');
+      });
+    }
+
+    function closeExportModal() {
+      document.getElementById('exportOverlay').style.display = 'none';
+    }
+
+    loadPatient();
+    loadMeasurements();
+    loadPlans();
+  </script>
+
+  <div class="export-overlay" id="exportOverlay" style="display:none">
+    <div class="export-modal">
+      <div class="export-modal-title">📧 寄送治療計畫</div>
+      <div class="export-countdown" id="exportCountdown">5</div>
+      <div class="export-status" id="exportStatus">正在寄送中…</div>
+      <div class="export-result" id="exportResult" style="display:none"></div>
+      <button class="export-confirm-btn" id="exportConfirmBtn" style="display:none" onclick="closeExportModal()">確定</button>
+    </div>
+  </div>
+</body>
+</html>

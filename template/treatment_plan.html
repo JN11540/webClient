@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>治療計畫</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue-dark: #1a3d6b;
+  --blue-mid: #2563a8;
+  --blue-light: #e8f0fb;
+  --blue-accent: #3b82c4;
+  --text-primary: #1a2c47;
+  --text-secondary: #4a6080;
+  --text-muted: #8099b8;
+  --border: #d0dcea;
+  --border-light: #e4ecf6;
+  --bg-page: #eef3fa;
+  --bg-white: #ffffff;
+  --bg-section: #f7f9fd;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); color: var(--text-primary); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { position:fixed; left:0; top:0; bottom:0; width:64px; background:var(--blue-dark); display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:6px; z-index:200; }
+.sidebar .avatar { width:36px; height:36px; border-radius:50%; background:var(--blue-accent); color:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+.sidebar .nav-icon { width:40px; height:40px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.55); cursor:pointer; transition:background .15s,color .15s; }
+.sidebar .nav-icon:hover, .sidebar .nav-icon.active { background:rgba(255,255,255,.12); color:#fff; }
+.sidebar .logout { margin-top:auto; }
+
+.main { margin-left:64px; display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+
+/* Page header */
+.page-header { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:center; flex-shrink:0; }
+.back-link { display:flex; align-items:center; gap:5px; color:var(--blue-mid); font-size:13px; cursor:pointer; text-decoration:none; }
+.back-link:hover { text-decoration:underline; }
+.page-title { font-size:17px; font-weight:600; color:var(--text-primary); flex:1; text-align:center; }
+
+/* Top controls */
+.top-controls { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap; flex-shrink:0; }
+.ctrl-group { display:flex; flex-direction:column; gap:3px; }
+.ctrl-label { font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; }
+.ctrl-select { padding:6px 28px 6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); background:var(--bg-white); appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a6080' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 9px center; cursor:pointer; min-width:260px; transition:border-color .15s; }
+.ctrl-select:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.ctrl-date { padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); background:var(--bg-white); width:140px; transition:border-color .15s; }
+.ctrl-date:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.date-pair { display:flex; align-items:center; gap:6px; }
+.date-sep { color:var(--text-muted); font-size:13px; }
+.ctrl-divider { width:1px; height:32px; background:var(--border-light); margin:0 2px; align-self:flex-end; }
+.generate-btn { padding:7px 16px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; align-self:flex-end; }
+.generate-btn:hover { background:var(--blue-dark); }
+.generate-btn:active { transform:scale(.98); }
+
+/* Content 1:1 */
+.content-row { flex:1; display:grid; grid-template-columns:1fr 1fr; min-height:0; overflow:hidden; }
+
+/* Left panel */
+.left-panel { background:var(--bg-white); border-right:1px solid var(--border-light); overflow-y:auto; display:flex; flex-direction:column; }
+
+/* Left top: basic info */
+.left-basic { padding:18px 16px; flex-shrink:0; }
+.panel-title { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; padding-bottom:7px; border-bottom:1px solid var(--border-light); }
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 8px; margin-bottom:12px; }
+.info-item { display:flex; flex-direction:column; gap:1px; }
+.il { font-size:11px; color:var(--text-muted); font-weight:500; }
+.iv { font-size:13px; color:var(--text-primary); font-weight:500; }
+.info-block { margin-bottom:8px; }
+.info-block .il { font-size:11px; color:var(--blue-mid); font-weight:600; margin-bottom:1px; }
+.info-block .iv { font-size:12px; font-weight:400; line-height:1.5; }
+.divider { border:none; border-top:1px solid var(--border-light); margin:12px 0; }
+
+/* Left empty */
+.left-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:8px; color:var(--text-muted); padding:40px 16px; }
+
+/* Left compare */
+.left-compare { border-top:1px solid var(--border-light); }
+.compare-title-bar { padding:10px 16px 8px; }
+.compare-section-title { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+
+/* Compare tables */
+.ctbl-section { padding:0 12px 12px; }
+.ctbl-section-label { font-size:11px; font-weight:600; color:var(--blue-mid); margin:10px 0 5px; padding-left:6px; border-left:3px solid var(--blue-mid); }
+.ctbl { width:100%; border-collapse:collapse; font-size:11px; border:1px solid var(--border-light); border-radius:var(--radius-sm); overflow:hidden; }
+.ctbl th { padding:6px 8px; background:var(--bg-section); color:var(--text-muted); font-weight:600; text-align:left; border-bottom:1px solid var(--border-light); white-space:nowrap; font-size:10px; letter-spacing:.03em; }
+.ctbl td { padding:6px 8px; border-bottom:1px solid var(--border-light); color:var(--text-primary); vertical-align:middle; }
+.ctbl tr:last-child td { border-bottom:none; }
+.ctbl tr:hover td { background:var(--bg-section); }
+.ctbl .muted { color:var(--text-muted); }
+
+/* Right panel */
+.right-panel { overflow-y:auto; padding:20px 20px 32px; display:flex; flex-direction:column; gap:14px; }
+.plan-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; color:var(--text-muted); gap:10px; }
+.plan-empty-icon { font-size:38px; opacity:.25; }
+.plan-empty-text { font-size:13px; text-align:center; line-height:1.7; }
+
+/* Schedule card */
+.schedule-card { background:var(--bg-white); border-radius:var(--radius-lg); overflow:hidden; }
+.schedule-card-header { padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-light); }
+.schedule-card-title { font-size:14px; font-weight:600; }
+.plan-name-group { display:flex; align-items:center; gap:8px; }
+.plan-name-label { font-size:11px; color:var(--text-muted); font-weight:500; white-space:nowrap; }
+.plan-name-input { padding:4px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); background:var(--bg-white); width:180px; transition:border-color .15s; }
+.plan-name-input:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.week-badge { display:inline-block; font-size:10px; font-weight:700; background:var(--blue-mid); color:#fff; padding:2px 8px; border-radius:20px; margin-bottom:4px; }
+.week-range-text { font-size:11px; font-weight:600; color:var(--text-secondary); display:block; }
+
+/* Exercise picker */
+.ex-picker { position:relative; }
+.ex-trigger { display:flex; align-items:center; flex-wrap:wrap; gap:4px; padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-white); cursor:pointer; min-height:34px; transition:border-color .15s; }
+.ex-trigger:hover { border-color:var(--blue-accent); }
+.ex-trigger.open { border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.ex-placeholder { font-size:12px; color:var(--text-muted); user-select:none; flex:1; }
+.ex-tag { display:inline-flex; align-items:center; gap:3px; background:var(--blue-light); color:var(--blue-dark); font-size:11px; font-weight:500; padding:2px 7px; border-radius:20px; }
+.ex-tag span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:150px; }
+.ex-tag-rm { cursor:pointer; color:var(--blue-mid); font-size:13px; line-height:1; }
+.ex-tag-rm:hover { color:#c0392b; }
+.ex-arrow { margin-left:auto; flex-shrink:0; color:var(--text-muted); transition:transform .2s; }
+.ex-trigger.open .ex-arrow { transform:rotate(180deg); }
+.ex-panel { display:none; position:absolute; left:0; top:calc(100% + 4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); width:280px; }
+.ex-panel.open { display:block; }
+.ex-search { padding:8px 10px; border-bottom:1px solid var(--border-light); }
+.ex-search input { width:100%; padding:5px 9px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:12px; outline:none; }
+.ex-search input:focus { border-color:var(--blue-mid); }
+.ex-list { max-height:200px; overflow-y:auto; padding:4px 0; }
+.ex-opt { display:flex; align-items:flex-start; gap:7px; padding:6px 12px; cursor:pointer; font-size:12px; line-height:1.4; transition:background .1s; }
+.ex-opt:hover, .ex-opt.checked { background:var(--blue-light); }
+.ex-opt input { margin-top:2px; flex-shrink:0; accent-color:var(--blue-mid); cursor:pointer; }
+.ex-footer { padding:7px 10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; }
+.ex-count { font-size:11px; color:var(--text-muted); }
+.ex-clear { font-size:11px; color:#c0392b; cursor:pointer; background:none; border:none; font-family:inherit; }
+.ex-clear:hover { text-decoration:underline; }
+
+/* Week exercise list */
+.wex-list { display:flex; flex-direction:column; gap:6px; padding:6px 0 2px; }
+.wex-item { border:1px solid var(--border-light); border-radius:var(--radius-sm); background:var(--bg-white); display:flex; align-items:center; gap:8px; padding:6px 10px; overflow:hidden; }
+.wex-num-badge { width:22px; height:22px; border-radius:50%; background:var(--blue-mid); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.wex-item-name { font-size:12px; font-weight:500; color:var(--text-primary); max-width:160px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; }
+.wex-item-chips { display:flex; gap:5px; align-items:center; flex-shrink:0; }
+.wex-chip { font-size:11px; color:var(--text-secondary); background:var(--bg-section); border:1px solid var(--border-light); border-radius:4px; padding:2px 7px; white-space:nowrap; flex-shrink:0; }
+.wex-chip b { color:var(--blue-mid); font-weight:600; }
+.wex-item-actions { display:flex; gap:4px; flex-shrink:0; margin-left:auto; }
+.wex-action-btn { cursor:pointer; padding:3px 10px; border-radius:4px; font-size:11px; font-family:inherit; border:1px solid var(--border); background:var(--bg-white); color:var(--text-secondary); transition:background .1s,color .1s; white-space:nowrap; flex-shrink:0; }
+.wex-action-btn:hover { background:var(--blue-light); color:var(--blue-mid); border-color:var(--blue-accent); }
+.wex-action-btn.rm:hover { background:#fef0ef; color:#c0392b; border-color:#e8b4b0; }
+.wex-add-area { padding:6px 8px 8px; }
+.wex-add-btn { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; padding:7px; border:1px dashed var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--blue-mid); font-family:inherit; font-size:12px; cursor:pointer; transition:background .15s,border-color .15s; }
+.wex-add-btn:hover { background:var(--blue-light); border-color:var(--blue-accent); }
+
+/* Day layout */
+.day-schedule-wrap { padding:8px 10px; }
+.day-grid { display:flex; flex-direction:column; gap:6px; }
+.day-row { display:flex; align-items:center; gap:6px; border:1px solid var(--border-light); border-radius:var(--radius-sm); padding:5px 8px; background:var(--bg-white); }
+.day-label { font-size:11px; font-weight:600; color:var(--text-secondary); white-space:nowrap; min-width:90px; padding-right:6px; border-right:1px solid var(--border-light); }
+.day-nums { display:flex; flex-wrap:wrap; gap:5px; flex:1; align-items:center; }
+.day-num-chip { width:22px; height:22px; border-radius:50%; background:var(--blue-light); border:1.5px solid var(--blue-accent); color:var(--blue-dark); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:default; }
+.day-empty-hint { font-size:11px; color:var(--text-muted); font-style:italic; }
+.day-add-btn { display:flex; align-items:center; gap:3px; padding:3px 8px; border:1px dashed var(--border); border-radius:4px; font-size:11px; font-family:inherit; color:var(--blue-mid); background:transparent; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:background .1s,border-color .1s; }
+.day-add-btn:hover { background:var(--blue-light); border-color:var(--blue-accent); }
+.day-num-chip.removable { cursor:pointer; position:relative; }
+.day-num-chip.removable:hover { background:#fef0ef; border-color:#e8b4b0; color:#c0392b; }
+.day-pick-panel { display:none; position:absolute; left:0; top:calc(100%+4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); min-width:200px; }
+.day-pick-panel.open { display:block; }
+.day-pick-list { max-height:220px; overflow-y:auto; padding:4px 0; }
+.day-pick-opt { display:flex; align-items:center; gap:8px; padding:6px 12px; cursor:pointer; font-size:12px; transition:background .1s; }
+.day-pick-opt:hover { background:var(--blue-light); }
+.day-pick-opt .dp-num { width:20px; height:20px; border-radius:50%; background:var(--blue-mid); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.day-pick-opt.already { opacity:.45; pointer-events:none; }
+.day-add-wrap { position:relative; flex-shrink:0; }
+
+/* Modal */
+.modal-overlay { position:fixed; inset:0; background:rgba(20,40,80,.35); z-index:500; display:flex; align-items:center; justify-content:center; }
+.modal-box { background:var(--bg-white); border-radius:var(--radius-lg); box-shadow:0 8px 32px rgba(26,61,107,.18); width:360px; max-width:94vw; overflow:hidden; }
+.modal-header { padding:14px 18px 12px; border-bottom:1px solid var(--border-light); display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.modal-title { font-size:13px; font-weight:600; color:var(--text-primary); line-height:1.4; flex:1; }
+.modal-close { cursor:pointer; color:var(--text-muted); font-size:18px; line-height:1; flex-shrink:0; margin-top:1px; }
+.modal-close:hover { color:var(--text-primary); }
+.modal-body { padding:16px 18px; display:grid; grid-template-columns:1fr; gap:12px; }
+.modal-field { display:flex; flex-direction:column; gap:4px; }
+.modal-field-label { font-size:11px; font-weight:600; color:var(--text-secondary); }
+.modal-field-input { padding:7px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); transition:border-color .15s; }
+.modal-field-input:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.modal-footer { padding:12px 18px; border-top:1px solid var(--border-light); display:flex; justify-content:flex-end; gap:8px; background:var(--bg-section); }
+.modal-btn-cancel { padding:7px 16px; background:var(--bg-white); color:var(--text-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; cursor:pointer; }
+.modal-btn-cancel:hover { background:var(--bg-section); }
+.modal-btn-confirm { padding:7px 16px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; }
+.modal-btn-confirm:hover { background:var(--blue-dark); }
+
+/* Actions */
+.action-row { display:flex; justify-content:flex-end; gap:10px; padding:12px 16px; border-top:1px solid var(--border-light); background:var(--bg-section); }
+.btn-cancel { padding:7px 18px; background:var(--bg-white); color:var(--text-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; cursor:pointer; }
+.btn-cancel:hover { background:var(--bg-section); }
+.btn-save { padding:7px 18px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:5px; }
+.btn-save:hover { background:var(--blue-dark); }
+
+.toast { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-12px); background:var(--blue-dark); color:#fff; padding:10px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:500; opacity:0; transition:opacity .3s,transform .3s; pointer-events:none; z-index:9999; display:flex; align-items:center; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+
+/* Confirmation Page */
+.confirm-page { max-width:900px; margin:0 auto; padding:0 24px 48px; }
+.confirm-header { position:sticky; top:0; z-index:10; background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:12px 24px; margin:0 -24px; display:flex; align-items:center; gap:12px; }
+.confirm-back-btn { display:flex; align-items:center; gap:5px; padding:7px 14px; background:var(--bg-section); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-secondary); cursor:pointer; transition:background .15s; flex-shrink:0; }
+.confirm-back-btn:hover { background:var(--border-light); }
+.confirm-header-center { flex:1; text-align:center; }
+.confirm-header-label { font-size:11px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; }
+.confirm-plan-name { font-size:16px; font-weight:700; color:var(--blue-dark); letter-spacing:.03em; }
+.confirm-header-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.confirm-submit-btn { display:flex; align-items:center; gap:6px; padding:7px 18px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+.confirm-submit-btn:hover { background:var(--blue-dark); }
+.confirm-meta-bar { display:flex; align-items:center; gap:0; background:var(--bg-white); border:1px solid var(--border-light); border-radius:var(--radius-md); margin:20px 0; overflow:hidden; }
+.confirm-meta-item { flex:1; padding:12px 18px; }
+.confirm-meta-label { font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:3px; }
+.confirm-meta-value { font-size:13px; font-weight:600; color:var(--text-primary); }
+.confirm-meta-divider { width:1px; height:40px; background:var(--border-light); flex-shrink:0; }
+.confirm-table-wrap { border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border); }
+.confirm-table { width:100%; border-collapse:collapse; }
+.confirm-table thead tr { background:var(--blue-dark); }
+.confirm-table th { padding:10px 16px; font-size:12px; font-weight:700; color:#fff; letter-spacing:.06em; text-align:left; }
+.confirm-table th.col-week { width:160px; text-align:center; }
+.confirm-table tbody tr { border-bottom:1px solid var(--border-light); transition:background .1s; }
+.confirm-table tbody tr:last-child { border-bottom:none; }
+.confirm-table tbody tr:nth-child(even) { background:var(--bg-section); }
+.confirm-table tbody tr:hover { background:var(--blue-light); }
+.confirm-table td { padding:14px 16px; vertical-align:top; font-size:13px; }
+.confirm-table td.td-week { text-align:center; background:var(--bg-section); border-right:1px solid var(--border-light); }
+.confirm-week-badge { display:inline-block; font-size:11px; font-weight:700; background:var(--blue-mid); color:#fff; padding:3px 10px; border-radius:20px; margin-bottom:6px; }
+.confirm-week-range { font-size:11px; font-weight:600; color:var(--text-secondary); line-height:1.6; }
+.confirm-ex-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+.confirm-ex-item { display:flex; align-items:flex-start; gap:8px; line-height:1.5; }
+.confirm-ex-bullet { width:6px; height:6px; border-radius:50%; background:var(--blue-mid); flex-shrink:0; margin-top:6px; }
+.confirm-ex-name { font-weight:600; color:var(--text-primary); }
+.confirm-ex-params { color:var(--text-secondary); font-size:12px; }
+.confirm-day-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+.confirm-day-tag { font-size:10px; background:var(--blue-light); color:var(--blue-mid); border-radius:4px; padding:1px 7px; font-weight:500; }
+.confirm-no-ex { color:var(--text-muted); font-style:italic; font-size:12px; }
+.confirm-footer-note { display:flex; align-items:center; gap:8px; margin-top:16px; padding:10px 16px; background:var(--blue-light); border-radius:var(--radius-sm); font-size:12px; color:var(--blue-dark); }
+
+@media print {
+  .sidebar, .confirm-header, .confirm-print-btn, .confirm-back-btn { display:none !important; }
+  #confirmOverlay { position:static !important; left:0 !important; }
+  .confirm-page { padding:0; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="avatar" id="sidebarAvatar">—</div>
+  <div class="nav-icon" title="首頁" onclick="location.href='/home'">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+  </div>
+  <div class="nav-icon active" title="治療計畫">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+  </div>
+  <div class="nav-icon" title="訓練結果" onclick="location.href='/training-results'">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  </div>
+  <div class="nav-icon logout" title="登出" onclick="location.href='/'">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M17 16l4-4-4-4M21 12H9"/><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/></svg>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <a class="back-link" onclick="location.href='/home'">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg> 返回首頁
+    </a>
+    <div class="page-title">治療計畫</div>
+    <div style="width:72px"></div>
+  </div>
+
+  <div class="top-controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">選擇個案</span>
+      <select class="ctrl-select" id="patientSelect" onchange="onPatientChange()">
+        <option value="">── 請選擇個案 ──</option>
+      </select>
+    </div>
+    <div class="ctrl-divider"></div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">治療計畫期間</span>
+      <div class="date-pair">
+        <input type="date" class="ctrl-date" id="startDate">
+        <span class="date-sep">→</span>
+        <input type="date" class="ctrl-date" id="endDate">
+      </div>
+    </div>
+    <button class="generate-btn" onclick="generateSchedule()">產生計畫表格</button>
+  </div>
+
+  <div class="content-row">
+    <!-- LEFT -->
+    <div class="left-panel" id="leftPanel">
+      <div class="left-empty" id="leftEmpty">
+        <div style="font-size:32px;opacity:.3">👤</div>
+        <div style="font-size:13px">請先選擇個案</div>
+      </div>
+      <div id="patientInfo" style="display:none">
+        <div class="left-basic">
+          <div class="panel-title">個案基本資料</div>
+          <div class="info-grid">
+            <div class="info-item"><span class="il">姓名</span><span class="iv" id="iName"></span></div>
+            <div class="info-item"><span class="il">性別</span><span class="iv" id="iGender"></span></div>
+            <div class="info-item"><span class="il">出生日期</span><span class="iv" id="iBirth"></span></div>
+            <div class="info-item"><span class="il">職業</span><span class="iv" id="iJob"></span></div>
+            <div class="info-item"><span class="il">身高</span><span class="iv" id="iHeight"></span></div>
+            <div class="info-item"><span class="il">體重</span><span class="iv" id="iWeight"></span></div>
+            <div class="info-item"><span class="il">KL Grade</span><span class="iv" id="iKL"></span></div>
+            <div class="info-item"><span class="il">病程</span><span class="iv" id="iDur"></span></div>
+          </div>
+          <hr class="divider">
+          <div class="info-block"><div class="il">診斷</div><div class="iv" id="iDiag"></div></div>
+          <div class="info-block"><div class="il">主訴</div><div class="iv" id="iChief"></div></div>
+          <div class="info-block"><div class="il">加重因素</div><div class="iv" id="iAgg"></div></div>
+          <div class="info-block"><div class="il">相關病史</div><div class="iv" id="iHist"></div></div>
+          <div class="info-block"><div class="il">影像學結果</div><div class="iv" id="iImg"></div></div>
+          <div class="info-block"><div class="il">就診流程</div><div class="iv" id="iFlow"></div></div>
+        </div>
+        <div class="left-compare" id="compareSection">
+          <div class="compare-title-bar">
+            <div class="compare-section-title">治療前後比較</div>
+          </div>
+          <div id="compareContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <div class="plan-empty" id="planEmpty">
+        <div class="plan-empty-icon">📋</div>
+        <div class="plan-empty-text">請選擇個案並設定治療期間<br>再點「產生計畫表格」</div>
+      </div>
+      <div id="scheduleWrap" style="display:none">
+        <div class="schedule-card">
+          <div class="schedule-card-header">
+            <span class="schedule-card-title">週/日治療安排</span>
+            <div class="plan-name-group">
+              <span class="plan-name-label">治療計畫名稱</span>
+              <input type="text" class="plan-name-input" id="planNameInput" placeholder="計畫名稱">
+            </div>
+          </div>
+          <div id="planBody"></div>
+          <div class="action-row">
+            <button class="btn-cancel" onclick="cancelPlan()">取消</button>
+            <button class="btn-save" onclick="savePlan()">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              儲存計畫
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toastMsg"></span>
+  <button id="toastConfirmBtn" onclick="location.href='/home'" style="display:none; margin-left:12px; padding:3px 12px; border:1px solid rgba(255,255,255,.6); border-radius:4px; background:transparent; color:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">確定</button>
+</div>
+
+<!-- Confirmation Overlay -->
+<div id="confirmOverlay" style="display:none; position:fixed; inset:0; left:64px; background:var(--bg-page); z-index:300; overflow-y:auto;">
+  <div class="confirm-page">
+    <div class="confirm-header">
+      <button class="confirm-back-btn" onclick="closeConfirm()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        返回編輯
+      </button>
+      <div class="confirm-header-center">
+        <div class="confirm-header-label">確認治療計畫</div>
+        <div class="confirm-plan-name" id="confirmPlanName"></div>
+      </div>
+      <div class="confirm-header-actions">
+        <button class="confirm-submit-btn" onclick="submitPlan()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          確認送出
+        </button>
+      </div>
+    </div>
+    <div class="confirm-meta-bar">
+      <div class="confirm-meta-item">
+        <span class="confirm-meta-label">個案</span>
+        <span class="confirm-meta-value" id="confirmPatient">—</span>
+      </div>
+      <div class="confirm-meta-divider"></div>
+      <div class="confirm-meta-item">
+        <span class="confirm-meta-label">治療期間</span>
+        <span class="confirm-meta-value" id="confirmPeriod">—</span>
+      </div>
+      <div class="confirm-meta-divider"></div>
+      <div class="confirm-meta-item">
+        <span class="confirm-meta-label">週數</span>
+        <span class="confirm-meta-value" id="confirmWeeks">—</span>
+      </div>
+      <div class="confirm-meta-divider"></div>
+      <div class="confirm-meta-item">
+        <span class="confirm-meta-label">建立時間</span>
+        <span class="confirm-meta-value" id="confirmCreatedAt">—</span>
+      </div>
+    </div>
+    <div class="confirm-table-wrap">
+      <table class="confirm-table" id="confirmTable">
+        <thead><tr><th class="col-week">週次</th><th class="col-content">治療內容</th></tr></thead>
+        <tbody id="confirmTableBody"></tbody>
+      </table>
+    </div>
+    <div class="confirm-footer-note">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      請確認所有治療內容無誤後再按「確認送出」。送出後計畫將正式建立。
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Helpers ── */
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+function tsToDateStr(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts * 1000);
+  return d.getFullYear() + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0');
+}
+function dateToTs(str) { return Math.floor(new Date(str).getTime() / 1000); }
+function fmt(d) { return d.getFullYear()+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getDate().toString().padStart(2,'0'); }
+const WEEKDAYS = ['日','一','二','三','四','五','六'];
+function fmtWithDay(dateStr) {
+  const d = new Date(dateStr.replace(/\//g,'-'));
+  return dateStr + '（' + WEEKDAYS[d.getDay()] + '）';
+}
+
+const sessionId  = getCookie('session_id');
+const clinicianId = getCookie('clinician_id');
+let exercises = [];        // [{id, name}]
+let weekData  = [];
+let currentPatientId  = null;
+let currentPatientName = '';
+
+/* ── Init ── */
+async function init() {
+  await Promise.all([loadExercises(), loadPatients(), loadClinicianAvatar()]);
+}
+
+async function loadClinicianAvatar() {
+  if (!clinicianId) return;
+  try {
+    const res = await fetch(`/clinicians/${clinicianId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const data = await res.json();
+    if (data.result && data.data.name) {
+      document.getElementById('sidebarAvatar').textContent = data.data.name.charAt(0);
+    }
+  } catch(e) {}
+}
+
+async function loadExercises() {
+  try {
+    const res = await fetch('/exercises', { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const data = await res.json();
+    if (data.result) exercises = data.data;
+  } catch(e) { console.error(e); }
+}
+
+async function loadPatients() {
+  if (!clinicianId) return;
+  try {
+    const res = await fetch(`/clinicians/${clinicianId}/patients`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const data = await res.json();
+    if (!data.result) return;
+    const sel = document.getElementById('patientSelect');
+    data.data.forEach(p => {
+      const age = new Date().getFullYear() - new Date(p.date_of_birth * 1000).getFullYear();
+      const opt = document.createElement('option');
+      opt.value = p.patient_id;
+      opt.textContent = `${p.name}　｜　${p.gender === 1 ? '男' : '女'}　${age} 歲　｜　${p.diagnosis || '—'}`;
+      sel.appendChild(opt);
+    });
+  } catch(e) { console.error(e); }
+}
+
+/* ── Patient change ── */
+async function onPatientChange() {
+  const v = document.getElementById('patientSelect').value;
+  if (!v) {
+    document.getElementById('leftEmpty').style.display = 'flex';
+    document.getElementById('patientInfo').style.display = 'none';
+    currentPatientId = null; currentPatientName = '';
+    return;
+  }
+  currentPatientId = v;
+  try {
+    const res = await fetch(`/patients/${v}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const data = await res.json();
+    if (!data.result) return;
+    const p = data.data;
+    currentPatientName = p.name;
+    const age = new Date().getFullYear() - new Date(p.date_of_birth * 1000).getFullYear();
+    document.getElementById('leftEmpty').style.display = 'none';
+    document.getElementById('patientInfo').style.display = 'block';
+    const set = (id, val) => { document.getElementById(id).textContent = val || '—'; };
+    set('iName',   p.name);
+    set('iGender', p.gender === 1 ? '男（Male）' : '女（Female）');
+    set('iBirth',  p.date_of_birth ? tsToDateStr(p.date_of_birth) : null);
+    set('iJob',    p.profession);
+    set('iHeight', p.height != null ? p.height + ' cm' : null);
+    set('iWeight', p.weight != null ? p.weight + ' kg' : null);
+    set('iKL',     p.kl_grade != null ? 'KL ' + p.kl_grade : null);
+    set('iDur',    p.symptom_duration_months != null ? p.symptom_duration_months + ' 個月' : null);
+    set('iDiag',   p.diagnosis);
+    set('iChief',  p.chief_complaint);
+    set('iAgg',    p.aggravating_factors);
+    set('iHist',   p.medical_history);
+    set('iImg',    p.imaging_findings);
+    set('iFlow',   p.visit_flow);
+    loadMeasurements(v);
+  } catch(e) { console.error(e); }
+}
+
+/* ── Measurements / Compare ── */
+const MMT_GRADE = ['0','1','2','2+','3-','3','3+','4-','4','4+','5-','5'];
+const SIDE_LBL = {0:'左膝', 1:'右膝'};
+
+async function loadMeasurements(patientId) {
+  try {
+    const res = await fetch(`/patients/${patientId}/measurements`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const data = await res.json();
+    if (!data.result) return;
+    renderCompare(buildCompareData(data.data));
+  } catch(e) { console.error(e); }
+}
+
+function buildCompareData(measurements) {
+  if (!measurements.length) return null;
+  const evals = measurements.map(m => ({ tn: m.name, date: tsToDateStr(m.measured_at) }));
+  const sides = [...new Set(measurements.flatMap(m => m.objective.map(o => o.side)))].sort();
+  const obj = (m, side) => m.objective.find(o => o.side === side);
+
+  return {
+    evals,
+    subjective: [
+      { label: 'SF-36 總分',           vals: measurements.map(m => m.sf_36_total ?? '—') },
+      { label: 'WOMAC 總分（0–96）',    vals: measurements.map(m => m.womac_total  ?? '—') },
+      { label: 'KOOS 總分',             vals: measurements.map(m => m.koos_total   ?? '—') },
+    ],
+    vas: sides.flatMap(s => [
+      { side: SIDE_LBL[s], item: '測試前', vals: measurements.map(m => obj(m,s)?.vas_before_test ?? '—') },
+      { side: SIDE_LBL[s], item: '測試後', vals: measurements.map(m => obj(m,s)?.vas_after_test  ?? '—') },
+    ]),
+    ftsst: [{ item: '紀錄時間（是否有使用輔具）',
+      vals:  measurements.map(m => { const o=m.objective[0]; return o ? o.ftsst_time_seconds+'秒'+(o.ftsst_assistive_device?' / 有輔具':'') : '—'; }),
+      notes: measurements.map(m => m.objective[0]?.ftsst_comment ?? '—') }],
+    tug:   [{ item: '紀錄時間（是否有使用輔具）',
+      vals:  measurements.map(m => { const o=m.objective[0]; return o ? o.tug_time_seconds+'秒'+(o.tug_assistive_device?' / 有輔具':'') : '—'; }),
+      notes: measurements.map(m => m.objective[0]?.tug_comment ?? '—') }],
+    mwt:   [{ item: '紀錄時間（是否有使用輔具）',
+      vals:  measurements.map(m => { const o=m.objective[0]; return o ? o.mwt_10_time_seconds+'秒'+(o.mwt_10_assistive_device?' / 有輔具':'') : '—'; }),
+      notes: measurements.map(m => m.objective[0]?.mwt_10_comment ?? '—') }],
+    sls: sides.map(s => ({
+      side: SIDE_LBL[s], item: '紀錄時間',
+      vals:  measurements.map(m => obj(m,s)?.sls_time_seconds != null ? obj(m,s).sls_time_seconds+'秒' : '—'),
+      notes: measurements.map(m => obj(m,s)?.sls_comment ?? '—'),
+    })),
+    tc: sides.map(s => ({
+      side: SIDE_LBL[s], item: '維度（cm）',
+      vals: measurements.map(m => obj(m,s)?.thigh_circumference != null ? obj(m,s).thigh_circumference+' cm' : '—'),
+    })),
+    rom: sides.flatMap(s => [
+      { side: SIDE_LBL[s], item: '膝屈曲',
+        vals:  measurements.map(m => { const o=obj(m,s); return (o?.rom_knee_flexion_min!=null&&o?.rom_knee_flexion_max!=null) ? o.rom_knee_flexion_min+'°–'+o.rom_knee_flexion_max+'°' : '—'; }),
+        notes: measurements.map(m => obj(m,s)?.rom_knee_flexion_comment ?? '—') },
+      { side: SIDE_LBL[s], item: '膝伸直',
+        vals:  measurements.map(m => { const o=obj(m,s); return (o?.rom_knee_extension_min!=null&&o?.rom_knee_extension_max!=null) ? o.rom_knee_extension_min+'°–'+o.rom_knee_extension_max+'°' : '—'; }),
+        notes: measurements.map(m => obj(m,s)?.rom_knee_extension_comment ?? '—') },
+    ]),
+    mmt: sides.flatMap(s => [
+      { side: SIDE_LBL[s], item: '膝屈曲', vals: measurements.map(m => { const v=obj(m,s)?.mmt_knee_flexion;  return v!=null ? (MMT_GRADE[v]??'—') : '—'; }) },
+      { side: SIDE_LBL[s], item: '膝伸直', vals: measurements.map(m => { const v=obj(m,s)?.mmt_knee_extension; return v!=null ? (MMT_GRADE[v]??'—') : '—'; }) },
+    ]),
+  };
+}
+
+function renderCompare(d) {
+  const el = document.getElementById('compareContent');
+  if (!d || !d.evals.length) {
+    el.innerHTML = '<div style="padding:12px 16px;font-size:12px;color:var(--text-muted)">尚無評量資料</div>';
+    return;
+  }
+  const ens = d.evals;
+  function thRow(hasSide, hasNote) {
+    let h = hasSide ? '<th>評估側</th>' : '';
+    h += '<th>項目</th>';
+    ens.forEach(e => { h += `<th>${e.tn}</th>`; if (hasNote) h += `<th class="muted">${e.tn}備註</th>`; });
+    return `<thead><tr>${h}</tr></thead>`;
+  }
+  function bodyRows(rows, hasSide, hasNote) {
+    return rows.map(r => {
+      let cells = hasSide ? `<td>${r.side}</td>` : '';
+      cells += `<td>${r.item}</td>`;
+      r.vals.forEach((v,i) => { cells += `<td>${v}</td>`; if (hasNote) cells += `<td class="muted">${r.notes?.[i]??'—'}</td>`; });
+      return `<tr>${cells}</tr>`;
+    }).join('');
+  }
+  function section(label, thead, rows, hasSide, hasNote) {
+    return `<div class="ctbl-section"><div class="ctbl-section-label">${label}</div>
+      <div style="overflow-x:auto"><table class="ctbl">${thead}<tbody>${bodyRows(rows,hasSide,hasNote)}</tbody></table></div></div>`;
+  }
+  el.innerHTML =
+    section('主觀量表',
+      `<thead><tr><th>量表</th>${ens.map(e=>`<th>${e.tn}</th>`).join('')}</tr></thead>`,
+      d.subjective, false, false) +
+    section('疼痛量表（VAS）',          thRow(true,false),  d.vas,   true,  false) +
+    section('五次坐站測試（FTSST）',     thRow(false,true),  d.ftsst, false, true)  +
+    section('計時起走測試（TUG）',       thRow(false,true),  d.tug,   false, true)  +
+    section('10公尺步行測試（10MWT）',   thRow(false,true),  d.mwt,   false, true)  +
+    section('單腳站立平衡測試（SLS）',   thRow(true,true),   d.sls,   true,  true)  +
+    section('大腿圍（Thigh Circumference）', thRow(true,false), d.tc, true, false)  +
+    section('關節活動度（ROM）',         thRow(true,true),   d.rom,   true,  true)  +
+    section('徒手肌力測試（MMT）',
+      `<thead><tr><th>評估側</th><th>項目</th>${ens.map(e=>`<th>${e.tn}</th>`).join('')}</tr></thead>`,
+      d.mmt, true, false);
+}
+
+/* ── Schedule generation ── */
+function generateSchedule() {
+  if (!currentPatientId) { showToast('請先選擇個案', true); return; }
+  const s = document.getElementById('startDate').value;
+  const e = document.getElementById('endDate').value;
+  if (!s||!e) { showToast('請填寫開始與結束日期', true); return; }
+  if (s>e)    { showToast('結束日期不可早於開始日期', true); return; }
+  weekData = [];
+  let cur = new Date(s);
+  const end = new Date(e);
+  while (cur <= end) {
+    const ws = new Date(cur);
+    const we = new Date(cur); we.setDate(we.getDate()+6);
+    if (we > end) we.setTime(end.getTime());
+    const days = [];
+    let d = new Date(ws);
+    while (d <= we) { days.push({date:fmt(d), sel:[]}); const nd=new Date(d); nd.setDate(nd.getDate()+1); d=nd; }
+    weekData.push({range:fmt(ws)+' → '+fmt(we), wexItems:[], get wsel(){ return this.wexItems.map(i=>i.name); }, days});
+    cur.setDate(cur.getDate()+7);
+  }
+  renderTable();
+  document.getElementById('planEmpty').style.display = 'none';
+  const hex = Array.from(crypto.getRandomValues(new Uint8Array(4))).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  document.getElementById('planNameInput').value = 'PLAN-' + hex;
+  document.getElementById('scheduleWrap').style.display = 'block';
+}
+
+function renderTable() {
+  const container = document.getElementById('planBody');
+  container.innerHTML = '';
+  weekData.forEach((week, wi) => {
+    const weekBlock = document.createElement('div');
+    weekBlock.style.cssText = 'border-bottom:2px solid var(--border-light);';
+
+    const weekHeader = document.createElement('div');
+    weekHeader.style.cssText = 'display:grid; grid-template-columns:120px 1fr; border-bottom:1px solid var(--border-light); background:var(--bg-section);';
+    const weekBadgeCell = document.createElement('div');
+    weekBadgeCell.style.cssText = 'padding:8px 14px; border-right:1px solid var(--border-light); display:flex; align-items:center;';
+    weekBadgeCell.innerHTML = `<span class="week-badge">第 ${wi+1} 週</span>`;
+    const weekItemsLabel = document.createElement('div');
+    weekItemsLabel.style.cssText = 'padding:6px 12px; font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:flex; align-items:center; gap:6px;';
+    weekItemsLabel.innerHTML = `<span>週治療項目</span><span style="font-size:10px;color:var(--blue-mid);font-weight:400;">（動作名稱、組數、次數、組間休息）</span>`;
+    weekHeader.appendChild(weekBadgeCell); weekHeader.appendChild(weekItemsLabel);
+    weekBlock.appendChild(weekHeader);
+
+    const weekExRow = document.createElement('div');
+    weekExRow.style.cssText = 'display:grid; grid-template-columns:120px 1fr; border-bottom:1px solid var(--border-light);';
+    const weekRangeCell = document.createElement('div');
+    weekRangeCell.style.cssText = 'padding:8px 14px; background:var(--bg-section); border-right:1px solid var(--border-light); display:flex; align-items:flex-start; padding-top:10px;';
+    weekRangeCell.innerHTML = `<span class="week-range-text">${week.range.replace(' → ',' →<br>')}</span>`;
+    const weekExCell = document.createElement('div');
+    weekExCell.style.cssText = 'padding:8px 10px; min-width:0; overflow-x:auto;';
+    weekExCell.appendChild(makeWeekExCell(wi, week));
+    weekExRow.appendChild(weekRangeCell); weekExRow.appendChild(weekExCell);
+    weekBlock.appendChild(weekExRow);
+
+    const dayLabelRow = document.createElement('div');
+    dayLabelRow.style.cssText = 'display:grid; grid-template-columns:120px 150px 1fr; background:var(--bg-section); border-bottom:1px solid var(--border-light);';
+    const dlc0 = document.createElement('div'); dlc0.style.cssText = 'border-right:1px solid var(--border-light); background:var(--bg-section);';
+    const dlc1 = document.createElement('div'); dlc1.style.cssText = 'padding:5px 12px; font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:flex; align-items:center; border-right:1px solid var(--border-light);'; dlc1.textContent = '日安排';
+    const dlc2 = document.createElement('div'); dlc2.style.cssText = 'padding:5px 12px; font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:flex; align-items:center; gap:5px;'; dlc2.innerHTML = `<span>日治療項目</span><span style="font-size:10px;color:var(--blue-mid);font-weight:400;">（顯示動作編號，從週治療項目中選取）</span>`;
+    dayLabelRow.appendChild(dlc0); dayLabelRow.appendChild(dlc1); dayLabelRow.appendChild(dlc2);
+    weekBlock.appendChild(dayLabelRow);
+
+    week.days.forEach((day, di) => {
+      day.sel = (day.sel||[]).filter(idx => idx >= 0 && idx < week.wexItems.length);
+      const dayRow = document.createElement('div');
+      dayRow.style.cssText = 'display:grid; grid-template-columns:120px 150px 1fr; border-bottom:1px solid var(--border-light);';
+      const dc0 = document.createElement('div'); dc0.style.cssText = 'background:var(--bg-section); border-right:1px solid var(--border-light);';
+      const colors = ['#3b82c4','#5b9bd5','#7ab4e6','#9acdf7','#bad6f5','#daeaf8','#eef4fb'];
+      const dc1 = document.createElement('div'); dc1.style.cssText = `padding:8px 14px; border-right:1px solid var(--border-light); border-left:3px solid ${colors[di%7]}; display:flex; align-items:center;`;
+      dc1.innerHTML = `<span style="font-size:11px;font-weight:600;color:var(--text-secondary);">${fmtWithDay(day.date)}</span>`;
+      const dc2 = document.createElement('div'); dc2.style.cssText = 'padding:6px 10px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;';
+      dc2.appendChild(makeDayExCell(wi, di, week, day));
+      dayRow.appendChild(dc0); dayRow.appendChild(dc1); dayRow.appendChild(dc2);
+      weekBlock.appendChild(dayRow);
+    });
+    container.appendChild(weekBlock);
+  });
+  setupClose();
+}
+
+/* ── Week exercise cell ── */
+const PARAM_DEFS = [
+  { key:'sets', label:'組數',          placeholder:'ex. 3'  },
+  { key:'reps', label:'次數',          placeholder:'ex. 10' },
+  { key:'rest', label:'組間休息', placeholder:'ex. 30' },
+];
+
+function makeWeekExCell(wi, week) {
+  const wrap = document.createElement('div');
+  function redraw() {
+    wrap.innerHTML = '';
+    const list = document.createElement('div'); list.className = 'wex-list';
+    week.wexItems.forEach((item, idx) => {
+      const row = document.createElement('div'); row.className = 'wex-item';
+      const numBadge = document.createElement('div'); numBadge.className = 'wex-num-badge'; numBadge.textContent = item.id;
+      const nameSpan = document.createElement('span'); nameSpan.className = 'wex-item-name'; nameSpan.title = item.name; nameSpan.textContent = item.name;
+      const chips = document.createElement('div'); chips.className = 'wex-item-chips';
+      PARAM_DEFS.forEach(p => {
+        const chip = document.createElement('span'); chip.className = 'wex-chip';
+        const dv = (item[p.key]!==undefined&&item[p.key]!=='') ? (p.key==='rest'?item[p.key]+'秒':item[p.key]) : '—';
+        chip.innerHTML = `${p.label}：<b>${dv}</b>`; chips.appendChild(chip);
+      });
+      const actions = document.createElement('div'); actions.className = 'wex-item-actions';
+      const editBtn = document.createElement('button'); editBtn.className = 'wex-action-btn'; editBtn.textContent = '編輯';
+      editBtn.addEventListener('click', e => { e.stopPropagation(); openEditModal(item, ()=>redraw()); });
+      const rmBtn = document.createElement('button'); rmBtn.className = 'wex-action-btn rm'; rmBtn.textContent = '✕'; rmBtn.title='移除';
+      rmBtn.addEventListener('click', e => { e.stopPropagation(); week.wexItems.splice(idx,1); week.days.forEach(d=>{d.sel=[];}); redraw(); renderTable(); });
+      actions.appendChild(editBtn); actions.appendChild(rmBtn);
+      row.appendChild(numBadge); row.appendChild(nameSpan); row.appendChild(chips); row.appendChild(actions);
+      list.appendChild(row);
+    });
+    wrap.appendChild(list);
+
+    const addArea = document.createElement('div'); addArea.className = 'wex-add-area';
+    const panel = document.createElement('div'); panel.className = 'ex-panel';
+    panel.style.cssText = 'position:fixed; z-index:600; width:320px; display:none;';
+    document.body.appendChild(panel);
+    const optList = document.createElement('div'); optList.className = 'ex-list';
+
+    function buildOpts() {
+      optList.innerHTML = '';
+      exercises.forEach(ex => {
+        const inUse = week.wsel.includes(ex.name);
+        const lbl = document.createElement('label'); lbl.className = 'ex-opt'+(inUse?' checked':'');
+        const topRow = document.createElement('div'); topRow.style.cssText = 'display:flex; align-items:flex-start; gap:7px; width:100%;';
+        const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=inUse; cb.style.marginTop='3px';
+        cb.addEventListener('change', e => {
+          e.stopPropagation();
+          if (cb.checked) { if (!week.wsel.includes(ex.name)) week.wexItems.push({id:ex.id, name:ex.name, sets:'3', reps:'10', rest:'15'}); }
+          else { week.wexItems = week.wexItems.filter(i=>i.name!==ex.name); week.days.forEach(d=>{d.sel=[];}); }
+          lbl.className = 'ex-opt'+(week.wsel.includes(ex.name)?' checked':'');
+          cnt.textContent = week.wexItems.length>0 ? `已選 ${week.wexItems.length} 項` : '';
+          redraw(); renderTable(); buildOpts();
+        });
+        topRow.appendChild(cb); topRow.appendChild(document.createTextNode(' '+ex.name));
+        lbl.appendChild(topRow); optList.appendChild(lbl);
+      });
+    }
+
+    const footer2 = document.createElement('div'); footer2.className = 'ex-footer';
+    const cnt = document.createElement('span'); cnt.className = 'ex-count';
+    cnt.textContent = week.wexItems.length>0 ? `已選 ${week.wexItems.length} 項` : '';
+    footer2.appendChild(cnt);
+    panel.appendChild(optList); panel.appendChild(footer2);
+
+    const addBtn = document.createElement('button'); addBtn.className = 'wex-add-btn';
+    addBtn.innerHTML = `<svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> 新增治療動作`;
+    addBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = panel.style.display==='block';
+      closeAll();
+      if (!isOpen) {
+        buildOpts();
+        cnt.textContent = week.wexItems.length>0 ? `已選 ${week.wexItems.length} 項` : '';
+        const rect = addBtn.getBoundingClientRect();
+        panel.style.top = (rect.bottom+4)+'px'; panel.style.left = rect.left+'px';
+        if (rect.bottom+260>window.innerHeight) { panel.style.top=(rect.top-4)+'px'; panel.style.transform='translateY(-100%)'; }
+        else { panel.style.transform=''; }
+        panel.style.display='block';
+      }
+    });
+    addArea.appendChild(addBtn); wrap.appendChild(addArea);
+  }
+  redraw();
+  return wrap;
+}
+
+function openEditModal(item, onConfirm) {
+  const existing = document.getElementById('wexModal'); if (existing) existing.remove();
+  const overlay = document.createElement('div'); overlay.className='modal-overlay'; overlay.id='wexModal';
+  const box = document.createElement('div'); box.className='modal-box'; box.addEventListener('click',e=>e.stopPropagation());
+  const hdr = document.createElement('div'); hdr.className='modal-header';
+  const title = document.createElement('div'); title.className='modal-title'; title.textContent=item.name;
+  const closeBtn = document.createElement('span'); closeBtn.className='modal-close'; closeBtn.textContent='×'; closeBtn.addEventListener('click',()=>overlay.remove());
+  hdr.appendChild(title); hdr.appendChild(closeBtn);
+  const body = document.createElement('div'); body.className='modal-body';
+  const tmpVals = {sets:item.sets||'', reps:item.reps||'', rest:item.rest||''};
+  PARAM_DEFS.forEach(p => {
+    const field=document.createElement('div'); field.className='modal-field';
+    const lbl=document.createElement('div'); lbl.className='modal-field-label'; lbl.textContent=p.label;
+    const inp=document.createElement('input'); inp.className='modal-field-input'; inp.type='number'; inp.placeholder=p.placeholder; inp.min='0'; inp.step='1'; inp.value=tmpVals[p.key];
+    inp.addEventListener('input',()=>{tmpVals[p.key]=inp.value;});
+    inp.addEventListener('keypress',e=>{if(!/[0-9]/.test(e.key))e.preventDefault();});
+    field.appendChild(lbl); field.appendChild(inp); body.appendChild(field);
+  });
+  const footer=document.createElement('div'); footer.className='modal-footer';
+  const cancelBtn=document.createElement('button'); cancelBtn.className='modal-btn-cancel'; cancelBtn.textContent='取消'; cancelBtn.addEventListener('click',()=>overlay.remove());
+  const confirmBtn=document.createElement('button'); confirmBtn.className='modal-btn-confirm'; confirmBtn.textContent='確定';
+  confirmBtn.addEventListener('click',()=>{Object.assign(item,tmpVals); overlay.remove(); onConfirm();});
+  footer.appendChild(cancelBtn); footer.appendChild(confirmBtn);
+  box.appendChild(hdr); box.appendChild(body); box.appendChild(footer);
+  overlay.appendChild(box); overlay.addEventListener('click',()=>overlay.remove());
+  document.body.appendChild(overlay); body.querySelector('input').focus();
+}
+
+function makeDayExCell(wi, di, week, day) {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex; align-items:center; gap:5px; flex-wrap:wrap; width:100%;';
+  function redraw() {
+    wrap.innerHTML = '';
+    if (week.wexItems.length===0) {
+      const hint=document.createElement('span'); hint.style.cssText='font-size:11px;color:var(--text-muted);font-style:italic;'; hint.textContent='請先設定週治療項目'; wrap.appendChild(hint); return;
+    }
+    (day.sel||[]).forEach(idx=>{
+      const chip=document.createElement('div'); chip.className='day-num-chip removable'; chip.title=`${week.wexItems[idx]?.id||''}. ${week.wexItems[idx]?.name||''} — 點擊移除`; chip.textContent=week.wexItems[idx]?.id||idx+1;
+      chip.addEventListener('click',e=>{e.stopPropagation(); day.sel=day.sel.filter(i=>i!==idx); redraw();}); wrap.appendChild(chip);
+    });
+    const addWrap=document.createElement('div'); addWrap.className='day-add-wrap';
+    const addBtn=document.createElement('button'); addBtn.className='day-add-btn'; addBtn.innerHTML=`<svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>`; addBtn.title='新增動作';
+    const dropPanel=document.createElement('div'); dropPanel.className='day-pick-panel';
+    const dropList=document.createElement('div'); dropList.className='day-pick-list';
+    function buildDropOptions() {
+      dropList.innerHTML='';
+      week.wexItems.forEach((item,idx)=>{
+        const alreadyIn=(day.sel||[]).includes(idx);
+        const opt=document.createElement('div'); opt.className='day-pick-opt'+(alreadyIn?' already':'');
+        const numSpan=document.createElement('div'); numSpan.className='dp-num'; numSpan.textContent=item.id;
+        const nameSpan=document.createElement('span'); nameSpan.style.cssText='font-size:12px;'; nameSpan.textContent=item.name;
+        opt.appendChild(numSpan); opt.appendChild(nameSpan);
+        if (!alreadyIn) { opt.addEventListener('click',e=>{e.stopPropagation(); if(!day.sel)day.sel=[]; day.sel.push(idx); dropPanel.classList.remove('open'); redraw();}); }
+        dropList.appendChild(opt);
+      });
+    }
+    addBtn.addEventListener('click',e=>{e.stopPropagation(); const isOpen=dropPanel.classList.contains('open'); closeAll(); if(!isOpen){buildDropOptions(); dropPanel.classList.add('open');}});
+    dropPanel.appendChild(dropList); addWrap.appendChild(addBtn); addWrap.appendChild(dropPanel); wrap.appendChild(addWrap);
+  }
+  redraw();
+  return wrap;
+}
+
+function closeAll() {
+  document.querySelectorAll('.ex-panel').forEach(p=>{p.classList.remove('open');p.style.display='none';});
+  document.querySelectorAll('.ex-trigger.open').forEach(t=>t.classList.remove('open'));
+  document.querySelectorAll('.day-pick-panel.open').forEach(p=>p.classList.remove('open'));
+}
+function setupClose() {
+  document.onclick = e => { if(!e.target.closest('.wex-add-btn')&&!e.target.closest('.ex-panel')&&!e.target.closest('.day-add-wrap')&&!e.target.closest('.modal-box')) closeAll(); };
+}
+
+function cancelPlan() {
+  if (!confirm('確定取消？')) return;
+  weekData=[];
+  document.getElementById('startDate').value=''; document.getElementById('endDate').value='';
+  document.getElementById('planEmpty').style.display='flex'; document.getElementById('scheduleWrap').style.display='none';
+}
+
+function savePlan() {
+  const planName = document.getElementById('planNameInput').value.trim() || '未命名計畫';
+  const patientEl = document.getElementById('patientSelect');
+  const patientLabel = patientEl.options[patientEl.selectedIndex]?.text || '—';
+  const start = document.getElementById('startDate').value.replace(/-/g,'/');
+  const end   = document.getElementById('endDate').value.replace(/-/g,'/');
+  document.getElementById('confirmPlanName').textContent = planName;
+  document.getElementById('confirmPatient').textContent  = currentPatientName || patientLabel;
+  document.getElementById('confirmPeriod').textContent   = start + ' → ' + end;
+  document.getElementById('confirmWeeks').textContent    = weekData.length + ' 週';
+  const now = new Date();
+  document.getElementById('confirmCreatedAt').textContent =
+    now.getFullYear()+'/'+(now.getMonth()+1).toString().padStart(2,'0')+'/'+now.getDate().toString().padStart(2,'0')+
+    ' '+now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+
+  const tbody = document.getElementById('confirmTableBody'); tbody.innerHTML='';
+  const WEEK_ORD = ['一','二','三','四','五','六','七','八','九','十'];
+  weekData.forEach((week,wi)=>{
+    const tr=document.createElement('tr');
+    const tdWeek=document.createElement('td'); tdWeek.className='td-week';
+    const [ws,we]=week.range.split(' → ');
+    tdWeek.innerHTML=`<span class="confirm-week-badge">第${WEEK_ORD[wi]||wi+1}週</span><br><span class="confirm-week-range">${ws}<br>→ ${we}</span>`;
+    const tdContent=document.createElement('td');
+    if (!week.wexItems.length) {
+      tdContent.innerHTML='<span class="confirm-no-ex">本週尚未設定治療項目</span>';
+    } else {
+      const ul=document.createElement('ul'); ul.className='confirm-ex-list';
+      week.wexItems.forEach((item,idx)=>{
+        const assignedDates=week.days.filter(d=>(d.sel||[]).includes(idx)).map(d=>{const pts=d.date.split('/'); return pts[1].replace(/^0/,'')+'/'+pts[2].replace(/^0/,'');});
+        const li=document.createElement('li'); li.className='confirm-ex-item';
+        const params=[]; if(item.sets)params.push('組數：'+item.sets); if(item.reps)params.push('次數：'+item.reps); if(item.rest)params.push('組間休息：'+item.rest+'秒');
+        let dayTagsHtml='';
+        if(assignedDates.length) dayTagsHtml='<div class="confirm-day-tags">'+assignedDates.map(d=>`<span class="confirm-day-tag">${d}</span>`).join('')+'</div>';
+        li.innerHTML=`<span class="confirm-ex-bullet"></span><span><span class="confirm-ex-name">${item.name}</span>`+(params.length?`<span class="confirm-ex-params">：${params.join('，')}</span>`:'')+dayTagsHtml+'</span>';
+        ul.appendChild(li);
+      });
+      tdContent.appendChild(ul);
+    }
+    tr.appendChild(tdWeek); tr.appendChild(tdContent); tbody.appendChild(tr);
+  });
+  document.getElementById('confirmOverlay').style.display='block';
+  document.getElementById('confirmOverlay').scrollTop=0;
+}
+
+function closeConfirm() { document.getElementById('confirmOverlay').style.display='none'; }
+
+async function submitPlan() {
+  const planName  = document.getElementById('planNameInput').value.trim() || '未命名計畫';
+  const startDate = document.getElementById('startDate').value;
+  const endDate   = document.getElementById('endDate').value;
+  const contents  = [];
+  weekData.forEach(week => {
+    week.days.forEach(day => {
+      (day.sel||[]).forEach(idx => {
+        const item = week.wexItems[idx];
+        if (!item) return;
+        contents.push({
+          exercise_id:   item.id,
+          sets:          parseInt(item.sets) || 1,
+          reps:          parseInt(item.reps) || 1,
+          set_rest_time: parseInt(item.rest) || 0,
+          date:          dateToTs(day.date.replace(/\//g, '-')),
+        });
+      });
+    });
+  });
+
+  try {
+    const res = await fetch('/treatments/full', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionId}` },
+      body: JSON.stringify({
+        name:       planName,
+        patient_id: parseInt(currentPatientId),
+        start_time: dateToTs(startDate),
+        end_time:   dateToTs(endDate),
+        contents,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      const msg = data.message || (data.detail ? `驗證錯誤 (${res.status})` : `伺服器錯誤 (${res.status})`);
+      showToast(msg, true);
+      return;
+    }
+    if (data.result) {
+      showToast('治療計畫已成功送出 ✓');
+    } else {
+      showToast(data.message, true);
+    }
+  } catch(e) {
+    showToast(e.message, true);
+  }
+}
+
+function showToast(msg, err) {
+  const t = document.getElementById('toast');
+  const msgEl = document.getElementById('toastMsg');
+  const btn = document.getElementById('toastConfirmBtn');
+  msgEl.textContent = msg;
+  t.style.background = err ? '#c0392b' : '#1a3d6b';
+  btn.style.display = err ? 'none' : 'inline-block';
+  t.classList.add('show');
+  if (err) setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+init();
+</script>
+</body>
+</html>

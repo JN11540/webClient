@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>編輯個人資料</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
+      background: #EBF4FC;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── 頁首 ── */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-back {
+      font-size: 12px;
+      color: #378ADD;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+      font-family: inherit;
+    }
+    .btn-back:hover { color: #185FA5; }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #0C447C;
+    }
+
+    /* 標題右側佔位，讓標題視覺置中 */
+    .header-spacer { width: 60px; }
+
+    /* ── 表單卡片 ── */
+    .form-card {
+      background: white;
+      border-radius: 12px;
+      border: 0.5px solid #B5D4F4;
+      padding: 8px 24px 24px;
+    }
+
+    /* ── 分組標題 ── */
+    .section-title {
+      font-size: 10px;
+      color: #185FA5;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 18px 0 6px;
+    }
+
+    /* ── 行內欄位列 ── */
+    .field-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 0.5px solid #EBF4FC;
+      gap: 12px;
+    }
+
+    .field-row:last-of-type { border-bottom: none; }
+
+    .field-label {
+      font-size: 13px;
+      color: #378ADD;
+      width: 80px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .required { color: #E24B4A; font-size: 11px; }
+    .optional { color: #B4B2A9; font-size: 11px; font-weight: 400; }
+
+    .field-input {
+      flex: 1;
+      background: #EBF4FC;
+      border: 1px solid #B5D4F4;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #0C447C;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: inherit;
+    }
+
+    .field-input:focus {
+      border-color: #185FA5;
+      background: #daeaf8;
+    }
+
+    /* ── 分隔線 ── */
+    .section-divider {
+      border: none;
+      border-top: 0.5px solid #E6F1FB;
+      margin: 4px 0 0;
+    }
+
+    /* ── 按鈕列 ── */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding-top: 20px;
+      border-top: 0.5px solid #E6F1FB;
+      margin-top: 8px;
+    }
+
+    .btn-cancel {
+      font-size: 13px;
+      background: white;
+      color: #185FA5;
+      border: 1px solid #B5D4F4;
+      border-radius: 6px;
+      padding: 9px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .btn-cancel:hover { background: #E6F1FB; }
+
+    .btn-save {
+      font-size: 13px;
+      background: #185FA5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 24px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .btn-save:hover { background: #0C447C; }
+    .btn-save:active { background: #042C53; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- 頁首 -->
+    <div class="page-header">
+      <button class="btn-back" onclick="location.href='/home'">← 返回首頁</button>
+      <div class="page-title">編輯個人資料</div>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- 表單卡片 -->
+    <div class="form-card">
+
+      <!-- 基本資料 -->
+      <div class="section-title">基本資料</div>
+
+      <div class="field-row">
+        <label class="field-label">姓名 <span class="required">✱</span></label>
+        <input class="field-input" type="text" name="name">
+      </div>
+      <div class="field-row">
+        <label class="field-label">電子信箱 <span class="optional">選填</span></label>
+        <input class="field-input" type="email" name="email">
+      </div>
+      <div class="field-row">
+        <label class="field-label">電話 <span class="optional">選填</span></label>
+        <input class="field-input" type="tel" name="phone">
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- 執業資訊 -->
+      <div class="section-title">執業資訊</div>
+
+      <div class="field-row">
+        <label class="field-label">所屬機構 <span class="optional">選填</span></label>
+        <input class="field-input" type="text" name="institution">
+      </div>
+      <div class="field-row">
+        <label class="field-label">科別 <span class="optional">選填</span></label>
+        <input class="field-input" type="text" name="department">
+      </div>
+      <div class="field-row">
+        <label class="field-label">職種 <span class="optional">選填</span></label>
+        <input class="field-input" type="text" name="profession">
+      </div>
+      <div class="field-row">
+        <label class="field-label">專科 <span class="optional">選填</span></label>
+        <input class="field-input" type="text" name="specialty">
+      </div>
+      <div class="field-row">
+        <label class="field-label">年資 <span class="optional">選填</span></label>
+        <input class="field-input" type="number" name="years_of_experience" min="0">
+      </div>
+      <div class="field-row">
+        <label class="field-label">診間地點 <span class="optional">選填</span></label>
+        <input class="field-input" type="text" name="clinic_location">
+      </div>
+
+      <!-- 按鈕列 -->
+      <div class="btn-row">
+        <button class="btn-cancel" onclick="location.href='/home'">取消</button>
+        <button class="btn-save" onclick="submitEdit()">儲存變更</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function field(name) {
+      return document.querySelector(`[name="${name}"]`);
+    }
+
+    async function loadProfile() {
+      const clinicianId = getCookie('clinician_id');
+      const sessionId = getCookie('session_id');
+      if (!clinicianId || !sessionId) {
+        alert('cookie 不存在：clinician_id 或 session_id 遺失');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/clinicians/${clinicianId}`, {
+          headers: { 'Authorization': `Bearer ${sessionId}` },
+        });
+        const data = await res.json();
+        if (!data.result) {
+          alert(data.message);
+          return;
+        }
+
+        const c = data.data;
+        field('name').value                = c.name || '';
+        field('email').value               = c.email || '';
+        field('phone').value               = c.phone || '';
+        field('institution').value         = c.institution || '';
+        field('department').value          = c.department || '';
+        field('profession').value          = c.profession || '';
+        field('specialty').value           = c.specialty || '';
+        field('years_of_experience').value = c.years_of_experience ?? '';
+        field('clinic_location').value     = c.clinic_location || '';
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function submitEdit() {
+      const clinicianId = getCookie('clinician_id');
+      const sessionId = getCookie('session_id');
+      if (!clinicianId || !sessionId) {
+        alert('cookie 不存在：clinician_id 或 session_id 遺失');
+        return;
+      }
+
+      const yearsRaw = field('years_of_experience').value;
+      const body = {
+        id: parseInt(clinicianId),
+        name: field('name').value.trim(),
+        email: field('email').value.trim() || null,
+        phone: field('phone').value.trim() || null,
+        institution: field('institution').value.trim() || null,
+        department: field('department').value.trim() || null,
+        profession: field('profession').value.trim() || null,
+        specialty: field('specialty').value.trim() || null,
+        years_of_experience: yearsRaw !== '' ? parseInt(yearsRaw) : null,
+        clinic_location: field('clinic_location').value.trim() || null,
+      };
+
+      try {
+        const res = await fetch('/clinicians', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionId}`,
+          },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (data.result) {
+          location.href = '/home';
+        } else {
+          alert(data.message);
+        }
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>
