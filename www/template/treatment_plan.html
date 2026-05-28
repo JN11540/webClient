@@ -418,6 +418,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 
 <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
+    const clinicianId = localStorage.getItem('clinician_id');
 /* ── Helpers ── */
 function tsToDateStr(ts) {
   if (!ts) return '—';
