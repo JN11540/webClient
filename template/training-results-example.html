@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>訓練結果</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue-dark: #1a3d6b;
+  --blue-mid: #2563a8;
+  --blue-light: #e8f0fb;
+  --blue-accent: #3b82c4;
+  --text-primary: #1a2c47;
+  --text-secondary: #4a6080;
+  --text-muted: #8099b8;
+  --border: #d0dcea;
+  --border-light: #e4ecf6;
+  --bg-page: #eef3fa;
+  --bg-white: #ffffff;
+  --bg-section: #f7f9fd;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --green: #2d7a36;
+  --green-light: #edf6ee;
+  --orange: #b05e0d;
+  --orange-light: #fef4e6;
+  --red: #c0392b;
+  --red-light: #fef0ef;
+}
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); color: var(--text-primary); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar { position:fixed; left:0; top:0; bottom:0; width:64px; background:var(--blue-dark); display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:6px; z-index:200; }
+.sidebar .avatar { width:36px; height:36px; border-radius:50%; background:var(--blue-accent); color:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+.sidebar .nav-icon { width:40px; height:40px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.55); cursor:pointer; transition:background .15s,color .15s; }
+.sidebar .nav-icon:hover, .sidebar .nav-icon.active { background:rgba(255,255,255,.12); color:#fff; }
+.sidebar .logout { margin-top:auto; }
+
+/* ── Main ── */
+.main { margin-left:64px; display:flex; flex-direction:column; min-height:100vh; }
+
+/* ── Page Header ── */
+.page-header { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:center; flex-shrink:0; }
+.page-title { font-size:17px; font-weight:600; color:var(--text-primary); flex:1; text-align:center; }
+
+/* ── Top Controls ── */
+.top-controls { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap; flex-shrink:0; }
+.ctrl-group { display:flex; flex-direction:column; gap:3px; }
+.ctrl-label { font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; }
+.ctrl-select { padding:6px 28px 6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); background:var(--bg-white); appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a6080' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 9px center; cursor:pointer; min-width:200px; transition:border-color .15s; }
+.ctrl-select:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+
+/* Multi-select picker */
+.ex-picker { position:relative; min-width:220px; }
+.ex-trigger { display:flex; align-items:center; flex-wrap:wrap; gap:4px; padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-white); cursor:pointer; min-height:34px; transition:border-color .15s; }
+.ex-trigger:hover { border-color:var(--blue-accent); }
+.ex-trigger.open { border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.ex-placeholder { font-size:12px; color:var(--text-muted); user-select:none; flex:1; }
+.ex-tag { display:inline-flex; align-items:center; gap:3px; background:var(--blue-light); color:var(--blue-dark); font-size:11px; font-weight:500; padding:2px 7px; border-radius:20px; }
+.ex-tag-rm { cursor:pointer; color:var(--blue-mid); font-size:13px; line-height:1; }
+.ex-tag-rm:hover { color:var(--red); }
+.ex-arrow { margin-left:auto; flex-shrink:0; color:var(--text-muted); transition:transform .2s; }
+.ex-trigger.open .ex-arrow { transform:rotate(180deg); }
+.ex-panel { display:none; position:absolute; left:0; top:calc(100% + 4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); width:260px; }
+.ex-panel.open { display:block; }
+.ex-list { max-height:200px; overflow-y:auto; padding:4px 0; }
+.ex-opt { display:flex; align-items:center; gap:7px; padding:6px 12px; cursor:pointer; font-size:12px; transition:background .1s; }
+.ex-opt:hover, .ex-opt.checked { background:var(--blue-light); }
+.ex-opt input { flex-shrink:0; accent-color:var(--blue-mid); cursor:pointer; }
+.ex-footer { padding:7px 10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; }
+.ex-count { font-size:11px; color:var(--text-muted); }
+.ex-clear { font-size:11px; color:var(--red); cursor:pointer; background:none; border:none; font-family:inherit; }
+.ex-clear:hover { text-decoration:underline; }
+
+.ctrl-divider { width:1px; height:32px; background:var(--border-light); margin:0 2px; align-self:flex-end; }
+.query-btn { padding:7px 16px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; align-self:flex-end; display:flex; align-items:center; gap:5px; }
+.query-btn:hover { background:var(--blue-dark); }
+.query-btn:active { transform:scale(.98); }
+
+/* ── Content Area ── */
+.content-area { padding:20px 24px 40px; display:flex; flex-direction:column; gap:16px; }
+
+/* ── Result Empty ── */
+.result-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 20px; color:var(--text-muted); gap:10px; background:var(--bg-white); border-radius:var(--radius-lg); }
+.result-empty-icon { font-size:38px; opacity:.25; }
+.result-empty-text { font-size:13px; text-align:center; line-height:1.7; }
+
+/* ── Result Card ── */
+.result-card { background:var(--bg-white); border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-light); }
+.result-card-header { padding:12px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-light); background:var(--bg-section); }
+.result-card-title { font-size:14px; font-weight:600; color:var(--text-primary); }
+.result-card-meta { display:flex; align-items:center; gap:10px; }
+.meta-badge { font-size:11px; padding:2px 9px; border-radius:20px; font-weight:500; background:var(--blue-light); color:var(--blue-mid); }
+.meta-badge.green { background:var(--green-light); color:var(--green); }
+
+/* ── Table ── */
+.result-table-wrap { overflow-x:auto; }
+.result-table { width:100%; border-collapse:collapse; font-size:13px; }
+.result-table thead tr { background:var(--blue-dark); }
+.result-table th { padding:10px 14px; font-size:11px; font-weight:700; color:#fff; letter-spacing:.06em; text-align:left; white-space:nowrap; }
+.result-table th.col-date   { width:180px; }
+.result-table th.col-action { width:160px; }
+.result-table th.col-exec   { width:260px; }
+.result-table th.col-index  { }
+.result-table tbody tr { border-bottom:1px solid var(--border-light); transition:background .1s; }
+.result-table tbody tr:last-child { border-bottom:none; }
+.result-table tbody tr:nth-child(even) { background:var(--bg-section); }
+.result-table tbody tr:hover { background:var(--blue-light); }
+.result-table td { padding:12px 14px; vertical-align:middle; }
+
+/* ── Date Bar ── */
+.date-bar-wrap { display:flex; flex-direction:column; gap:2px; min-width:150px; }
+.date-bar-status { font-size:9px; font-weight:600; letter-spacing:.03em; margin-bottom:0px; line-height:1.2; }
+/* 規劃日期標籤 — 正中上方，大字 */
+.date-bar-label-row { position:relative; height:38px; }
+.date-bar-label { position:absolute; left:50%; transform:translateX(-50%); font-size:30px; font-weight:700; color:var(--blue-mid); white-space:nowrap; line-height:1; }
+/* Bar track */
+.date-bar-track { position:relative; height:8px; border-radius:4px; background:#d6e2f0; overflow:hidden; }
+.date-seg-grey { position:absolute; top:0; height:100%; background:#d6e2f0; }
+.date-seg-blue { position:absolute; top:0; height:100%; background:var(--blue-mid); }
+/* 實作日期錨點 — 下方左或右 */
+.date-bar-bottom { position:relative; height:18px; margin-top:2px; }
+.date-actual-label { position:absolute; font-size:11px; font-weight:700; color:var(--text-secondary); white-space:nowrap; }
+.date-actual-label.left  { left:0; }
+.date-actual-label.right { right:0; }
+.date-diff-note { font-size:10px; color:var(--text-muted); }
+
+/* ── Exec Bars (sets/reps) ── */
+.exec-wrap { display:flex; flex-direction:column; gap:5px; }
+.exec-row { display:flex; align-items:center; gap:8px; }
+.exec-row-label { font-size:10px; color:var(--text-muted); font-weight:600; width:32px; flex-shrink:0; }
+.mini-bar-wrap { flex:1; display:flex; flex-direction:column; gap:1px; }
+.mini-bar-track { height:7px; background:#dde6f4; border-radius:4px; overflow:hidden; position:relative; }
+.mini-bar-fill { height:100%; border-radius:4px; transition:width .3s; }
+.mini-bar-fill.done   { background:var(--blue-mid); }
+.mini-bar-fill.partial{ background:var(--blue-accent); }
+.mini-bar-fill.none   { background:#c8d6ec; }
+.mini-bar-fill.over   { background:var(--green); }
+.mini-bar-nums { display:flex; align-items:baseline; gap:3px; font-size:10px; }
+.mini-bar-actual { font-weight:700; color:var(--text-primary); }
+.mini-bar-slash  { color:var(--text-muted); }
+.mini-bar-plan   { color:var(--text-muted); }
+
+/* Duration bar (same style but wider label) */
+.dur-row { display:flex; align-items:center; gap:8px; margin-top:3px; border-top:1px dashed var(--border-light); padding-top:5px; }
+.dur-label { font-size:10px; color:var(--text-muted); font-weight:600; white-space:nowrap; }
+.dur-bar-wrap { flex:1; display:flex; flex-direction:column; gap:1px; }
+.dur-bar-track { height:7px; background:#dde6f4; border-radius:4px; overflow:hidden; }
+.dur-bar-fill { height:100%; border-radius:4px; }
+.dur-bar-fill.done    { background:var(--green); }
+.dur-bar-fill.partial { background:var(--orange); }
+.dur-bar-fill.over    { background:var(--blue-mid); }
+.dur-bar-nums { display:flex; align-items:baseline; gap:3px; font-size:10px; }
+.dur-actual { font-weight:700; color:var(--text-primary); }
+.dur-slash  { color:var(--text-muted); }
+.dur-plan   { color:var(--text-muted); }
+
+/* ── Action Name ── */
+.action-name { font-size:13px; font-weight:600; color:var(--text-primary); }
+.action-sub  { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+/* ── Index Cell ── */
+.index-empty { font-size:12px; color:var(--text-muted); font-style:italic; }
+
+/* ── Legend ── */
+.legend-bar { display:flex; align-items:center; gap:14px; padding:10px 18px; background:var(--bg-section); border-top:1px solid var(--border-light); flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-secondary); }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.legend-dot.planned { background:var(--blue-mid); }
+.legend-dot.actual  { background:var(--blue-accent); }
+.legend-bar-swatch { width:18px; height:7px; border-radius:3px; flex-shrink:0; }
+
+/* ── Toast ── */
+.toast { position:fixed; bottom:22px; right:22px; background:var(--blue-dark); color:#fff; padding:10px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:500; opacity:0; transform:translateY(8px); transition:opacity .3s,transform .3s; pointer-events:none; z-index:999; }
+.toast.show { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<div class="sidebar">
+  <div class="avatar">T</div>
+  <div class="nav-icon" title="訓練結果">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+  </div>
+  <div class="nav-icon" title="個案管理">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+  </div>
+  <div class="nav-icon active" title="治療計畫">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+  </div>
+  <div class="nav-icon logout" title="登出">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<div class="main">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <span class="page-title">訓練結果</span>
+  </div>
+
+  <!-- Top Controls -->
+  <div class="top-controls">
+    <!-- 選擇個案 -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">選擇個案</span>
+      <select class="ctrl-select" id="patientSelect" onchange="onPatientChange()">
+        <option value="">— 請選擇個案 —</option>
+        <option value="p1">王小明（M / 45歲）</option>
+        <option value="p2">林美玲（F / 38歲）</option>
+        <option value="p3">陳大偉（M / 60歲）</option>
+      </select>
+    </div>
+
+    <!-- 選擇治療計畫 -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">選擇治療計畫</span>
+      <select class="ctrl-select" id="planSelect" disabled onchange="onPlanChange()">
+        <option value="">— 請先選擇個案 —</option>
+      </select>
+    </div>
+
+    <!-- 選擇治療動作（多選） -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">選擇治療動作</span>
+      <div class="ex-picker" id="actionPicker">
+        <div class="ex-trigger" id="actionTrigger" onclick="toggleActionPicker()">
+          <span class="ex-placeholder" id="actionPlaceholder">— 不選則查詢全部動作 —</span>
+          <svg class="ex-arrow" width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="#4a6080" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="ex-panel" id="actionPanel">
+          <div class="ex-list" id="actionList"></div>
+          <div class="ex-footer">
+            <span class="ex-count" id="actionCount">已選 0 項</span>
+            <button class="ex-clear" onclick="clearActions()">清除全部</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <!-- 查詢按鈕 -->
+    <button class="query-btn" onclick="doQuery()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      查詢結果
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="content-area">
+
+    <!-- Empty state -->
+    <div class="result-empty" id="resultEmpty">
+      <div class="result-empty-icon">📊</div>
+      <div class="result-empty-text">請選擇個案、治療計畫及治療動作<br>再點「查詢結果」</div>
+    </div>
+
+    <!-- Result card (hidden until query) -->
+    <div class="result-card" id="resultCard" style="display:none">
+      <div class="result-card-header">
+        <div class="result-card-title" id="resultCardTitle">訓練結果</div>
+        <div class="result-card-meta">
+          <span class="meta-badge" id="resultPlanBadge"></span>
+          <span class="meta-badge green" id="resultPatientBadge"></span>
+        </div>
+      </div>
+
+      <div class="result-table-wrap">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th class="col-date">日期</th>
+              <th class="col-action">治療動作</th>
+              <th class="col-exec">實作情況</th>
+              <th class="col-index">動作指標</th>
+            </tr>
+          </thead>
+          <tbody id="resultTableBody"></tbody>
+        </table>
+      </div>
+
+
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Mock Data ── */
+const PATIENTS = {
+  p1: { name:'王小明', gender:'M', age:45 },
+  p2: { name:'林美玲', gender:'F', age:38 },
+  p3: { name:'陳大偉', gender:'M', age:60 },
+};
+
+const PLANS = {
+  p1: [
+    { id:'pl1', name:'膝關節復健計畫 A', period:'2024/03/01 → 2024/04/30' },
+    { id:'pl2', name:'步態訓練計畫',      period:'2024/05/01 → 2024/06/15' },
+  ],
+  p2: [
+    { id:'pl3', name:'肩關節強化計畫',    period:'2024/02/15 → 2024/04/15' },
+  ],
+  p3: [
+    { id:'pl4', name:'平衡訓練計畫 B',    period:'2024/01/10 → 2024/03/10' },
+  ],
+};
+
+const ACTIONS = {
+  pl1: ['直腿抬高', '股四頭肌訓練', '腳踝背屈', '靜蹲訓練', '彈力帶側走'],
+  pl2: ['重心轉移訓練', '踮腳尖步行', '障礙物跨越', '平衡板站立'],
+  pl3: ['肩關節旋轉', '彈力帶外旋', '側平舉', '俯身划船'],
+  pl4: ['單腳站立', '坐站訓練', '重心移位', '平衡墊訓練', '動態平衡走'],
+};
+
+/* Mock result rows — each has planned/actual dates and sets/reps */
+function genRows(actionNames) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  // Spread rows backwards from today: most recent first after sort
+  const base = new Date(today); base.setDate(base.getDate() - (actionNames.length - 1) * 4);
+
+  // Force first 3 rows to show early/same/late for demo clarity
+  const DEMO_OFFSETS = [-1, 0, 2];
+  const rows = actionNames.map((name, i) => {
+    const plannedDay = new Date(base); plannedDay.setDate(plannedDay.getDate() + i*4);
+    // Only include rows where plannedDay <= today
+    if (plannedDay > today) return null;
+    const offset = i < DEMO_OFFSETS.length ? DEMO_OFFSETS[i] : Math.floor(Math.random()*3)-1;
+    const actualDay  = new Date(plannedDay); actualDay.setDate(actualDay.getDate() + offset);
+    const planSets   = 3;
+    const planReps   = [10, 12, 15][i % 3];
+    const setResults = Array.from({length: planSets}, (_, s) => {
+      if (s === 0) return planReps;
+      if (s === 1) return Math.random()>.3 ? Math.round(planReps*(.6+Math.random()*.6)) : 0;
+      if (s === 2) return Math.random()>.5 ? Math.round(planReps*(.5+Math.random()*.7)) : 0;
+      return 0;
+    });
+    const planDuration   = planSets * planReps * 3;
+    const actualDuration = setResults.reduce((a,b)=>a+b,0)*3;
+    return { name, plannedDay, actualDay, planSets, planReps, setResults, planDuration, actualDuration };
+  }).filter(r => r !== null);
+
+  // Sort: most recent planned date first (closest to today at top)
+  rows.sort((a, b) => b.plannedDay - a.plannedDay);
+  return rows;
+}
+
+/* ── State ── */
+let selectedPatient = '';
+let selectedPlan    = '';
+let selectedActions = new Set();
+let availableActions = [];
+
+/* ── Selects ── */
+function onPatientChange() {
+  selectedPatient = document.getElementById('patientSelect').value;
+  selectedPlan = '';
+  selectedActions.clear();
+
+  const planSel = document.getElementById('planSelect');
+  planSel.innerHTML = '';
+  if (!selectedPatient) {
+    planSel.innerHTML = '<option value="">— 請先選擇個案 —</option>';
+    planSel.disabled = true;
+    resetActionPicker('— 請先選擇計畫 —');
+    return;
+  }
+  planSel.innerHTML = '<option value="">— 請選擇計畫 —</option>';
+  (PLANS[selectedPatient]||[]).forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = p.name;
+    planSel.appendChild(opt);
+  });
+  planSel.disabled = false;
+  resetActionPicker('— 請先選擇計畫 —');
+}
+
+function onPlanChange() {
+  selectedPlan = document.getElementById('planSelect').value;
+  selectedActions.clear();
+  if (!selectedPlan) { resetActionPicker('— 請先選擇計畫 —'); return; }
+  availableActions = ACTIONS[selectedPlan] || [];
+  buildActionList();
+  renderActionTags();
+}
+
+/* ── Multi-select Action Picker ── */
+function resetActionPicker(placeholder) {
+  availableActions = [];
+  document.getElementById('actionList').innerHTML = '';
+  document.getElementById('actionPlaceholder').textContent = placeholder || '— 不選則查詢全部動作 —';
+  document.getElementById('actionPlaceholder').style.display = 'inline';
+  document.getElementById('actionCount').textContent = '已選 0 項';
+  // remove all tags
+  const trigger = document.getElementById('actionTrigger');
+  [...trigger.querySelectorAll('.ex-tag')].forEach(t=>t.remove());
+}
+
+function buildActionList() {
+  const list = document.getElementById('actionList');
+  list.innerHTML = '';
+  availableActions.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'ex-opt' + (selectedActions.has(name) ? ' checked' : '');
+    div.innerHTML = `<input type="checkbox" ${selectedActions.has(name)?'checked':''}/><span>${name}</span>`;
+    div.querySelector('input').addEventListener('change', e => {
+      if (e.target.checked) selectedActions.add(name); else selectedActions.delete(name);
+      div.classList.toggle('checked', e.target.checked);
+      renderActionTags();
+    });
+    list.appendChild(div);
+  });
+  document.getElementById('actionCount').textContent = `已選 ${selectedActions.size} 項`;
+}
+
+function renderActionTags() {
+  const trigger = document.getElementById('actionTrigger');
+  [...trigger.querySelectorAll('.ex-tag')].forEach(t=>t.remove());
+  const placeholder = document.getElementById('actionPlaceholder');
+
+  if (selectedActions.size === 0) {
+    placeholder.style.display = 'inline';
+    placeholder.textContent = '— 不選則查詢全部動作 —';
+  } else {
+    placeholder.style.display = 'none';
+    selectedActions.forEach(name => {
+      const tag = document.createElement('span');
+      tag.className = 'ex-tag';
+      tag.innerHTML = `<span>${name}</span><span class="ex-tag-rm" data-name="${name}">×</span>`;
+      tag.querySelector('.ex-tag-rm').onclick = e => {
+        e.stopPropagation();
+        selectedActions.delete(name);
+        renderActionTags();
+        buildActionList();
+      };
+      trigger.insertBefore(tag, trigger.querySelector('.ex-arrow'));
+    });
+  }
+  document.getElementById('actionCount').textContent = `已選 ${selectedActions.size} 項`;
+}
+
+function toggleActionPicker() {
+  if (!selectedPlan) return;
+  const panel   = document.getElementById('actionPanel');
+  const trigger = document.getElementById('actionTrigger');
+  const isOpen  = panel.classList.contains('open');
+  closeAll();
+  if (!isOpen) {
+    buildActionList();
+    panel.classList.add('open');
+    trigger.classList.add('open');
+  }
+}
+
+function clearActions() {
+  selectedActions.clear();
+  renderActionTags();
+  buildActionList();
+}
+
+function closeAll() {
+  document.querySelectorAll('.ex-panel').forEach(p=>p.classList.remove('open'));
+  document.querySelectorAll('.ex-trigger').forEach(t=>t.classList.remove('open'));
+}
+document.onclick = e => {
+  if (!e.target.closest('.ex-picker')) closeAll();
+};
+
+/* ── Query ── */
+function doQuery() {
+  if (!selectedPatient) { showToast('請先選擇個案', true); return; }
+  if (!selectedPlan)    { showToast('請先選擇治療計畫', true); return; }
+
+  const patient = PATIENTS[selectedPatient];
+  const planList = PLANS[selectedPatient];
+  const plan = planList.find(p=>p.id===selectedPlan);
+
+  // 未選動作 → 全選
+  const actionsToQuery = selectedActions.size > 0 ? [...selectedActions] : [...availableActions];
+
+  document.getElementById('resultEmpty').style.display = 'none';
+  document.getElementById('resultCard').style.display  = 'block';
+  document.getElementById('resultCardTitle').textContent = '訓練結果';
+  document.getElementById('resultPlanBadge').textContent = plan.name;
+  document.getElementById('resultPatientBadge').textContent = patient.name + '（' + patient.gender + ' / ' + patient.age + '歲）';
+
+  const rows = genRows(actionsToQuery);
+  renderTable(rows);
+  const allLabel = selectedActions.size === 0 ? '（全部動作）' : '';
+  showToast('已載入 ' + rows.length + ' 筆結果' + allLabel);
+}
+
+/* ── Table Render ── */
+function fmt(d) {
+  return (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getDate().toString().padStart(2,'0');
+}
+function dayDiff(a,b) { return Math.round((b-a)/(1000*60*60*24)); }
+
+function renderTable(rows) {
+  const tbody = document.getElementById('resultTableBody');
+  tbody.innerHTML = '';
+
+  rows.forEach(row => {
+    const tr = document.createElement('tr');
+
+    /* ── Date cell ──
+       規劃日期 = bar 正中上方大字（基準）
+       實作日期 = bar 下方：提前→左下，延後→右下，同天→不顯示（已在上方）
+       藍灰 1:1，藍色代表「已完成的區間」
+       提前：blue 左50%，grey 右50%；實作日在左下
+       同天：全藍；不顯示實作日（同規劃日）
+       延後：grey 左50%，blue 右50%；實作日在右下
+    */
+    const tdDate = document.createElement('td');
+    const diff = dayDiff(row.plannedDay, row.actualDay);
+
+    let statusText, statusColor, blueLeft, bluePct, actualLabelPos, actualLabelText;
+
+    if (diff < 0) {
+      // 提前完成：藍左灰右，實作日左下
+      blueLeft = 0; bluePct = 50;
+      actualLabelPos = 'left';
+      actualLabelText = fmt(row.actualDay);
+      statusText = '提前完成';
+      statusColor = 'var(--blue-mid)';
+    } else if (diff === 0) {
+      // 同一天：全藍，不顯示實作日（與規劃日相同）
+      blueLeft = 0; bluePct = 100;
+      actualLabelPos = null;
+      actualLabelText = null;
+      statusText = '同一天';
+      statusColor = 'var(--green)';
+    } else {
+      // 延遲完成：灰左藍右，實作日右下
+      blueLeft = 50; bluePct = 50;
+      actualLabelPos = 'right';
+      actualLabelText = fmt(row.actualDay);
+      statusText = '延遲完成';
+      statusColor = 'var(--orange)';
+    }
+
+    const blueStyle = `left:${blueLeft}%;width:${bluePct}%`;
+    const bottomHtml = actualLabelText
+      ? `<div class="date-bar-bottom"><span class="date-actual-label ${actualLabelPos}">${actualLabelText}</span></div>`
+      : `<div class="date-bar-bottom"></div>`;
+
+    tdDate.innerHTML = `
+      <div class="date-bar-wrap">
+        <div class="date-bar-status" style="color:${statusColor}">${statusText}</div>
+        <div class="date-bar-label-row">
+          <span class="date-bar-label">${fmt(row.plannedDay)}</span>
+        </div>
+        <div class="date-bar-track">
+          <div class="date-seg-blue" style="${blueStyle}"></div>
+        </div>
+        ${bottomHtml}
+      </div>`;
+
+    /* ── Action cell ── */
+    const tdAction = document.createElement('td');
+    tdAction.innerHTML = `
+      <div class="action-name">${row.name}</div>
+      <div class="action-sub">規劃 ${row.planSets} 組 × ${row.planReps} 次</div>`;
+
+    /* ── Exec cell ── */
+    const tdExec = document.createElement('td');
+    let execHtml = '<div class="exec-wrap">';
+    row.setResults.forEach((actual, si) => {
+      const pct = actual === 0 ? 0 : Math.min(100, Math.round(actual / row.planReps * 100));
+      const cls = actual === 0 ? 'none' : (actual >= row.planReps ? (actual > row.planReps ? 'over' : 'done') : 'partial');
+      execHtml += `
+        <div class="exec-row">
+          <span class="exec-row-label">第${si+1}組</span>
+          <div class="mini-bar-wrap">
+            <div class="mini-bar-track">
+              <div class="mini-bar-fill ${cls}" style="width:${pct}%"></div>
+            </div>
+            <div class="mini-bar-nums">
+              <span class="mini-bar-actual">${actual}</span>
+              <span class="mini-bar-slash">/</span>
+              <span class="mini-bar-plan">${row.planReps} 次</span>
+            </div>
+          </div>
+        </div>`;
+    });
+    // Duration bar
+    const durPct = Math.min(120, Math.round(row.actualDuration / row.planDuration * 100));
+    const durCls = durPct >= 100 ? (durPct > 100 ? 'over' : 'done') : (durPct > 50 ? 'partial' : 'none');
+    const durFmt = s => s >= 60 ? (Math.floor(s/60)+'分'+(s%60?s%60+'秒':'')) : s+'秒';
+    execHtml += `
+      <div class="dur-row">
+        <span class="dur-label">總長度</span>
+        <div class="dur-bar-wrap">
+          <div class="dur-bar-track">
+            <div class="dur-bar-fill ${durCls}" style="width:${Math.min(100,durPct)}%"></div>
+          </div>
+          <div class="dur-bar-nums">
+            <span class="dur-actual">${durFmt(row.actualDuration)}</span>
+            <span class="dur-slash">/</span>
+            <span class="dur-plan">${durFmt(row.planDuration)}</span>
+          </div>
+        </div>
+      </div>`;
+    execHtml += '</div>';
+    tdExec.innerHTML = execHtml;
+
+    /* ── Index cell (empty) ── */
+    const tdIndex = document.createElement('td');
+    tdIndex.innerHTML = '<span class="index-empty">—</span>';
+
+    tr.appendChild(tdDate);
+    tr.appendChild(tdAction);
+    tr.appendChild(tdExec);
+    tr.appendChild(tdIndex);
+    tbody.appendChild(tr);
+  });
+}
+
+function showToast(msg, err) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? 'var(--red)' : 'var(--blue-dark)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>

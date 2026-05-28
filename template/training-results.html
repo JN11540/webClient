@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>訓練結果</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue-dark: #1a3d6b;
+  --blue-mid: #2563a8;
+  --blue-light: #e8f0fb;
+  --blue-accent: #3b82c4;
+  --text-primary: #1a2c47;
+  --text-secondary: #4a6080;
+  --text-muted: #8099b8;
+  --border: #d0dcea;
+  --border-light: #e4ecf6;
+  --bg-page: #eef3fa;
+  --bg-white: #ffffff;
+  --bg-section: #f7f9fd;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --green: #2d7a36;
+  --green-light: #edf6ee;
+  --orange: #b05e0d;
+  --orange-light: #fef4e6;
+  --red: #c0392b;
+  --red-light: #fef0ef;
+}
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); color: var(--text-primary); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar { position:fixed; left:0; top:0; bottom:0; width:64px; background:var(--blue-dark); display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:6px; z-index:200; }
+.sidebar .avatar { width:36px; height:36px; border-radius:50%; background:var(--blue-accent); color:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+.sidebar .nav-icon { width:40px; height:40px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.55); cursor:pointer; transition:background .15s,color .15s; }
+.sidebar .nav-icon:hover, .sidebar .nav-icon.active { background:rgba(255,255,255,.12); color:#fff; }
+.sidebar .logout { margin-top:auto; }
+
+/* ── Main ── */
+.main { margin-left:64px; display:flex; flex-direction:column; min-height:100vh; }
+
+/* ── Page Header ── */
+.page-header { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:center; flex-shrink:0; }
+.page-title { font-size:17px; font-weight:600; color:var(--text-primary); flex:1; text-align:center; }
+
+/* ── Top Controls ── */
+.top-controls { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap; flex-shrink:0; }
+.ctrl-group { display:flex; flex-direction:column; gap:3px; }
+.ctrl-label { font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; }
+.ctrl-select { padding:6px 28px 6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); background:var(--bg-white); appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a6080' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 9px center; cursor:pointer; min-width:200px; transition:border-color .15s; }
+.ctrl-select:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.ctrl-select:disabled { opacity:.5; cursor:not-allowed; }
+
+/* Multi-select picker */
+.ex-picker { position:relative; min-width:220px; }
+.ex-trigger { display:flex; align-items:center; flex-wrap:wrap; gap:4px; padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-white); cursor:pointer; min-height:34px; transition:border-color .15s; }
+.ex-trigger:hover { border-color:var(--blue-accent); }
+.ex-trigger.open { border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.ex-placeholder { font-size:12px; color:var(--text-muted); user-select:none; flex:1; }
+.ex-tag { display:inline-flex; align-items:center; gap:3px; background:var(--blue-light); color:var(--blue-dark); font-size:11px; font-weight:500; padding:2px 7px; border-radius:20px; }
+.ex-tag-rm { cursor:pointer; color:var(--blue-mid); font-size:13px; line-height:1; }
+.ex-tag-rm:hover { color:var(--red); }
+.ex-arrow { margin-left:auto; flex-shrink:0; color:var(--text-muted); transition:transform .2s; }
+.ex-trigger.open .ex-arrow { transform:rotate(180deg); }
+.ex-panel { display:none; position:absolute; left:0; top:calc(100% + 4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); width:260px; }
+.ex-panel.open { display:block; }
+.ex-list { max-height:200px; overflow-y:auto; padding:4px 0; }
+.ex-opt { display:flex; align-items:center; gap:7px; padding:6px 12px; cursor:pointer; font-size:12px; transition:background .1s; }
+.ex-opt:hover, .ex-opt.checked { background:var(--blue-light); }
+.ex-opt input { flex-shrink:0; accent-color:var(--blue-mid); cursor:pointer; }
+.ex-footer { padding:7px 10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; }
+.ex-count { font-size:11px; color:var(--text-muted); }
+.ex-clear { font-size:11px; color:var(--red); cursor:pointer; background:none; border:none; font-family:inherit; }
+.ex-clear:hover { text-decoration:underline; }
+
+.ctrl-divider { width:1px; height:32px; background:var(--border-light); margin:0 2px; align-self:flex-end; }
+.query-btn { padding:7px 16px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; align-self:flex-end; display:flex; align-items:center; gap:5px; }
+.query-btn:hover { background:var(--blue-dark); }
+.query-btn:active { transform:scale(.98); }
+
+/* ── Content Area ── */
+.content-area { padding:20px 24px 40px; display:flex; flex-direction:column; gap:16px; }
+
+/* ── Result Empty ── */
+.result-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 20px; color:var(--text-muted); gap:10px; background:var(--bg-white); border-radius:var(--radius-lg); }
+.result-empty-icon { font-size:38px; opacity:.25; }
+.result-empty-text { font-size:13px; text-align:center; line-height:1.7; }
+
+/* ── Result Card ── */
+.result-card { background:var(--bg-white); border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-light); }
+.result-card-header { padding:12px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-light); background:var(--bg-section); }
+.result-card-title { font-size:14px; font-weight:600; color:var(--text-primary); }
+.result-card-meta { display:flex; align-items:center; gap:10px; }
+.meta-badge { font-size:11px; padding:2px 9px; border-radius:20px; font-weight:500; background:var(--blue-light); color:var(--blue-mid); }
+.meta-badge.green { background:var(--green-light); color:var(--green); }
+
+/* ── Table ── */
+.result-table-wrap { overflow-x:auto; }
+.result-table { width:100%; border-collapse:collapse; font-size:13px; }
+.result-table thead tr { background:var(--blue-dark); }
+.result-table th { padding:10px 14px; font-size:11px; font-weight:700; color:#fff; letter-spacing:.06em; text-align:left; white-space:nowrap; }
+.result-table th.col-date   { width:180px; }
+.result-table th.col-action { width:160px; }
+.result-table th.col-exec   { width:260px; }
+.result-table th.col-index  { }
+.result-table tbody tr { border-bottom:1px solid var(--border-light); transition:background .1s; }
+.result-table tbody tr:last-child { border-bottom:none; }
+.result-table tbody tr:nth-child(even) { background:var(--bg-section); }
+.result-table tbody tr:hover { background:var(--blue-light); }
+.result-table td { padding:12px 14px; vertical-align:middle; }
+
+/* ── Date Bar ── */
+.date-bar-wrap { display:flex; flex-direction:column; gap:2px; min-width:150px; }
+.date-bar-status { font-size:9px; font-weight:600; letter-spacing:.03em; margin-bottom:0px; line-height:1.2; }
+.date-bar-label-row { position:relative; height:38px; }
+.date-bar-label { position:absolute; left:50%; transform:translateX(-50%); font-size:30px; font-weight:700; color:var(--blue-mid); white-space:nowrap; line-height:1; }
+.date-bar-track { position:relative; height:8px; border-radius:4px; background:#d6e2f0; overflow:hidden; }
+.date-seg-blue { position:absolute; top:0; height:100%; background:var(--blue-mid); }
+.date-bar-bottom { position:relative; height:18px; margin-top:2px; }
+.date-actual-label { position:absolute; font-size:11px; font-weight:700; color:var(--text-secondary); white-space:nowrap; }
+.date-actual-label.left  { left:0; }
+.date-actual-label.right { right:0; }
+
+/* ── Exec Bars ── */
+.exec-wrap { display:flex; flex-direction:column; gap:5px; }
+.exec-row { display:flex; align-items:center; gap:8px; }
+.exec-row-label { font-size:10px; color:var(--text-muted); font-weight:600; width:36px; flex-shrink:0; }
+.mini-bar-wrap { flex:1; display:flex; flex-direction:column; gap:1px; }
+.mini-bar-track { height:7px; background:#dde6f4; border-radius:4px; overflow:hidden; position:relative; }
+.mini-bar-fill { height:100%; border-radius:4px; transition:width .3s; }
+.mini-bar-fill.done    { background:var(--blue-mid); }
+.mini-bar-fill.partial { background:var(--blue-accent); }
+.mini-bar-fill.none    { background:#c8d6ec; }
+.mini-bar-fill.over    { background:var(--green); }
+.mini-bar-nums { display:flex; align-items:baseline; gap:3px; font-size:10px; }
+.mini-bar-actual { font-weight:700; color:var(--text-primary); }
+.mini-bar-slash  { color:var(--text-muted); }
+.mini-bar-plan   { color:var(--text-muted); }
+
+.dur-row { display:flex; align-items:center; gap:8px; margin-top:3px; border-top:1px dashed var(--border-light); padding-top:5px; }
+.dur-label { font-size:10px; color:var(--text-muted); font-weight:600; width:36px; flex-shrink:0; white-space:nowrap; }
+.dur-bar-wrap { flex:1; display:flex; flex-direction:column; gap:1px; }
+.dur-bar-track { height:7px; background:#dde6f4; border-radius:4px; overflow:hidden; }
+.dur-bar-fill { height:100%; border-radius:4px; }
+.dur-bar-fill.done    { background:var(--green); }
+.dur-bar-fill.partial { background:var(--orange); }
+.dur-bar-fill.over    { background:var(--blue-mid); }
+.dur-bar-nums { display:flex; align-items:baseline; gap:3px; font-size:10px; }
+.dur-actual { font-weight:700; color:var(--text-primary); }
+.dur-slash  { color:var(--text-muted); }
+.dur-plan   { color:var(--text-muted); }
+
+/* ── Action Name ── */
+.action-name { font-size:13px; font-weight:600; color:var(--text-primary); }
+.action-sub  { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+/* ── Index Cell ── */
+.index-empty { font-size:12px; color:var(--text-muted); font-style:italic; }
+
+/* ── Toast ── */
+.toast { position:fixed; bottom:22px; right:22px; background:var(--blue-dark); color:#fff; padding:10px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:500; opacity:0; transform:translateY(8px); transition:opacity .3s,transform .3s; pointer-events:none; z-index:999; }
+.toast.show { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<div class="sidebar">
+  <div class="avatar" id="sidebarAvatar">T</div>
+  <div class="nav-icon" title="首頁" onclick="location.href='/home'">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+  </div>
+  <div class="nav-icon" title="治療計畫" onclick="location.href='/treatment-plan'">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+  </div>
+  <div class="nav-icon active" title="訓練結果">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  </div>
+  <div class="nav-icon logout" title="登出" onclick="logout()">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<div class="main">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <span class="page-title">訓練結果</span>
+  </div>
+
+  <!-- Top Controls -->
+  <div class="top-controls">
+    <!-- 選擇個案 -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">選擇個案</span>
+      <select class="ctrl-select" id="patientSelect" onchange="onPatientChange()">
+        <option value="">— 請選擇個案 —</option>
+      </select>
+    </div>
+
+    <!-- 選擇治療計畫 -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">選擇治療計畫</span>
+      <select class="ctrl-select" id="planSelect" disabled onchange="onPlanChange()">
+        <option value="">— 請先選擇個案 —</option>
+      </select>
+    </div>
+
+    <!-- 選擇治療動作（多選） -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">選擇治療動作</span>
+      <div class="ex-picker" id="actionPicker">
+        <div class="ex-trigger" id="actionTrigger" onclick="toggleActionPicker()">
+          <span class="ex-placeholder" id="actionPlaceholder">— 不選則查詢全部動作 —</span>
+          <svg class="ex-arrow" width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="#4a6080" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="ex-panel" id="actionPanel">
+          <div class="ex-list" id="actionList"></div>
+          <div class="ex-footer">
+            <span class="ex-count" id="actionCount">已選 0 項</span>
+            <button class="ex-clear" onclick="clearActions()">清除全部</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <button class="query-btn" onclick="doQuery()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      查詢結果
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="content-area">
+
+    <div class="result-empty" id="resultEmpty">
+      <div class="result-empty-icon">📊</div>
+      <div class="result-empty-text">請選擇個案、治療計畫及治療動作<br>再點「查詢結果」</div>
+    </div>
+
+    <div class="result-card" id="resultCard" style="display:none">
+      <div class="result-card-header">
+        <div class="result-card-title">訓練結果</div>
+        <div class="result-card-meta">
+          <span class="meta-badge" id="resultPlanBadge"></span>
+          <span class="meta-badge green" id="resultPatientBadge"></span>
+        </div>
+      </div>
+      <div class="result-table-wrap">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th class="col-date">日期</th>
+              <th class="col-action">治療動作</th>
+              <th class="col-exec">實作情況</th>
+              <th class="col-index">動作指標</th>
+            </tr>
+          </thead>
+          <tbody id="resultTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Helpers ── */
+function getCookie(name) {
+  const m = document.cookie.match('(?:^|; )' + name + '=([^;]*)');
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+function apiFetch(path, opts = {}) {
+  const sessionId = getCookie('session_id');
+  return fetch(path, {
+    ...opts,
+    headers: { 'Authorization': `Bearer ${sessionId}`, 'Content-Type': 'application/json', ...(opts.headers || {}) },
+  }).then(r => r.json());
+}
+
+function tsToDateStr(ts) {
+  const d = new Date(ts * 1000);
+  return (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getDate().toString().padStart(2,'0');
+}
+
+function dayDiff(tsA, tsB) {
+  return Math.round((tsB - tsA) / 86400);
+}
+
+function fmtSecs(s) {
+  return s >= 60 ? Math.floor(s/60) + '分' + (s%60 ? s%60+'秒' : '') : s + '秒';
+}
+
+function showToast(msg, err) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? 'var(--red)' : 'var(--blue-dark)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ── State ── */
+const clinicianId = parseInt(getCookie('clinician_id'));
+let exerciseMap    = {};   // {id: name}
+let patientList    = [];
+let planList       = [];   // TreatmentListItem[] (each has contents[])
+let contentMap     = {};   // {treatment_content_id: content}
+let availableActions = []; // [{id, name}]
+let selectedPatient  = '';
+let selectedPlan     = '';
+let selectedPlanName = '';
+let selectedPatientName = '';
+let selectedActions  = new Set(); // Set<exercise_id (number)>
+
+/* ── Init ── */
+async function init() {
+  try {
+    const [exRes, patRes, clinRes] = await Promise.all([
+      apiFetch('/exercises'),
+      apiFetch(`/clinicians/${clinicianId}/patients`),
+      apiFetch(`/clinicians/${clinicianId}`),
+    ]);
+
+    if (exRes.result) {
+      exRes.data.forEach(e => { exerciseMap[e.id] = e.name; });
+    }
+
+    if (clinRes.result && clinRes.data.name) {
+      document.getElementById('sidebarAvatar').textContent = clinRes.data.name.charAt(0);
+    }
+
+    if (patRes.result) {
+      patientList = patRes.data;
+      const sel = document.getElementById('patientSelect');
+      patientList.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.patient_id;
+        opt.textContent = p.name;
+        sel.appendChild(opt);
+      });
+    }
+  } catch (e) {
+    showToast('初始化失敗：' + e.message, true);
+  }
+}
+
+/* ── Patient Change ── */
+async function onPatientChange() {
+  selectedPatient = document.getElementById('patientSelect').value;
+  selectedPlan = '';
+  selectedPlanName = '';
+  selectedPatientName = '';
+  selectedActions.clear();
+  availableActions = [];
+  contentMap = {};
+
+  const planSel = document.getElementById('planSelect');
+  planSel.innerHTML = '<option value="">— 請選擇計畫 —</option>';
+  planSel.disabled = true;
+  resetActionPicker('— 請先選擇計畫 —');
+
+  if (!selectedPatient) return;
+
+  const pat = patientList.find(p => String(p.patient_id) === selectedPatient);
+  selectedPatientName = pat ? pat.name : '';
+
+  try {
+    const res = await apiFetch(`/treatments/patient/${selectedPatient}`);
+    if (res.result) {
+      planList = res.data;
+      planList.forEach(plan => {
+        const opt = document.createElement('option');
+        opt.value = plan.id;
+        opt.textContent = plan.name;
+        planSel.appendChild(opt);
+      });
+      planSel.disabled = false;
+    }
+  } catch (e) {
+    showToast('載入計畫失敗：' + e.message, true);
+  }
+}
+
+/* ── Plan Change ── */
+function onPlanChange() {
+  selectedPlan = document.getElementById('planSelect').value;
+  selectedActions.clear();
+  contentMap = {};
+  availableActions = [];
+  resetActionPicker('— 不選則查詢全部動作 —');
+
+  if (!selectedPlan) { resetActionPicker('— 請先選擇計畫 —'); return; }
+
+  const plan = planList.find(p => String(p.id) === selectedPlan);
+  if (!plan) return;
+  selectedPlanName = plan.name;
+
+  // build contentMap and availableActions from plan.contents
+  const seenIds = new Set();
+  plan.contents.forEach(c => {
+    contentMap[c.id] = c;
+    if (!seenIds.has(c.exercise_id)) {
+      seenIds.add(c.exercise_id);
+      availableActions.push({ id: c.exercise_id, name: exerciseMap[c.exercise_id] || `動作 ${c.exercise_id}` });
+    }
+  });
+
+  buildActionList();
+  renderActionTags();
+}
+
+/* ── Multi-select Action Picker ── */
+function resetActionPicker(placeholder) {
+  availableActions = [];
+  selectedActions.clear();
+  document.getElementById('actionList').innerHTML = '';
+  document.getElementById('actionPlaceholder').textContent = placeholder;
+  document.getElementById('actionPlaceholder').style.display = 'inline';
+  document.getElementById('actionCount').textContent = '已選 0 項';
+  const trigger = document.getElementById('actionTrigger');
+  [...trigger.querySelectorAll('.ex-tag')].forEach(t => t.remove());
+}
+
+function buildActionList() {
+  const list = document.getElementById('actionList');
+  list.innerHTML = '';
+  availableActions.forEach(({ id, name }) => {
+    const div = document.createElement('div');
+    div.className = 'ex-opt' + (selectedActions.has(id) ? ' checked' : '');
+    div.innerHTML = `<input type="checkbox" ${selectedActions.has(id) ? 'checked' : ''}/><span>${name}</span>`;
+    div.querySelector('input').addEventListener('change', e => {
+      if (e.target.checked) selectedActions.add(id); else selectedActions.delete(id);
+      div.classList.toggle('checked', e.target.checked);
+      renderActionTags();
+    });
+    list.appendChild(div);
+  });
+  document.getElementById('actionCount').textContent = `已選 ${selectedActions.size} 項`;
+}
+
+function renderActionTags() {
+  const trigger = document.getElementById('actionTrigger');
+  [...trigger.querySelectorAll('.ex-tag')].forEach(t => t.remove());
+  const placeholder = document.getElementById('actionPlaceholder');
+  if (selectedActions.size === 0) {
+    placeholder.style.display = 'inline';
+    placeholder.textContent = '— 不選則查詢全部動作 —';
+  } else {
+    placeholder.style.display = 'none';
+    selectedActions.forEach(id => {
+      const name = exerciseMap[id] || `動作 ${id}`;
+      const tag = document.createElement('span');
+      tag.className = 'ex-tag';
+      tag.innerHTML = `<span>${name}</span><span class="ex-tag-rm" data-id="${id}">×</span>`;
+      tag.querySelector('.ex-tag-rm').onclick = e => {
+        e.stopPropagation();
+        selectedActions.delete(id);
+        renderActionTags();
+        buildActionList();
+      };
+      trigger.insertBefore(tag, trigger.querySelector('.ex-arrow'));
+    });
+  }
+  document.getElementById('actionCount').textContent = `已選 ${selectedActions.size} 項`;
+}
+
+function toggleActionPicker() {
+  if (!selectedPlan) return;
+  const panel = document.getElementById('actionPanel');
+  const trigger = document.getElementById('actionTrigger');
+  const isOpen = panel.classList.contains('open');
+  closeAll();
+  if (!isOpen) {
+    buildActionList();
+    panel.classList.add('open');
+    trigger.classList.add('open');
+  }
+}
+
+function clearActions() {
+  selectedActions.clear();
+  renderActionTags();
+  buildActionList();
+}
+
+function closeAll() {
+  document.querySelectorAll('.ex-panel').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.ex-trigger').forEach(t => t.classList.remove('open'));
+}
+document.onclick = e => { if (!e.target.closest('.ex-picker')) closeAll(); };
+
+/* ── Query ── */
+async function doQuery() {
+  if (!selectedPatient) { showToast('請先選擇個案', true); return; }
+  if (!selectedPlan)    { showToast('請先選擇治療計畫', true); return; }
+
+  try {
+    const res = await apiFetch(`/treatment-results/by-treatment/${selectedPlan}`);
+    if (!res.result) { showToast(res.message || '查詢失敗', true); return; }
+
+    // Build result map keyed by treatment_content_id
+    const resultMap = {};
+    (res.data.contents || []).forEach(r => { resultMap[r.treatment_content_id] = r; });
+
+    // Select which plan contents to display
+    const plan = planList.find(p => String(p.id) === selectedPlan);
+    let contents = plan ? plan.contents : [];
+    if (selectedActions.size > 0) {
+      contents = contents.filter(c => selectedActions.has(c.exercise_id));
+    }
+
+    // Build rows: each content + its result (may be null)
+    let rows = contents.map(c => ({ content: c, result: resultMap[c.id] || null }));
+
+    // Sort by planned date descending
+    rows.sort((a, b) => b.content.date - a.content.date);
+
+    document.getElementById('resultEmpty').style.display = 'none';
+    document.getElementById('resultCard').style.display  = 'block';
+    document.getElementById('resultPlanBadge').textContent    = selectedPlanName;
+    document.getElementById('resultPatientBadge').textContent = selectedPatientName;
+
+    renderTable(rows);
+    showToast(`已載入 ${rows.length} 筆結果`);
+  } catch (e) {
+    showToast('查詢失敗：' + e.message, true);
+  }
+}
+
+/* ── Table Render ── */
+function renderTable(rows) {
+  const tbody = document.getElementById('resultTableBody');
+  tbody.innerHTML = '';
+
+  if (rows.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="4" style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">此條件下尚無訓練結果</td>';
+    tbody.appendChild(tr);
+    return;
+  }
+
+  rows.forEach(({ content: c, result: r }) => {
+    const exerciseName = exerciseMap[c.exercise_id] || `動作 ${c.exercise_id}`;
+    const planReps = c.sets * c.reps;
+
+    /* ── Date cell ── */
+    let statusText, statusColor, blueLeft, bluePct, bottomHtml;
+    if (!r) {
+      blueLeft = 0; bluePct = 0;
+      statusText = '未完成'; statusColor = 'var(--text-muted)';
+      bottomHtml = '<div class="date-bar-bottom"></div>';
+    } else {
+      const diff = dayDiff(c.date, r.date);
+      if (diff < 0) {
+        blueLeft = 0; bluePct = 50;
+        statusText = '提前完成'; statusColor = 'var(--blue-mid)';
+        bottomHtml = `<div class="date-bar-bottom"><span class="date-actual-label left">${tsToDateStr(r.date)}</span></div>`;
+      } else if (diff === 0) {
+        blueLeft = 0; bluePct = 100;
+        statusText = '同一天'; statusColor = 'var(--green)';
+        bottomHtml = '<div class="date-bar-bottom"></div>';
+      } else {
+        blueLeft = 50; bluePct = 50;
+        statusText = '延遲完成'; statusColor = 'var(--orange)';
+        bottomHtml = `<div class="date-bar-bottom"><span class="date-actual-label right">${tsToDateStr(r.date)}</span></div>`;
+      }
+    }
+
+    /* ── Exec cell ── */
+    let execHtml;
+    if (!r) {
+      execHtml = '<span style="font-size:12px;color:var(--text-muted)">尚無紀錄</span>';
+    } else {
+      // Distribute total reps across sets sequentially
+      const setResults = [];
+      let remaining = r.reps;
+      for (let s = 0; s < c.sets; s++) {
+        const actual = Math.min(remaining, c.reps);
+        setResults.push(actual);
+        remaining = Math.max(0, remaining - c.reps);
+      }
+
+      let setRows = '';
+      setResults.forEach((actual, si) => {
+        const pct = c.reps > 0 ? Math.min(100, Math.round(actual / c.reps * 100)) : 0;
+        const cls = actual === 0 ? 'none' : (actual >= c.reps ? 'done' : 'partial');
+        setRows += `
+          <div class="exec-row">
+            <span class="exec-row-label">第${si+1}組</span>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-track"><div class="mini-bar-fill ${cls}" style="width:${pct}%"></div></div>
+              <div class="mini-bar-nums">
+                <span class="mini-bar-actual">${actual}</span>
+                <span class="mini-bar-slash">/</span>
+                <span class="mini-bar-plan">${c.reps} 次</span>
+              </div>
+            </div>
+          </div>`;
+      });
+
+      const planTime = r.plan_total_time;
+      const timePct = planTime > 0 ? Math.min(100, Math.round(r.total_time / planTime * 100)) : 0;
+      const timeCls = r.total_time === 0 ? 'none' : (r.total_time >= planTime ? (r.total_time > planTime ? 'over' : 'done') : 'partial');
+
+      execHtml = `
+        <div class="exec-wrap">
+          ${setRows}
+          <div class="dur-row">
+            <span class="dur-label">總秒數</span>
+            <div class="dur-bar-wrap">
+              <div class="dur-bar-track"><div class="dur-bar-fill ${timeCls}" style="width:${Math.min(100,timePct)}%"></div></div>
+              <div class="dur-bar-nums">
+                <span class="dur-actual">${fmtSecs(r.total_time)}</span>
+                <span class="dur-slash">/</span>
+                <span class="dur-plan">${fmtSecs(planTime)}</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="date-bar-wrap">
+          <div class="date-bar-status" style="color:${statusColor}">${statusText}</div>
+          <div class="date-bar-label-row"><span class="date-bar-label">${tsToDateStr(c.date)}</span></div>
+          <div class="date-bar-track"><div class="date-seg-blue" style="left:${blueLeft}%;width:${bluePct}%"></div></div>
+          ${bottomHtml}
+        </div>
+      </td>
+      <td>
+        <div class="action-name">${exerciseName}</div>
+        <div class="action-sub">規劃 ${c.sets} 組 × ${c.reps} 次</div>
+      </td>
+      <td>${execHtml}</td>
+      <td><span class="index-empty">—</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ── Logout ── */
+function logout() {
+  fetch('/auth/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${getCookie('session_id')}` } })
+    .finally(() => location.href = '/');
+}
+
+init();
+</script>
+</body>
+</html>
