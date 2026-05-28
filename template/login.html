@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>退化性關節炎臨床驗證平台</title>
+  <link rel="stylesheet" href="/static/css/login.css">
+</head>
+<body>
+  <div class="container">
+    <div class="badge-top">▸ CLINICAL TRIAL SYSTEM</div>
+    <div class="main-title">退化性關節炎<br>臨床驗證平台</div>
+    <div class="sub-title">OA Validation System</div>
+    <div class="card">
+      <div class="field-label">臨床人員帳號</div>
+      <input class="field-input" type="text" id="username">
+      <div class="field-label">驗證密碼</div>
+      <input class="field-input" type="password" id="password">
+      <button class="btn-primary" onclick="submitLogin()">進入系統</button>
+      <button class="btn-secondary" onclick="location.href='/register'">註冊新帳號</button>
+      <hr class="divider">
+      <div class="footer-text">僅限授權臨床人員存取 · 所有操作均有記錄</div>
+    </div>
+  </div>
+  <script>
+    async function submitLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        alert('請輸入帳號與密碼');
+        return;
+      }
+
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+        redirect: 'manual',
+      });
+
+      if (res.type === 'opaqueredirect') {
+        // 307 收到，cookie 已由 browser 寫入，手動導向
+        location.href = '/home';
+      } else {
+        try {
+          const data = await res.json();
+          alert(data.message || '登入失敗');
+        } catch {
+          alert('登入失敗');
+        }
+      }
+    }
+  </script>
+</body>
+</html>
