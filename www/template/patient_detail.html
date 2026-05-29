@@ -269,11 +269,6 @@
     .plan-card-btn-edit:hover { background:#B5D4F4; }
     .plan-card-btn-del { border:0.5px solid #F7C1C1; background:#FCEBEB; color:#A32D2D; }
     .plan-card-btn-del:hover { background:#F7C1C1; }
-    .plan-card-btn-export { border:0.5px solid #B5D4F4; background:#E6F1FB; color:#185FA5; }
-    .plan-card-btn-export:hover { background:#B5D4F4; }
-    .export-overlay { position:fixed; inset:0; background:rgba(20,40,80,.45); z-index:9000; display:flex; align-items:center; justify-content:center; }
-    .export-modal { background:#fff; border-radius:14px; box-shadow:0 8px 32px rgba(26,61,107,.18); width:320px; max-width:92vw; padding:32px 28px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; }
-    .export-modal-title { font-size:15px; font-weight:600; color:#0C447C; }
     .export-countdown { font-size:52px; font-weight:700; color:#185FA5; line-height:1; }
     .export-status { font-size:13px; color:#378ADD; min-height:20px; }
     .export-result { font-size:13px; font-weight:500; color:#0C447C; line-height:1.6; }
@@ -282,6 +277,8 @@
     .export-confirm-btn.err { background:#A32D2D; }
     .export-confirm-btn.err:hover { background:#7a1f1f; }
     .plan-card-body { display:block; padding:0; }
+    .plan-qr-row { padding:8px 14px; background:#EBF4FC; border-bottom:0.5px solid #D4E9F8; display:flex; align-items:center; gap:10px; }
+    .plan-qr-row .qrcode-area { margin-top:8px; width:100%; }
     .plan-meta-bar { display:flex; align-items:stretch; border-bottom:0.5px solid #E6F1FB; background:white; }
     .plan-meta-item { flex:1; padding:10px 14px; display:flex; flex-direction:column; gap:2px; }
     .plan-meta-label { font-size:9px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#9BBCDC; }
@@ -837,9 +834,8 @@
             <span class="plan-card-name">治療名稱：${escHtml(plan.name)}</span>
           </div>
           <div class="plan-card-actions">
-            <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='/edit_patient-treatment-plan?id=${patientId}&planId=${plan.id}'">編輯</button>
+            <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='edit_patient-treatment-plan.html?id=${patientId}&planId=${plan.id}'">編輯</button>
             <button class="plan-card-btn plan-card-btn-del" onclick="deletePlan(${plan.id})">刪除</button>
-            <button class="plan-card-btn plan-card-btn-export" onclick="exportPlan(${plan.id})">匯出</button>
           </div>`;
 
         const body = document.createElement('div');
@@ -862,6 +858,15 @@
             <span class="plan-meta-label">建立時間</span>
             <span class="plan-meta-value">${escHtml(createdAt)}</span>
           </div>`;
+        const qrRow = document.createElement('div');
+        qrRow.className = 'plan-qr-row';
+        qrRow.innerHTML = `
+          <button class="plan-card-btn plan-card-btn-edit" onclick="togglePlanQrCode(${plan.id})">⬛ QR Code</button>
+          <div class="qrcode-area" id="planQr-${plan.id}" style="display:none; flex-direction:column; align-items:center; gap:8px; padding:12px; background:#F5FAFF; border-radius:8px; border:0.5px solid #B5D4F4; width:100%;">
+            <img id="planQrImg-${plan.id}" src="" alt="QR Code" style="width:180px; height:180px;">
+            <div class="qrcode-label">患者端應用程式掃描此 QR Code 以取得治療計畫</div>
+          </div>`;
+        body.appendChild(qrRow);
         body.appendChild(metaBar);
 
         const schedWrap = document.createElement('div');
@@ -945,69 +950,29 @@
       } catch(e) { console.error(e); }
     }
 
-    function exportPlan(planId) {
-      const sessionId = getCookie('session_id');
-      const overlay  = document.getElementById('exportOverlay');
-      const countEl  = document.getElementById('exportCountdown');
-      const statusEl = document.getElementById('exportStatus');
-      const resultEl = document.getElementById('exportResult');
-      const confirmBtn = document.getElementById('exportConfirmBtn');
-
-      // 初始化 modal
-      countEl.style.display  = 'block';
-      statusEl.style.display = 'block';
-      resultEl.style.display = 'none';
-      confirmBtn.style.display = 'none';
-      statusEl.textContent   = '正在寄送中…';
-      confirmBtn.className   = 'export-confirm-btn';
-      overlay.style.display  = 'flex';
-
-      // 倒數 5 秒
-      let remaining = 5;
-      countEl.textContent = remaining;
-      const timer = setInterval(() => {
-        remaining--;
-        countEl.textContent = remaining;
-        if (remaining <= 0) clearInterval(timer);
-      }, 1000);
-
-      // API 呼叫 + 倒數同步進行，兩者都完成才顯示結果
-      const apiPromise = fetch(`/treatments/${planId}/send-email`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${sessionId}` },
-      }).then(r => r.json()).catch(e => ({ result: false, message: e.message }));
-
-      const countdownPromise = new Promise(resolve => setTimeout(resolve, 5000));
-
-      Promise.all([apiPromise, countdownPromise]).then(([data]) => {
-        clearInterval(timer);
-        countEl.style.display  = 'none';
-        statusEl.style.display = 'none';
-        resultEl.style.display = 'block';
-        confirmBtn.style.display = 'inline-block';
-        const ok = data.result;
-        resultEl.textContent = data.message || (ok ? '匯出成功' : '匯出失敗');
-        if (!ok) confirmBtn.classList.add('err');
-      });
-    }
-
-    function closeExportModal() {
-      document.getElementById('exportOverlay').style.display = 'none';
-    }
 
     loadPatient();
     loadMeasurements();
     loadPlans();
+
+    async function togglePlanQrCode(planId) {
+      const area = document.getElementById(`planQr-${planId}`);
+      if (area.style.display === 'flex') {
+        area.style.display = 'none';
+        return;
+      }
+      try {
+        const res = await fetch(`/treatments/${planId}/qrcode`);
+        if (!res.ok) { alert('無法取得 QR Code'); return; }
+        const blob = await res.blob();
+        document.getElementById(`planQrImg-${planId}`).src = URL.createObjectURL(blob);
+      } catch (e) {
+        alert('QR Code 載入失敗：' + e.message);
+        return;
+      }
+      area.style.display = 'flex';
+    }
   </script>
 
-  <div class="export-overlay" id="exportOverlay" style="display:none">
-    <div class="export-modal">
-      <div class="export-modal-title">📧 寄送治療計畫</div>
-      <div class="export-countdown" id="exportCountdown">5</div>
-      <div class="export-status" id="exportStatus">正在寄送中…</div>
-      <div class="export-result" id="exportResult" style="display:none"></div>
-      <button class="export-confirm-btn" id="exportConfirmBtn" style="display:none" onclick="closeExportModal()">確定</button>
-    </div>
-  </div>
 </body>
 </html>
