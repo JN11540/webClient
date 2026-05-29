@@ -373,7 +373,7 @@ let planStartTs   = 0;
 let planEndTs     = 0;
 let planCreatedAt = 0;
 
-const backUrl = patientId ? `/patient-detail?id=${patientId}` : '/home';
+const backUrl = patientId ? `patient_detail.html?id=${patientId}` : 'patient_detail.html';
 document.getElementById('backLink').onclick = () => location.href = backUrl;
 document.getElementById('toastConfirmBtn').onclick = () => location.href = backUrl;
 
