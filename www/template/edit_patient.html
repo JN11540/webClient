@@ -463,7 +463,7 @@
         // keep-alive: ping /health every 10s to prevent Railway sleeping
     setInterval(async () => {
       try {
-        const res = await fetch('${API_URL}/health');
+        const res = await fetch(`${API_URL}/health`);
         if (res.ok) {
           document.getElementById('connectionOverlay').style.display = 'none';
         } else {
