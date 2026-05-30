@@ -477,7 +477,7 @@
         // keep-alive: ping /health every 10s to prevent Railway sleeping
     setInterval(async () => {
       try {
-        const res = await fetch('/health');
+        const res = await fetch(`/health`);
         if (res.ok) {
           document.getElementById('connectionOverlay').style.display = 'none';
         } else {
