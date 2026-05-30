@@ -857,6 +857,30 @@ function showToast(msg, err) {
 }
 
 init();
+
+// keep-alive: ping /health every 10s to prevent Railway sleeping
+    // keep-alive: ping /health every 10s to prevent Railway sleeping
+    setInterval(async () => {
+      try {
+        const res = await fetch('/health');
+        if (res.ok) {
+          document.getElementById('connectionOverlay').style.display = 'none';
+        } else {
+          document.getElementById('connectionOverlay').style.display = 'flex';
+        }
+      } catch (e) {
+        document.getElementById('connectionOverlay').style.display = 'flex';
+      }
+    }, 10000);
 </script>
+
+  <!-- 連線失敗提示 -->
+  <div id="connectionOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:12px; padding:32px 28px; text-align:center; display:flex; flex-direction:column; gap:14px; max-width:300px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+      <div style="font-size:16px; font-weight:600; color:#0C447C;">嘗試連線中</div>
+      <div style="font-size:13px; color:#378ADD; line-height:1.6;">請稍後...</div>
+      <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:14px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
+    </div>
+  </div>
 </body>
 </html>
