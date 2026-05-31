@@ -528,6 +528,8 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
+    const MAX_RETRIES = 3;
+    const _retry = {};
 
     function f(name) { return document.querySelector(`[name="${name}"]`); }
     function intOrNull(name) { const v = f(name).value; return v !== '' ? parseInt(v) : null; }
@@ -637,13 +639,22 @@
           body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (data.result) {
-          location.href = `patient_detail.html?id=${patientId}`;
-        } else {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.submitAssessment || 0) < MAX_RETRIES) {
+            _retry.submitAssessment = (_retry.submitAssessment || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitAssessment}/${MAX_RETRIES})`);
+            setTimeout(submitAssessment, 3000);
+          } else { _retry.submitAssessment = 0; alert(data.message || '送出失敗'); }
+          return;
         }
+        _retry.submitAssessment = 0;
+        if (data.result) { location.href = `patient_detail.html?id=${patientId}`; } else { alert(data.message); }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.submitAssessment || 0) < MAX_RETRIES) {
+          _retry.submitAssessment = (_retry.submitAssessment || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitAssessment}/${MAX_RETRIES})`);
+          setTimeout(submitAssessment, 3000);
+        } else { _retry.submitAssessment = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 

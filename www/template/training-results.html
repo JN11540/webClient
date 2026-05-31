@@ -275,6 +275,8 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
     const clinicianId = localStorage.getItem('clinician_id');
+    const MAX_RETRIES = 3;
+    const _retry = {};
 /* ── Helpers ── */
 
 function apiFetch(path, opts = {}) {
@@ -345,7 +347,11 @@ async function init() {
       });
     }
   } catch (e) {
-    alert('伺服器資料庫啟動中...');
+    if ((_retry.init || 0) < MAX_RETRIES) {
+      _retry.init = (_retry.init || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.init}/${MAX_RETRIES})`);
+      setTimeout(init, 3000);
+    } else { _retry.init = 0; alert('伺服器資料庫啟動中...'); }
   }
 }
 
@@ -382,7 +388,11 @@ async function onPatientChange() {
       planSel.disabled = false;
     }
   } catch (e) {
-    alert('伺服器資料庫啟動中...');
+    if ((_retry.onPatientChange || 0) < MAX_RETRIES) {
+      _retry.onPatientChange = (_retry.onPatientChange || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.onPatientChange}/${MAX_RETRIES})`);
+      setTimeout(onPatientChange, 3000);
+    } else { _retry.onPatientChange = 0; alert('伺服器資料庫啟動中...'); }
   }
 }
 
@@ -528,7 +538,11 @@ async function doQuery() {
     renderTable(rows);
     showToast(`已載入 ${rows.length} 筆結果`);
   } catch (e) {
-    alert('伺服器資料庫啟動中...');
+    if ((_retry.doQuery || 0) < MAX_RETRIES) {
+      _retry.doQuery = (_retry.doQuery || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.doQuery}/${MAX_RETRIES})`);
+      setTimeout(doQuery, 3000);
+    } else { _retry.doQuery = 0; alert('伺服器資料庫啟動中...'); }
   }
 }
 

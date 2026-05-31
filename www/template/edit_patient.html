@@ -350,6 +350,8 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
+    const MAX_RETRIES = 3;
+    const _retry = {};
 
     function field(name) {
       return document.querySelector(`[name="${name}"]`);
@@ -372,10 +374,16 @@
           headers: {},
         });
         const data = await res.json();
-        if (!data.result) {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.loadPatient || 0) < MAX_RETRIES) {
+            _retry.loadPatient = (_retry.loadPatient || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
+            setTimeout(loadPatient, 3000);
+          } else { _retry.loadPatient = 0; alert(data.message || '載入失敗'); }
           return;
         }
+        _retry.loadPatient = 0;
+        if (!data.result) { alert(data.message); return; }
 
         const p = data.data;
         field('name').value                    = p.name || '';
@@ -404,7 +412,11 @@
         const genderRadio = document.querySelector(`[name="gender"][value="${p.gender}"]`);
         if (genderRadio) genderRadio.checked = true;
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.loadPatient || 0) < MAX_RETRIES) {
+          _retry.loadPatient = (_retry.loadPatient || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
+          setTimeout(loadPatient, 3000);
+        } else { _retry.loadPatient = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
@@ -440,13 +452,22 @@
           body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (data.result) {
-          location.href = `patient_detail.html?id=${patientId}`;
-        } else {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.submitEdit || 0) < MAX_RETRIES) {
+            _retry.submitEdit = (_retry.submitEdit || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
+            setTimeout(submitEdit, 3000);
+          } else { _retry.submitEdit = 0; alert(data.message || '送出失敗'); }
+          return;
         }
+        _retry.submitEdit = 0;
+        if (data.result) { location.href = `patient_detail.html?id=${patientId}`; } else { alert(data.message); }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.submitEdit || 0) < MAX_RETRIES) {
+          _retry.submitEdit = (_retry.submitEdit || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
+          setTimeout(submitEdit, 3000);
+        } else { _retry.submitEdit = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 

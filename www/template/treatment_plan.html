@@ -419,6 +419,8 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
     const clinicianId = localStorage.getItem('clinician_id');
+    const MAX_RETRIES = 3;
+    const _retry = {};
 /* ── Helpers ── */
 function tsToDateStr(ts) {
   if (!ts) return '—';
@@ -448,18 +450,49 @@ async function loadClinicianAvatar() {
   try {
     const res = await fetch(`${API_URL}/clinicians/${clinicianId}`, { headers: {} });
     const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 500 && (_retry.loadClinicianAvatar || 0) < MAX_RETRIES) {
+        _retry.loadClinicianAvatar = (_retry.loadClinicianAvatar || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadClinicianAvatar}/${MAX_RETRIES})`);
+        setTimeout(loadClinicianAvatar, 3000);
+      } else { _retry.loadClinicianAvatar = 0; alert(data.message || '操作失敗'); }
+      return;
+    }
+    _retry.loadClinicianAvatar = 0;
+    if (!data.result) { alert(data.message); return; }
     if (data.result && data.data.name) {
       document.getElementById('sidebarAvatar').textContent = data.data.name.charAt(0);
     }
-  } catch(e) { alert('伺服器資料庫啟動中...'); }
+  } catch(e) {
+    if ((_retry.loadClinicianAvatar || 0) < MAX_RETRIES) {
+      _retry.loadClinicianAvatar = (_retry.loadClinicianAvatar || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadClinicianAvatar}/${MAX_RETRIES})`);
+      setTimeout(loadClinicianAvatar, 3000);
+    } else { _retry.loadClinicianAvatar = 0; alert('伺服器資料庫啟動中...'); }
+  }
 }
 
 async function loadExercises() {
   try {
     const res = await fetch(`${API_URL}/exercises`, { headers: {} });
     const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 500 && (_retry.loadExercises || 0) < MAX_RETRIES) {
+        _retry.loadExercises = (_retry.loadExercises || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadExercises}/${MAX_RETRIES})`);
+        setTimeout(loadExercises, 3000);
+      } else { _retry.loadExercises = 0; alert(data.message || '操作失敗'); }
+      return;
+    }
+    _retry.loadExercises = 0;
     if (data.result) exercises = data.data;
-  } catch(e) { alert('伺服器資料庫啟動中...'); }
+  } catch(e) {
+    if ((_retry.loadExercises || 0) < MAX_RETRIES) {
+      _retry.loadExercises = (_retry.loadExercises || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadExercises}/${MAX_RETRIES})`);
+      setTimeout(loadExercises, 3000);
+    } else { _retry.loadExercises = 0; alert('伺服器資料庫啟動中...'); }
+  }
 }
 
 async function loadPatients() {
@@ -467,6 +500,15 @@ async function loadPatients() {
   try {
     const res = await fetch(`${API_URL}/clinicians/${clinicianId}/patients`, { headers: {} });
     const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 500 && (_retry.loadPatients || 0) < MAX_RETRIES) {
+        _retry.loadPatients = (_retry.loadPatients || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
+        setTimeout(loadPatients, 3000);
+      } else { _retry.loadPatients = 0; alert(data.message || '操作失敗'); }
+      return;
+    }
+    _retry.loadPatients = 0;
     if (!data.result) return;
     const sel = document.getElementById('patientSelect');
     data.data.forEach(p => {
@@ -476,7 +518,13 @@ async function loadPatients() {
       opt.textContent = `${p.name}　｜　${p.gender === 1 ? '男' : '女'}　${age} 歲　｜　${p.diagnosis || '—'}`;
       sel.appendChild(opt);
     });
-  } catch(e) { alert('伺服器資料庫啟動中...'); }
+  } catch(e) {
+    if ((_retry.loadPatients || 0) < MAX_RETRIES) {
+      _retry.loadPatients = (_retry.loadPatients || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
+      setTimeout(loadPatients, 3000);
+    } else { _retry.loadPatients = 0; alert('伺服器資料庫啟動中...'); }
+  }
 }
 
 /* ── Patient change ── */
@@ -492,6 +540,15 @@ async function onPatientChange() {
   try {
     const res = await fetch(`${API_URL}/patients/${v}`, { headers: {} });
     const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 500 && (_retry.onPatientChange || 0) < MAX_RETRIES) {
+        _retry.onPatientChange = (_retry.onPatientChange || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.onPatientChange}/${MAX_RETRIES})`);
+        setTimeout(onPatientChange, 3000);
+      } else { _retry.onPatientChange = 0; alert(data.message || '操作失敗'); }
+      return;
+    }
+    _retry.onPatientChange = 0;
     if (!data.result) return;
     const p = data.data;
     currentPatientName = p.name;
@@ -514,7 +571,13 @@ async function onPatientChange() {
     set('iImg',    p.imaging_findings);
     set('iFlow',   p.visit_flow);
     loadMeasurements(v);
-  } catch(e) { alert('伺服器資料庫啟動中...'); }
+  } catch(e) {
+    if ((_retry.onPatientChange || 0) < MAX_RETRIES) {
+      _retry.onPatientChange = (_retry.onPatientChange || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.onPatientChange}/${MAX_RETRIES})`);
+      setTimeout(onPatientChange, 3000);
+    } else { _retry.onPatientChange = 0; alert('伺服器資料庫啟動中...'); }
+  }
 }
 
 /* ── Measurements / Compare ── */
@@ -525,9 +588,24 @@ async function loadMeasurements(patientId) {
   try {
     const res = await fetch(`${API_URL}/patients/${patientId}/measurements`, { headers: {} });
     const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 500 && (_retry.loadMeasurements || 0) < MAX_RETRIES) {
+        _retry.loadMeasurements = (_retry.loadMeasurements || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadMeasurements}/${MAX_RETRIES})`);
+        setTimeout(() => loadMeasurements(patientId), 3000);
+      } else { _retry.loadMeasurements = 0; alert(data.message || '操作失敗'); }
+      return;
+    }
+    _retry.loadMeasurements = 0;
     if (!data.result) return;
     renderCompare(buildCompareData(data.data));
-  } catch(e) { alert('伺服器資料庫啟動中...'); }
+  } catch(e) {
+    if ((_retry.loadMeasurements || 0) < MAX_RETRIES) {
+      _retry.loadMeasurements = (_retry.loadMeasurements || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadMeasurements}/${MAX_RETRIES})`);
+      setTimeout(() => loadMeasurements(patientId), 3000);
+    } else { _retry.loadMeasurements = 0; alert('伺服器資料庫啟動中...'); }
+  }
 }
 
 function buildCompareData(measurements) {
@@ -950,17 +1028,26 @@ async function submitPlan() {
     });
     const data = await res.json();
     if (!res.ok) {
-      const msg = data.message || (data.detail ? `驗證錯誤 (${res.status})` : `伺服器錯誤 (${res.status})`);
-      showToast(msg, true);
+      if (res.status === 500 && (_retry.submitPlan || 0) < MAX_RETRIES) {
+        _retry.submitPlan = (_retry.submitPlan || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitPlan}/${MAX_RETRIES})`);
+        setTimeout(submitPlan, 3000);
+      } else { _retry.submitPlan = 0; alert(data.message || '操作失敗'); }
       return;
     }
+    _retry.submitPlan = 0;
+    if (!data.result) { alert(data.message); return; }
     if (data.result) {
       showToast('治療計畫已成功送出 ✓');
     } else {
       showToast(data.message, true);
     }
   } catch(e) {
-    alert('伺服器資料庫啟動中...');
+    if ((_retry.submitPlan || 0) < MAX_RETRIES) {
+      _retry.submitPlan = (_retry.submitPlan || 0) + 1;
+      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitPlan}/${MAX_RETRIES})`);
+      setTimeout(submitPlan, 3000);
+    } else { _retry.submitPlan = 0; alert('伺服器資料庫啟動中...'); }
   }
 }
 

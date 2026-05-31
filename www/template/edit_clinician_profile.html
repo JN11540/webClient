@@ -229,6 +229,8 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
+    const MAX_RETRIES = 3;
+    const _retry = {};
     const clinicianId = localStorage.getItem('clinician_id');
 
     function field(name) {
@@ -242,10 +244,16 @@
           headers: {},
         });
         const data = await res.json();
-        if (!data.result) {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.loadProfile || 0) < MAX_RETRIES) {
+            _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+            setTimeout(loadProfile, 3000);
+          } else { _retry.loadProfile = 0; alert(data.message || '載入失敗'); }
           return;
         }
+        _retry.loadProfile = 0;
+        if (!data.result) { alert(data.message); return; }
 
         const c = data.data;
         field('name').value                = c.name || '';
@@ -258,7 +266,11 @@
         field('years_of_experience').value = c.years_of_experience ?? '';
         field('clinic_location').value     = c.clinic_location || '';
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.loadProfile || 0) < MAX_RETRIES) {
+          _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+          setTimeout(loadProfile, 3000);
+        } else { _retry.loadProfile = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
@@ -287,13 +299,22 @@
           body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (data.result) {
-          location.href = 'home.html';
-        } else {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.submitEdit || 0) < MAX_RETRIES) {
+            _retry.submitEdit = (_retry.submitEdit || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
+            setTimeout(submitEdit, 3000);
+          } else { _retry.submitEdit = 0; alert(data.message || '送出失敗'); }
+          return;
         }
+        _retry.submitEdit = 0;
+        if (data.result) { location.href = 'home.html'; } else { alert(data.message); }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.submitEdit || 0) < MAX_RETRIES) {
+          _retry.submitEdit = (_retry.submitEdit || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
+          setTimeout(submitEdit, 3000);
+        } else { _retry.submitEdit = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
