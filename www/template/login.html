@@ -24,6 +24,8 @@
   </div>
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
+    const MAX_RETRIES = 3;
+    const _retry = {};
     async function submitLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -40,17 +42,30 @@
           body: JSON.stringify({ username, password }),
         });
 
-        const data = await res.json();
-        if (res.ok && data.result) {
-          if (data.clinician_id) {
-            localStorage.setItem('clinician_id', String(data.clinician_id));
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.submitLogin || 0) < MAX_RETRIES) {
+            _retry.submitLogin = (_retry.submitLogin || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitLogin}/${MAX_RETRIES})`);
+            setTimeout(submitLogin, 3000);
+          } else {
+            _retry.submitLogin = 0;
+            alert(data.message || '登入失敗');
           }
-          location.href = '/home';
-        } else {
-          alert(data.message || '登入失敗');
+          return;
         }
+        _retry.submitLogin = 0;
+        if (data.clinician_id) localStorage.setItem('clinician_id', String(data.clinician_id));
+        location.href = 'home.html';
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.submitLogin || 0) < MAX_RETRIES) {
+          _retry.submitLogin = (_retry.submitLogin || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitLogin}/${MAX_RETRIES})`);
+          setTimeout(submitLogin, 3000);
+        } else {
+          _retry.submitLogin = 0;
+          alert('伺服器資料庫啟動中...');
+        }
       }
     }
 

@@ -337,6 +337,8 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
+    const MAX_RETRIES = 3;
+    const _retry = {};
     const clinicianId = localStorage.getItem('clinician_id');
 
     async function loadProfile() {
@@ -347,10 +349,16 @@
         });
 
         const data = await res.json();
-        if (!data.result) {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.loadProfile || 0) < MAX_RETRIES) {
+            _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+            setTimeout(loadProfile, 3000);
+          } else { _retry.loadProfile = 0; alert(data.message || '載入失敗'); }
           return;
         }
+        _retry.loadProfile = 0;
+        if (!data.result) { alert(data.message); return; }
 
         const c = data.data;
         if (c.name) document.getElementById('sidebarAvatar').textContent = c.name.charAt(0);
@@ -362,7 +370,11 @@
         document.getElementById('pf-years').textContent       = c.years_of_experience != null ? `${c.years_of_experience} 年` : '—';
         document.getElementById('pf-clinic').textContent      = c.clinic_location || '—';
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.loadProfile || 0) < MAX_RETRIES) {
+          _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+          setTimeout(loadProfile, 3000);
+        } else { _retry.loadProfile = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
@@ -373,10 +385,16 @@
           headers: {},
         });
         const data = await res.json();
-        if (!data.result) {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.loadPatients || 0) < MAX_RETRIES) {
+            _retry.loadPatients = (_retry.loadPatients || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
+            setTimeout(loadPatients, 3000);
+          } else { _retry.loadPatients = 0; alert(data.message || '載入失敗'); }
           return;
         }
+        _retry.loadPatients = 0;
+        if (!data.result) { alert(data.message); return; }
 
         const patients = data.data;
         document.getElementById('case-title').textContent = `個案列表 (${patients.length})`;
@@ -417,7 +435,11 @@
             </div>`;
         }).join('');
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.loadPatients || 0) < MAX_RETRIES) {
+          _retry.loadPatients = (_retry.loadPatients || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
+          setTimeout(loadPatients, 3000);
+        } else { _retry.loadPatients = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
@@ -429,13 +451,22 @@
           headers: {},
         });
         const data = await res.json();
-        if (data.result) {
-          loadPatients();
-        } else {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.deletePatient || 0) < MAX_RETRIES) {
+            _retry.deletePatient = (_retry.deletePatient || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePatient}/${MAX_RETRIES})`);
+            setTimeout(() => deletePatient(patientId), 3000);
+          } else { _retry.deletePatient = 0; alert(data.message || '刪除失敗'); }
+          return;
         }
+        _retry.deletePatient = 0;
+        if (data.result) { loadPatients(); } else { alert(data.message); }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.deletePatient || 0) < MAX_RETRIES) {
+          _retry.deletePatient = (_retry.deletePatient || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePatient}/${MAX_RETRIES})`);
+          setTimeout(() => deletePatient(patientId), 3000);
+        } else { _retry.deletePatient = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 

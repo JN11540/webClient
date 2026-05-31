@@ -448,6 +448,8 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
+    const MAX_RETRIES = 3;
+    const _retry = {};
 
     function tsToDateStr(ts) {
       const d = new Date(ts * 1000);
@@ -477,6 +479,15 @@
           headers: {},
         });
         const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.loadPatient || 0) < MAX_RETRIES) {
+            _retry.loadPatient = (_retry.loadPatient || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
+            setTimeout(loadPatient, 3000);
+          } else { _retry.loadPatient = 0; alert(data.message || '操作失敗'); }
+          return;
+        }
+        _retry.loadPatient = 0;
         if (!data.result) {
           alert(data.message);
           return;
@@ -517,7 +528,11 @@
           txDiv.style.display = 'none';
         }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.loadPatient || 0) < MAX_RETRIES) {
+          _retry.loadPatient = (_retry.loadPatient || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
+          setTimeout(loadPatient, 3000);
+        } else { _retry.loadPatient = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
@@ -567,13 +582,26 @@
           headers: {},
         });
         const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.deleteAssessment || 0) < MAX_RETRIES) {
+            _retry.deleteAssessment = (_retry.deleteAssessment || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deleteAssessment}/${MAX_RETRIES})`);
+            setTimeout(() => deleteAssessment(measurementId), 3000);
+          } else { _retry.deleteAssessment = 0; alert(data.message || '操作失敗'); }
+          return;
+        }
+        _retry.deleteAssessment = 0;
         if (data.result) {
           loadMeasurements();
         } else {
           alert(data.message);
         }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.deleteAssessment || 0) < MAX_RETRIES) {
+          _retry.deleteAssessment = (_retry.deleteAssessment || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deleteAssessment}/${MAX_RETRIES})`);
+          setTimeout(() => deleteAssessment(measurementId), 3000);
+        } else { _retry.deleteAssessment = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
@@ -731,6 +759,15 @@
           headers: {},
         });
         const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.loadMeasurements || 0) < MAX_RETRIES) {
+            _retry.loadMeasurements = (_retry.loadMeasurements || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadMeasurements}/${MAX_RETRIES})`);
+            setTimeout(loadMeasurements, 3000);
+          } else { _retry.loadMeasurements = 0; alert(data.message || '操作失敗'); }
+          return;
+        }
+        _retry.loadMeasurements = 0;
         if (!data.result) { alert(data.message); return; }
 
         const measurements = data.data;
@@ -760,7 +797,11 @@
           renderRom(measurements, sides) +
           renderMmt(measurements, sides);
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.loadMeasurements || 0) < MAX_RETRIES) {
+          _retry.loadMeasurements = (_retry.loadMeasurements || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadMeasurements}/${MAX_RETRIES})`);
+          setTimeout(loadMeasurements, 3000);
+        } else { _retry.loadMeasurements = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
@@ -910,9 +951,26 @@
     async function deletePlan(id) {
       if (!confirm('確定刪除此治療計畫？')) return;
       try {
-        await fetch(`${API_URL}/treatments/${id}/full`, { method: 'DELETE', headers: {} });
+        const res = await fetch(`${API_URL}/treatments/${id}/full`, { method: 'DELETE', headers: {} });
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.deletePlan || 0) < MAX_RETRIES) {
+            _retry.deletePlan = (_retry.deletePlan || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePlan}/${MAX_RETRIES})`);
+            setTimeout(() => deletePlan(id), 3000);
+          } else { _retry.deletePlan = 0; alert(data.message || '操作失敗'); }
+          return;
+        }
+        _retry.deletePlan = 0;
+        if (!data.result) { alert(data.message); return; }
         loadPlans();
-      } catch(e) { alert('伺服器資料庫啟動中...'); }
+      } catch(e) {
+        if ((_retry.deletePlan || 0) < MAX_RETRIES) {
+          _retry.deletePlan = (_retry.deletePlan || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePlan}/${MAX_RETRIES})`);
+          setTimeout(() => deletePlan(id), 3000);
+        } else { _retry.deletePlan = 0; alert('伺服器資料庫啟動中...'); }
+      }
     }
 
     async function loadPlans() {
@@ -924,6 +982,15 @@
 
         const tRes = await fetch(`${API_URL}/treatments/patient/${patientId}`, { headers: {} });
         const tData = await tRes.json();
+        if (!tRes.ok) {
+          if (tRes.status === 500 && (_retry.loadPlans || 0) < MAX_RETRIES) {
+            _retry.loadPlans = (_retry.loadPlans || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPlans}/${MAX_RETRIES})`);
+            setTimeout(loadPlans, 3000);
+          } else { _retry.loadPlans = 0; alert(tData.message || '操作失敗'); }
+          return;
+        }
+        _retry.loadPlans = 0;
         if (!tData.result) return;
 
         const fullPlans = await Promise.all((tData.data || []).map(async t => {
@@ -933,7 +1000,13 @@
         }));
 
         renderPlans(fullPlans, exerciseMap);
-      } catch(e) { alert('伺服器資料庫啟動中...'); }
+      } catch(e) {
+        if ((_retry.loadPlans || 0) < MAX_RETRIES) {
+          _retry.loadPlans = (_retry.loadPlans || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPlans}/${MAX_RETRIES})`);
+          setTimeout(loadPlans, 3000);
+        } else { _retry.loadPlans = 0; alert('伺服器資料庫啟動中...'); }
+      }
     }
 
     loadPatient();
@@ -948,11 +1021,23 @@
       }
       try {
         const res = await fetch(`${API_URL}/treatments/${planId}/qrcode`);
-        if (!res.ok) { alert('無法取得 QR Code'); return; }
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.togglePlanQrCode || 0) < MAX_RETRIES) {
+            _retry.togglePlanQrCode = (_retry.togglePlanQrCode || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.togglePlanQrCode}/${MAX_RETRIES})`);
+            setTimeout(() => togglePlanQrCode(planId), 3000);
+          } else { _retry.togglePlanQrCode = 0; alert('無法取得 QR Code'); }
+          return;
+        }
+        _retry.togglePlanQrCode = 0;
         const blob = await res.blob();
         document.getElementById(`planQrImg-${planId}`).src = URL.createObjectURL(blob);
       } catch (e) {
-        alert('QR Code 載入失敗：' + e.message);
+        if ((_retry.togglePlanQrCode || 0) < MAX_RETRIES) {
+          _retry.togglePlanQrCode = (_retry.togglePlanQrCode || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.togglePlanQrCode}/${MAX_RETRIES})`);
+          setTimeout(() => togglePlanQrCode(planId), 3000);
+        } else { _retry.togglePlanQrCode = 0; alert('伺服器資料庫啟動中...'); }
         return;
       }
       area.style.display = 'flex';
