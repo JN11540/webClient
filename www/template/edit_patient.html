@@ -404,7 +404,7 @@
         const genderRadio = document.querySelector(`[name="gender"][value="${p.gender}"]`);
         if (genderRadio) genderRadio.checked = true;
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
@@ -446,7 +446,7 @@
           alert(data.message);
         }
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 

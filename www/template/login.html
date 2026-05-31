@@ -33,19 +33,27 @@
         return;
       }
 
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+          redirect: 'manual',
+        });
 
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('clinician_id', String(data.clinician_id));
-        location.href = 'home.html';
-      } else {
-        const data = await res.json().catch(() => ({}));
-        alert(data.message || '登入失敗');
+        if (res.type === 'opaqueredirect') {
+          // 307 收到，cookie 已由 browser 寫入，手動導向
+          location.href = '/home';
+        } else {
+          try {
+            const data = await res.json();
+            alert(data.message || '登入失敗');
+          } catch {
+            alert('登入失敗');
+          }
+        }
+      } catch (e) {
+        alert('伺服器資料庫啟動中...');
       }
     }
 

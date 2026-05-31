@@ -451,7 +451,7 @@ async function loadClinicianAvatar() {
     if (data.result && data.data.name) {
       document.getElementById('sidebarAvatar').textContent = data.data.name.charAt(0);
     }
-  } catch(e) {}
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 async function loadExercises() {
@@ -459,7 +459,7 @@ async function loadExercises() {
     const res = await fetch(`${API_URL}/exercises`, { headers: {} });
     const data = await res.json();
     if (data.result) exercises = data.data;
-  } catch(e) { console.error(e); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 async function loadPatients() {
@@ -476,7 +476,7 @@ async function loadPatients() {
       opt.textContent = `${p.name}　｜　${p.gender === 1 ? '男' : '女'}　${age} 歲　｜　${p.diagnosis || '—'}`;
       sel.appendChild(opt);
     });
-  } catch(e) { console.error(e); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 /* ── Patient change ── */
@@ -514,7 +514,7 @@ async function onPatientChange() {
     set('iImg',    p.imaging_findings);
     set('iFlow',   p.visit_flow);
     loadMeasurements(v);
-  } catch(e) { console.error(e); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 /* ── Measurements / Compare ── */
@@ -527,7 +527,7 @@ async function loadMeasurements(patientId) {
     const data = await res.json();
     if (!data.result) return;
     renderCompare(buildCompareData(data.data));
-  } catch(e) { console.error(e); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 function buildCompareData(measurements) {
@@ -960,7 +960,7 @@ async function submitPlan() {
       showToast(data.message, true);
     }
   } catch(e) {
-    showToast(e.message, true);
+    alert('伺服器資料庫啟動中...');
   }
 }
 

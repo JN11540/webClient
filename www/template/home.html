@@ -362,7 +362,7 @@
         document.getElementById('pf-years').textContent       = c.years_of_experience != null ? `${c.years_of_experience} 年` : '—';
         document.getElementById('pf-clinic').textContent      = c.clinic_location || '—';
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
@@ -417,7 +417,7 @@
             </div>`;
         }).join('');
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
@@ -435,7 +435,7 @@
           alert(data.message);
         }
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 

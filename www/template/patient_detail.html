@@ -517,7 +517,7 @@
           txDiv.style.display = 'none';
         }
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
@@ -573,7 +573,7 @@
           alert(data.message);
         }
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
@@ -760,7 +760,7 @@
           renderRom(measurements, sides) +
           renderMmt(measurements, sides);
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
@@ -912,7 +912,7 @@
       try {
         await fetch(`${API_URL}/treatments/${id}/full`, { method: 'DELETE', headers: {} });
         loadPlans();
-      } catch(e) { alert(e.message); }
+      } catch(e) { alert('伺服器資料庫啟動中...'); }
     }
 
     async function loadPlans() {
@@ -933,7 +933,7 @@
         }));
 
         renderPlans(fullPlans, exerciseMap);
-      } catch(e) { console.error(e); }
+      } catch(e) { alert('伺服器資料庫啟動中...'); }
     }
 
     loadPatient();

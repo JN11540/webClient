@@ -321,9 +321,9 @@ let selectedActions  = new Set(); // Set<exercise_id (number)>
 async function init() {
   try {
     const [exRes, patRes, clinRes] = await Promise.all([
-      apiFetch('/exercises'),
-      apiFetch(`/clinicians/${clinicianId}/patients`),
-      apiFetch(`/clinicians/${clinicianId}`),
+      apiFetch('${API_URL}/exercises'),
+      apiFetch(`${API_URL}/clinicians/${clinicianId}/patients`),
+      apiFetch(`${API_URL}/clinicians/${clinicianId}`),
     ]);
 
     if (exRes.result) {
@@ -345,7 +345,7 @@ async function init() {
       });
     }
   } catch (e) {
-    showToast('初始化失敗：' + e.message, true);
+    alert('伺服器資料庫啟動中...');
   }
 }
 
@@ -370,7 +370,7 @@ async function onPatientChange() {
   selectedPatientName = pat ? pat.name : '';
 
   try {
-    const res = await apiFetch(`/treatments/patient/${selectedPatient}`);
+    const res = await apiFetch(`${API_URL}/treatments/patient/${selectedPatient}`);
     if (res.result) {
       planList = res.data;
       planList.forEach(plan => {
@@ -382,7 +382,7 @@ async function onPatientChange() {
       planSel.disabled = false;
     }
   } catch (e) {
-    showToast('載入計畫失敗：' + e.message, true);
+    alert('伺服器資料庫啟動中...');
   }
 }
 
@@ -500,7 +500,7 @@ async function doQuery() {
   if (!selectedPlan)    { showToast('請先選擇治療計畫', true); return; }
 
   try {
-    const res = await apiFetch(`/treatment-results/by-treatment/${selectedPlan}`);
+    const res = await apiFetch(`${API_URL}/treatment-results/by-treatment/${selectedPlan}`);
     if (!res.result) { showToast(res.message || '查詢失敗', true); return; }
 
     // Build result map keyed by treatment_content_id
@@ -528,7 +528,7 @@ async function doQuery() {
     renderTable(rows);
     showToast(`已載入 ${rows.length} 筆結果`);
   } catch (e) {
-    showToast('查詢失敗：' + e.message, true);
+    alert('伺服器資料庫啟動中...');
   }
 }
 
