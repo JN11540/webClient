@@ -301,17 +301,21 @@
         phone: get('phone') || null,
       };
 
-      const res = await fetch('/clinicians', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+      try {
+        const res = await fetch('/clinicians', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
 
-      const data = await res.json();
-      if (data.result) {
-        location.href = '/';
-      } else {
-        alert(data.message || '註冊失敗');
+        const data = await res.json();
+        if (data.result) {
+          location.href = '/';
+        } else {
+          alert(data.message || '註冊失敗');
+        }
+      } catch (e) {
+        alert('伺服器資料庫啟動中...');
       }
     }
 
