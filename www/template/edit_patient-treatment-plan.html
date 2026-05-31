@@ -392,7 +392,7 @@ async function loadExercises() {
     const res = await fetch('/exercises', { headers: { 'Authorization': `Bearer ${sessionId}` } });
     const data = await res.json();
     if (data.result) exercises = data.data;
-  } catch(e) { console.error(e); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 async function loadPatient() {
@@ -432,7 +432,7 @@ async function loadPatient() {
     document.getElementById('patientInfoBlock').style.display = 'block';
 
     loadMeasurements();
-  } catch(e) { console.error(e); showToast('載入個案失敗', true); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 /* ── Load existing plan ── */
@@ -455,7 +455,7 @@ async function loadPlan() {
     renderTable();
     document.getElementById('planLoading').style.display = 'none';
     document.getElementById('scheduleWrap').style.display = 'block';
-  } catch(e) { console.error(e); showToast('載入計畫失敗', true); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 function buildWeekDataFromPlan(plan) {
@@ -519,7 +519,7 @@ async function loadMeasurements() {
     const data = await res.json();
     if (!data.result) return;
     renderCompare(buildCompareData(data.data));
-  } catch(e) { console.error(e); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 function buildCompareData(measurements) {
@@ -876,7 +876,7 @@ async function submitPlan() {
     } else {
       showToast(data.message, true);
     }
-  } catch(e) { showToast(e.message, true); }
+  } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
 
 function showToast(msg, err) {

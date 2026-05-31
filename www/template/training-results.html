@@ -349,7 +349,7 @@ async function init() {
       });
     }
   } catch (e) {
-    showToast('初始化失敗：' + e.message, true);
+    alert('伺服器資料庫啟動中...');
   }
 }
 
@@ -386,7 +386,7 @@ async function onPatientChange() {
       planSel.disabled = false;
     }
   } catch (e) {
-    showToast('載入計畫失敗：' + e.message, true);
+    alert('伺服器資料庫啟動中...');
   }
 }
 
@@ -532,7 +532,7 @@ async function doQuery() {
     renderTable(rows);
     showToast(`已載入 ${rows.length} 筆結果`);
   } catch (e) {
-    showToast('查詢失敗：' + e.message, true);
+    alert('伺服器資料庫啟動中...');
   }
 }
 

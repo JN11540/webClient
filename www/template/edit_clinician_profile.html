@@ -266,7 +266,7 @@
         field('years_of_experience').value = c.years_of_experience ?? '';
         field('clinic_location').value     = c.clinic_location || '';
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
@@ -308,7 +308,7 @@
           alert(data.message);
         }
       } catch (e) {
-        alert(e.message);
+        alert('伺服器資料庫啟動中...');
       }
     }
 
