@@ -323,9 +323,9 @@ let selectedActions  = new Set(); // Set<exercise_id (number)>
 async function init() {
   try {
     const [exRes, patRes, clinRes] = await Promise.all([
-      apiFetch('${API_URL}/exercises'),
-      apiFetch(`${API_URL}/clinicians/${clinicianId}/patients`),
-      apiFetch(`${API_URL}/clinicians/${clinicianId}`),
+      apiFetch('/exercises'),
+      apiFetch(`/clinicians/${clinicianId}/patients`),
+      apiFetch(`/clinicians/${clinicianId}`),
     ]);
 
     if (exRes.result) {
@@ -376,7 +376,7 @@ async function onPatientChange() {
   selectedPatientName = pat ? pat.name : '';
 
   try {
-    const res = await apiFetch(`${API_URL}/treatments/patient/${selectedPatient}`);
+    const res = await apiFetch(`/treatments/patient/${selectedPatient}`);
     if (res.result) {
       planList = res.data;
       planList.forEach(plan => {
@@ -510,7 +510,7 @@ async function doQuery() {
   if (!selectedPlan)    { showToast('請先選擇治療計畫', true); return; }
 
   try {
-    const res = await apiFetch(`${API_URL}/treatment-results/by-treatment/${selectedPlan}`);
+    const res = await apiFetch(`/treatment-results/by-treatment/${selectedPlan}`);
     if (!res.result) { showToast(res.message || '查詢失敗', true); return; }
 
     // Build result map keyed by treatment_content_id
