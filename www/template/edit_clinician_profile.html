@@ -5,227 +5,230 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>編輯個人資料</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
-      background: #EBF4FC;
       min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 40px 20px;
+      background: #dce8f5;
+      padding: 2rem;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
     }
 
-    .container {
-      width: 100%;
-      max-width: 520px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* ── 頁首 ── */
-    .page-header {
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a3a5c;
     }
 
     .btn-back {
-      font-size: 12px;
-      color: #378ADD;
+      font-size: 20px;
+      color: #1e5fa8;
       background: none;
       border: none;
       cursor: pointer;
-      padding: 0;
-      transition: color 0.2s;
-      font-family: inherit;
+      text-decoration: underline;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+      transition: color 0.15s;
     }
-    .btn-back:hover { color: #185FA5; }
+    .btn-back:hover { color: #174d8a; }
 
-    .page-title {
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      border: 0.5px solid #c8d8ec;
+      padding: 2rem 2.5rem;
+    }
+
+    .section { margin-bottom: 1.75rem; }
+
+    .section-label {
       font-size: 20px;
-      font-weight: 500;
-      color: #0C447C;
+      font-weight: 700;
+      color: #1e5fa8;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1.5px solid #c5d9f0;
     }
 
-    /* 標題右側佔位，讓標題視覺置中 */
-    .header-spacer { width: 60px; }
-
-    /* ── 表單卡片 ── */
-    .form-card {
-      background: white;
-      border-radius: 12px;
-      border: 0.5px solid #B5D4F4;
-      padding: 8px 24px 24px;
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
     }
 
-    /* ── 分組標題 ── */
-    .section-title {
-      font-size: 10px;
-      color: #185FA5;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 18px 0 6px;
+    .grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
     }
 
-    /* ── 行內欄位列 ── */
-    .field-row {
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 20px;
+      color: #555;
       display: flex;
       align-items: center;
-      padding: 10px 0;
-      border-bottom: 0.5px solid #EBF4FC;
-      gap: 12px;
+      gap: 6px;
     }
 
-    .field-row:last-of-type { border-bottom: none; }
+    .required { color: #e03a3a; font-size: 18px; }
+    .optional { font-size: 16px; color: #999; font-weight: 400; }
 
-    .field-label {
-      font-size: 13px;
-      color: #378ADD;
-      width: 80px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .required { color: #E24B4A; font-size: 11px; }
-    .optional { color: #B4B2A9; font-size: 11px; font-weight: 400; }
-
-    .field-input {
-      flex: 1;
-      background: #EBF4FC;
-      border: 1px solid #B5D4F4;
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 13px;
-      color: #0C447C;
+    .field input {
+      height: 52px;
+      padding: 0 14px;
+      border: 1px solid #c8d8ec;
+      border-radius: 8px;
+      font-size: 20px;
+      background: #f4f8fd;
+      color: #1a1a1a;
       outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      font-family: inherit;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
     }
 
-    .field-input:focus {
-      border-color: #185FA5;
-      background: #daeaf8;
+    .field input:focus {
+      border-color: #1e5fa8;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(30,95,168,0.1);
     }
 
-    /* ── 分隔線 ── */
-    .section-divider {
-      border: none;
-      border-top: 0.5px solid #E6F1FB;
-      margin: 4px 0 0;
-    }
+    .field input::placeholder { color: #aec4de; }
 
-    /* ── 按鈕列 ── */
     .btn-row {
       display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      padding-top: 20px;
-      border-top: 0.5px solid #E6F1FB;
-      margin-top: 8px;
+      gap: 12px;
+      margin-top: 0.5rem;
     }
 
     .btn-cancel {
-      font-size: 13px;
-      background: white;
-      color: #185FA5;
-      border: 1px solid #B5D4F4;
-      border-radius: 6px;
-      padding: 9px 20px;
+      flex: 1;
+      height: 54px;
+      background: #fff;
+      color: #1e5fa8;
+      border: 1.5px solid #a0c0dc;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
-      font-family: inherit;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+      transition: background 0.15s;
     }
-    .btn-cancel:hover { background: #E6F1FB; }
+    .btn-cancel:hover { background: #eaf3fb; }
 
     .btn-save {
-      font-size: 13px;
-      background: #185FA5;
-      color: white;
+      flex: 1;
+      height: 54px;
+      background: #1e5fa8;
+      color: #fff;
       border: none;
-      border-radius: 6px;
-      padding: 9px 24px;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 700;
       cursor: pointer;
-      font-weight: 500;
-      transition: background 0.2s;
-      font-family: inherit;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+      transition: background 0.15s, transform 0.1s;
     }
-    .btn-save:hover { background: #0C447C; }
-    .btn-save:active { background: #042C53; }
+    .btn-save:hover { background: #174d8a; }
+    .btn-save:active { transform: scale(0.99); }
+
+    .footer-note {
+      text-align: center;
+      font-size: 16px;
+      color: #888;
+      margin-top: 1.25rem;
+    }
+
+    .footer-note span { color: #e03a3a; }
   </style>
 </head>
 <body>
-  <div class="container">
 
-    <!-- 頁首 -->
-    <div class="page-header">
-      <button class="btn-back" onclick="location.href='/home'">← 返回首頁</button>
-      <div class="page-title">編輯個人資料</div>
-      <div class="header-spacer"></div>
-    </div>
-
-    <!-- 表單卡片 -->
-    <div class="form-card">
-
-      <!-- 基本資料 -->
-      <div class="section-title">基本資料</div>
-
-      <div class="field-row">
-        <label class="field-label">姓名 <span class="required">✱</span></label>
-        <input class="field-input" type="text" name="name">
-      </div>
-      <div class="field-row">
-        <label class="field-label">電子信箱 <span class="optional">選填</span></label>
-        <input class="field-input" type="email" name="email">
-      </div>
-      <div class="field-row">
-        <label class="field-label">電話 <span class="optional">選填</span></label>
-        <input class="field-input" type="tel" name="phone">
-      </div>
-
-      <hr class="section-divider">
-
-      <!-- 執業資訊 -->
-      <div class="section-title">執業資訊</div>
-
-      <div class="field-row">
-        <label class="field-label">所屬機構 <span class="optional">選填</span></label>
-        <input class="field-input" type="text" name="institution">
-      </div>
-      <div class="field-row">
-        <label class="field-label">科別 <span class="optional">選填</span></label>
-        <input class="field-input" type="text" name="department">
-      </div>
-      <div class="field-row">
-        <label class="field-label">職種 <span class="optional">選填</span></label>
-        <input class="field-input" type="text" name="profession">
-      </div>
-      <div class="field-row">
-        <label class="field-label">專科 <span class="optional">選填</span></label>
-        <input class="field-input" type="text" name="specialty">
-      </div>
-      <div class="field-row">
-        <label class="field-label">年資 <span class="optional">選填</span></label>
-        <input class="field-input" type="number" name="years_of_experience" min="0">
-      </div>
-      <div class="field-row">
-        <label class="field-label">診間地點 <span class="optional">選填</span></label>
-        <input class="field-input" type="text" name="clinic_location">
-      </div>
-
-      <!-- 按鈕列 -->
-      <div class="btn-row">
-        <button class="btn-cancel" onclick="location.href='/home'">取消</button>
-        <button class="btn-save" onclick="submitEdit()">儲存變更</button>
-      </div>
-
-    </div>
+  <div class="header">
+    <h1>編輯個人資料</h1>
+    <button class="btn-back" onclick="location.href='/home'">← 返回首頁</button>
   </div>
+
+  <div class="card">
+
+    <!-- 基本資料 -->
+    <div class="section">
+      <div class="section-label">基本資料</div>
+      <div class="grid-1">
+        <div class="field">
+          <label>姓名 <span class="required">*</span></label>
+          <input type="text" name="name">
+        </div>
+      </div>
+    </div>
+
+    <!-- 執業資訊 -->
+    <div class="section">
+      <div class="section-label">執業資訊</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>所屬機構 <span class="optional">選填</span></label>
+          <input type="text" name="institution">
+        </div>
+        <div class="field">
+          <label>科別 <span class="optional">選填</span></label>
+          <input type="text" name="department">
+        </div>
+        <div class="field">
+          <label>職種 <span class="optional">選填</span></label>
+          <input type="text" name="profession">
+        </div>
+        <div class="field">
+          <label>專科 <span class="optional">選填</span></label>
+          <input type="text" name="specialty">
+        </div>
+        <div class="field">
+          <label>年資（年） <span class="optional">選填</span></label>
+          <input type="number" min="0" name="years_of_experience">
+        </div>
+        <div class="field">
+          <label>診間地點 <span class="optional">選填</span></label>
+          <input type="text" name="clinic_location">
+        </div>
+      </div>
+    </div>
+
+    <!-- 聯絡資訊 -->
+    <div class="section" style="margin-bottom: 1.25rem;">
+      <div class="section-label">聯絡資訊</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>電子信箱 <span class="optional">選填</span></label>
+          <input type="email" name="email">
+        </div>
+        <div class="field">
+          <label>電話 <span class="optional">選填</span></label>
+          <input type="tel" name="phone">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="location.href='/home'">取消</button>
+      <button class="btn-save" onclick="submitEdit()">儲存變更</button>
+    </div>
+
+  </div>
+
+  <p class="footer-note"><span>*</span> 為必填欄位</p>
 
   <script>
     function getCookie(name) {
@@ -237,24 +240,29 @@
       return document.querySelector(`[name="${name}"]`);
     }
 
+    const MAX_RETRIES = 3;
+    const _retry = {};
+
     async function loadProfile() {
       const clinicianId = getCookie('clinician_id');
-      const sessionId = getCookie('session_id');
+      const sessionId   = getCookie('session_id');
       if (!clinicianId || !sessionId) {
         alert('cookie 不存在：clinician_id 或 session_id 遺失');
         return;
       }
-
       try {
-        const res = await fetch(`/clinicians/${clinicianId}`, {
-          headers: { 'Authorization': `Bearer ${sessionId}` },
-        });
+        const res  = await fetch(`/clinicians/${clinicianId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
         const data = await res.json();
-        if (!data.result) {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.loadProfile || 0) < MAX_RETRIES) {
+            _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+            setTimeout(loadProfile, 3000);
+          } else { _retry.loadProfile = 0; alert(data.message || '載入失敗'); }
           return;
         }
-
+        _retry.loadProfile = 0;
+        if (!data.result) { alert(data.message); return; }
         const c = data.data;
         field('name').value                = c.name || '';
         field('email').value               = c.email || '';
@@ -266,64 +274,67 @@
         field('years_of_experience').value = c.years_of_experience ?? '';
         field('clinic_location').value     = c.clinic_location || '';
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.loadProfile || 0) < MAX_RETRIES) {
+          _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+          setTimeout(loadProfile, 3000);
+        } else { _retry.loadProfile = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
     async function submitEdit() {
       const clinicianId = getCookie('clinician_id');
-      const sessionId = getCookie('session_id');
+      const sessionId   = getCookie('session_id');
       if (!clinicianId || !sessionId) {
         alert('cookie 不存在：clinician_id 或 session_id 遺失');
         return;
       }
-
       const yearsRaw = field('years_of_experience').value;
       const body = {
-        id: parseInt(clinicianId),
-        name: field('name').value.trim(),
-        email: field('email').value.trim() || null,
-        phone: field('phone').value.trim() || null,
-        institution: field('institution').value.trim() || null,
-        department: field('department').value.trim() || null,
-        profession: field('profession').value.trim() || null,
-        specialty: field('specialty').value.trim() || null,
+        id:                  parseInt(clinicianId),
+        name:                field('name').value.trim(),
+        email:               field('email').value.trim() || null,
+        phone:               field('phone').value.trim() || null,
+        institution:         field('institution').value.trim() || null,
+        department:          field('department').value.trim() || null,
+        profession:          field('profession').value.trim() || null,
+        specialty:           field('specialty').value.trim() || null,
         years_of_experience: yearsRaw !== '' ? parseInt(yearsRaw) : null,
-        clinic_location: field('clinic_location').value.trim() || null,
+        clinic_location:     field('clinic_location').value.trim() || null,
       };
-
       try {
-        const res = await fetch('/clinicians', {
+        const res  = await fetch('/clinicians', {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionId}`,
-          },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionId}` },
           body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (data.result) {
-          location.href = '/home';
-        } else {
-          alert(data.message);
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.submitEdit || 0) < MAX_RETRIES) {
+            _retry.submitEdit = (_retry.submitEdit || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
+            setTimeout(submitEdit, 3000);
+          } else { _retry.submitEdit = 0; alert(data.message || '儲存失敗'); }
+          return;
         }
+        _retry.submitEdit = 0;
+        if (data.result) { location.href = '/home'; } else { alert(data.message); }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.submitEdit || 0) < MAX_RETRIES) {
+          _retry.submitEdit = (_retry.submitEdit || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
+          setTimeout(submitEdit, 3000);
+        } else { _retry.submitEdit = 0; alert('伺服器資料庫啟動中...'); }
       }
     }
 
     loadProfile();
 
-    // keep-alive: ping /health every 10s to prevent Railway sleeping
-        // keep-alive: ping /health every 10s to prevent Railway sleeping
+    // keep-alive
     setInterval(async () => {
       try {
-        const res = await fetch(`/health`);
-        if (res.ok) {
-          document.getElementById('connectionOverlay').style.display = 'none';
-        } else {
-          document.getElementById('connectionOverlay').style.display = 'flex';
-        }
+        const res = await fetch('/health');
+        document.getElementById('connectionOverlay').style.display = res.ok ? 'none' : 'flex';
       } catch (e) {
         document.getElementById('connectionOverlay').style.display = 'flex';
       }
