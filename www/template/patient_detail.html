@@ -834,7 +834,7 @@
             <span class="plan-card-name">治療名稱：${escHtml(plan.name)}</span>
           </div>
           <div class="plan-card-actions">
-            <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='edit_patient-treatment-plan.html?id=${patientId}&planId=${plan.id}'">編輯</button>
+            <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='/edit-patient-treatment-plan?id=${patientId}&planId=${plan.id}'">編輯</button>
             <button class="plan-card-btn plan-card-btn-del" onclick="deletePlan(${plan.id})">刪除</button>
           </div>`;
 

@@ -224,7 +224,16 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
+          redirect: 'manual',
         });
+
+        // 307 redirect：server 已寫入 session，手動導向
+        if (res.type === 'opaqueredirect') {
+          _retry.submitLogin = 0;
+          location.href = '/home';
+          return;
+        }
+
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           if (res.status === 500 && (_retry.submitLogin || 0) < MAX_RETRIES) {
@@ -237,6 +246,7 @@
           }
           return;
         }
+        // 200 OK with JSON
         _retry.submitLogin = 0;
         if (data.clinician_id) localStorage.setItem('clinician_id', String(data.clinician_id));
         location.href = '/home';
