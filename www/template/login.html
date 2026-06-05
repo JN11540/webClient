@@ -224,6 +224,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
+          redirect: 'manual',
         });
 
         const data = await res.json().catch(() => ({}));
@@ -239,6 +240,7 @@
           return;
           return;
         }
+        // 200 OK with JSON
         _retry.submitLogin = 0;
         if (data.clinician_id) localStorage.setItem('clinician_id', String(data.clinician_id));
         location.href = 'home.html';
