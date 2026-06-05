@@ -5,274 +5,220 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>建立臨床人員帳號</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
-      background: #EBF4FC;
       min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 40px 20px;
+      background: #dce8f5;
+      padding: 2rem;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
     }
 
-    .container {
-      width: 100%;
-      max-width: 560px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* ── 頁首 ── */
-    .page-header {
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 1.5rem;
     }
 
-    .page-title {
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a3a5c;
+    }
+
+    .header a {
       font-size: 20px;
-      font-weight: 500;
-      color: #0C447C;
-    }
-
-    .page-login-link {
-      font-size: 12px;
-      color: #378ADD;
+      color: #1e5fa8;
       text-decoration: underline;
-      cursor: pointer;
     }
 
-    .page-login-link:hover { color: #185FA5; }
+    .header a:hover { color: #174d8a; }
 
-    /* ── 表單卡片 ── */
-    .form-card {
-      background: white;
-      border-radius: 12px;
-      border: 0.5px solid #B5D4F4;
-      padding: 24px 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      border: 0.5px solid #c8d8ec;
+      padding: 2rem 2.5rem;
     }
 
-    /* ── 群組 ── */
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .section { margin-bottom: 1.75rem; }
+
+    .section-label {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e5fa8;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1.5px solid #c5d9f0;
     }
 
-    .group-title {
-      font-size: 10px;
-      color: #185FA5;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding-bottom: 6px;
-      border-bottom: 0.5px solid #E6F1FB;
-    }
-
-    .form-row {
+    .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 1.25rem;
     }
 
-    .form-row.single {
-      grid-template-columns: 1fr;
-    }
-
-    /* ── 欄位 ── */
-    .form-field {
+    .field {
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
 
-    .field-label {
-      font-size: 11px;
-      color: #185FA5;
-      font-weight: 500;
+    .field label {
+      font-size: 20px;
+      color: #555;
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 6px;
     }
 
-    .required {
-      color: #E24B4A;
-      font-size: 10px;
-    }
+    .required { color: #e03a3a; font-size: 18px; }
+    .optional { font-size: 16px; color: #999; font-weight: 400; }
 
-    .optional {
-      color: #888780;
-      font-size: 10px;
-      font-weight: 400;
-    }
-
-    .field-input {
-      width: 100%;
-      background: #EBF4FC;
-      border: 1px solid #B5D4F4;
-      border-radius: 6px;
-      padding: 9px 12px;
-      font-size: 13px;
-      color: #0C447C;
+    .field input {
+      height: 52px;
+      padding: 0 14px;
+      border: 1px solid #c8d8ec;
+      border-radius: 8px;
+      font-size: 20px;
+      background: #f4f8fd;
+      color: #1a1a1a;
       outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      font-family: inherit;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
     }
 
-    .field-input:focus {
-      border-color: #185FA5;
-      background: #daeaf8;
+    .field input:focus {
+      border-color: #1e5fa8;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(30,95,168,0.1);
     }
 
-    .field-input::placeholder { color: #B5D4F4; }
+    .field input::placeholder { color: #aec4de; }
 
-    /* ── 分隔線 ── */
-    .divider {
-      border: none;
-      border-top: 0.5px solid #E6F1FB;
-    }
-
-    /* ── 送出按鈕 ── */
-    .btn-submit {
+    .submit-btn {
       width: 100%;
-      background: #185FA5;
-      color: white;
+      height: 54px;
+      background: #1e5fa8;
+      color: #fff;
       border: none;
-      border-radius: 7px;
-      padding: 12px;
-      font-size: 14px;
-      font-weight: 500;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 700;
       cursor: pointer;
-      letter-spacing: 0.04em;
-      transition: background 0.2s;
-      font-family: inherit;
+      margin-top: 0.5rem;
+      letter-spacing: 0.03em;
+      transition: background 0.15s, transform 0.1s;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
     }
 
-    .btn-submit:hover { background: #0C447C; }
-    .btn-submit:active { background: #042C53; }
+    .submit-btn:hover { background: #174d8a; }
+    .submit-btn:active { transform: scale(0.99); }
 
-    /* ── 底部說明 ── */
     .footer-note {
-      font-size: 10px;
-      color: #378ADD;
       text-align: center;
-      line-height: 1.7;
+      font-size: 16px;
+      color: #888;
+      margin-top: 1.25rem;
     }
 
-    .footer-note span { color: #E24B4A; }
+    .footer-note span { color: #e03a3a; }
   </style>
 </head>
 <body>
-  <div class="container">
 
-    <div class="page-header">
-      <div class="page-title">建立臨床人員帳號</div>
-      <a class="page-login-link" href="/">已有帳號？登入</a>
-    </div>
+  <div class="header">
+    <h1>建立臨床人員帳號</h1>
+    <a href="/">已有帳號？登入</a>
+  </div>
 
-    <div class="form-card">
+  <div class="card">
 
-      <!-- 帳號資訊 -->
-      <div class="form-group">
-        <div class="group-title">帳號資訊</div>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="field-label">姓名 <span class="required">✱</span></label>
-            <input class="field-input" type="text" name="name">
-          </div>
-          <div class="form-field">
-            <label class="field-label">登入帳號 <span class="required">✱</span></label>
-            <input class="field-input" type="text" name="username">
-          </div>
+    <!-- 帳號資訊 -->
+    <div class="section">
+      <div class="section-label">帳號資訊</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>姓名 <span class="required">*</span></label>
+          <input type="text" name="name">
         </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="field-label">密碼 <span class="required">✱</span></label>
-            <input class="field-input" type="password" name="password">
-          </div>
-          <div class="form-field">
-            <label class="field-label">確認密碼 <span class="required">✱</span></label>
-            <input class="field-input" type="password" name="password_confirm">
-          </div>
+        <div class="field">
+          <label>登入帳號 <span class="required">*</span></label>
+          <input type="text" name="username">
+        </div>
+        <div class="field">
+          <label>密碼 <span class="required">*</span></label>
+          <input type="password" name="password">
+        </div>
+        <div class="field">
+          <label>確認密碼 <span class="required">*</span></label>
+          <input type="password" name="password_confirm">
         </div>
       </div>
-
-      <hr class="divider">
-
-      <!-- 執業資訊 -->
-      <div class="form-group">
-        <div class="group-title">執業資訊</div>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="field-label">所屬機構 <span class="required">選填</span></label>
-            <input class="field-input" type="text" name="institution">
-          </div>
-          <div class="form-field">
-            <label class="field-label">科別 <span class="optional">選填</span></label>
-            <input class="field-input" type="text" name="department">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="field-label">職種 <span class="optional">選填</span></label>
-            <input class="field-input" type="text" name="profession">
-          </div>
-          <div class="form-field">
-            <label class="field-label">專科 <span class="optional">選填</span></label>
-            <input class="field-input" type="text" name="specialty">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="field-label">年資（年）<span class="optional">選填</span></label>
-            <input class="field-input" type="number" min="0" name="years_of_experience">
-          </div>
-          <div class="form-field">
-            <label class="field-label">診間地點 <span class="optional">選填</span></label>
-            <input class="field-input" type="text" name="clinic_location">
-          </div>
-        </div>
-      </div>
-
-      <hr class="divider">
-
-      <!-- 聯絡資訊 -->
-      <div class="form-group">
-        <div class="group-title">聯絡資訊</div>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="field-label">電子信箱 <span class="optional">選填</span></label>
-            <input class="field-input" type="email" name="email">
-          </div>
-          <div class="form-field">
-            <label class="field-label">電話 <span class="optional">選填</span></label>
-            <input class="field-input" type="tel" name="phone">
-          </div>
-        </div>
-      </div>
-
-      <hr class="divider">
-
-      <button class="btn-submit" onclick="submitRegister()">送出註冊</button>
-
     </div>
 
-    <div class="footer-note">
-      <span>✱</span> 為必填欄位 · 僅限授權臨床人員申請
+    <!-- 執業資訊 -->
+    <div class="section">
+      <div class="section-label">執業資訊</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>所屬機構 <span class="optional">選填</span></label>
+          <input type="text" name="institution">
+        </div>
+        <div class="field">
+          <label>科別 <span class="optional">選填</span></label>
+          <input type="text" name="department">
+        </div>
+        <div class="field">
+          <label>職種 <span class="optional">選填</span></label>
+          <input type="text" name="profession">
+        </div>
+        <div class="field">
+          <label>專科 <span class="optional">選填</span></label>
+          <input type="text" name="specialty">
+        </div>
+        <div class="field">
+          <label>年資（年） <span class="optional">選填</span></label>
+          <input type="number" min="0" name="years_of_experience">
+        </div>
+        <div class="field">
+          <label>診間地點 <span class="optional">選填</span></label>
+          <input type="text" name="clinic_location">
+        </div>
+      </div>
     </div>
+
+    <!-- 聯絡資訊 -->
+    <div class="section" style="margin-bottom: 1.25rem;">
+      <div class="section-label">聯絡資訊</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>電子信箱 <span class="optional">選填</span></label>
+          <input type="email" name="email">
+        </div>
+        <div class="field">
+          <label>電話 <span class="optional">選填</span></label>
+          <input type="tel" name="phone">
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitRegister()">送出註冊</button>
 
   </div>
+
+  <p class="footer-note"><span>*</span> 為必填欄位，僅限授權臨床人員申請</p>
+
   <script>
+    const MAX_RETRIES = 3;
+    const _retry = {};
+
     async function submitRegister() {
       const get = name => document.querySelector(`[name="${name}"]`).value.trim();
 
-      const name = get('name');
+      const name     = get('name');
       const username = get('username');
       const password = get('password');
       const passwordConfirm = get('password_confirm');
@@ -309,21 +255,39 @@
         });
 
         const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 500 && (_retry.submitRegister || 0) < MAX_RETRIES) {
+            _retry.submitRegister = (_retry.submitRegister || 0) + 1;
+            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitRegister}/${MAX_RETRIES})`);
+            setTimeout(submitRegister, 3000);
+          } else {
+            _retry.submitRegister = 0;
+            alert(data.message || '註冊失敗');
+          }
+          return;
+        }
+        _retry.submitRegister = 0;
         if (data.result) {
           location.href = '/';
         } else {
           alert(data.message || '註冊失敗');
         }
       } catch (e) {
-        alert('伺服器資料庫啟動中...');
+        if ((_retry.submitRegister || 0) < MAX_RETRIES) {
+          _retry.submitRegister = (_retry.submitRegister || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitRegister}/${MAX_RETRIES})`);
+          setTimeout(submitRegister, 3000);
+        } else {
+          _retry.submitRegister = 0;
+          alert('伺服器資料庫啟動中...');
+        }
       }
     }
 
-    // keep-alive: ping /health every 10s to prevent Railway sleeping
-        // keep-alive: ping /health every 10s to prevent Railway sleeping
+    // keep-alive
     setInterval(async () => {
       try {
-        const res = await fetch(`/health`);
+        const res = await fetch('/health');
         if (res.ok) {
           document.getElementById('connectionOverlay').style.display = 'none';
         } else {
@@ -343,5 +307,6 @@
       <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:14px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
     </div>
   </div>
+
 </body>
 </html>
