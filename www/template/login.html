@@ -13,19 +13,24 @@
       min-height: 100vh;
       background: #ddeef8;
       display: flex;
-      align-items: stretch;
+      align-items: center;
       justify-content: center;
       font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
     }
 
     .wrapper {
       width: 100%;
-      max-width: 860px;
-      text-align: center;
+      max-width: 960px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 3rem 4rem;
+      flex-direction: row;
+      align-items: center;
+      gap: 4rem;
+      padding: 2rem 4rem;
+    }
+
+    .left-panel {
+      flex: 1;
+      text-align: center;
     }
 
     .badge {
@@ -38,7 +43,7 @@
       border-radius: 30px;
       font-size: 15px;
       letter-spacing: 0.14em;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       align-self: center;
     }
 
@@ -62,19 +67,20 @@
       font-size: 22px;
       color: #5a7a9a;
       letter-spacing: 0.05em;
-      margin-bottom: 2.5rem;
+      margin-bottom: 0;
     }
 
     .card {
+      flex: 0 0 420px;
       background: #ffffff;
       border-radius: 20px;
       border: 1px solid #c4d9ec;
-      padding: 3rem 3.5rem;
+      padding: 2.5rem 3rem;
       box-shadow: 0 6px 32px rgba(26, 58, 92, 0.1);
     }
 
     .field {
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.25rem;
       text-align: left;
     }
 
@@ -107,7 +113,7 @@
 
     .btn-primary {
       width: 100%;
-      padding: 20px;
+      padding: 14px;
       background: #1a3a5c;
       color: #e8f2fb;
       border: none;
@@ -124,7 +130,7 @@
 
     .btn-secondary {
       width: 100%;
-      padding: 19px;
+      padding: 13px;
       background: transparent;
       color: #1a3a5c;
       border: 1.5px solid #a0c0dc;
