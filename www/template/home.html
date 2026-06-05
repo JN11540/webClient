@@ -3,480 +3,577 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OA Validation Platform — 首頁</title>
+  <title>RehabSync — 個案列表</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
-      background: #EBF4FC;
-      min-height: 100vh;
-      display: flex;
+    html, body {
+      height: 100%;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+      background: #ddeef8;
+      overflow: hidden;
     }
 
-    /* ── 側邊欄 ── */
-    .sidebar { position:fixed; left:0; top:0; bottom:0; width:64px; background:#1a3d6b; display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:6px; z-index:200; }
-    .sidebar .avatar { width:36px; height:36px; border-radius:50%; background:#3b82c4; color:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
-    .sidebar .nav-icon { width:40px; height:40px; border-radius:6px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.55); cursor:pointer; transition:background .15s,color .15s; }
-    .sidebar .nav-icon:hover, .sidebar .nav-icon.active { background:rgba(255,255,255,.12); color:#fff; }
-    .sidebar .logout { margin-top:auto; }
+    .app {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
 
-    /* ── 主內容 ── */
-    .main {
-      margin-left: 64px;
-      flex: 1;
-      padding: 20px;
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 110px;
+      background: #1a3a5c;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      overflow-y: auto;
+      align-items: center;
+      padding: 18px 0;
+      gap: 10px;
+      flex-shrink: 0;
     }
 
-    /* ── 個人資料列 ── */
-    .profile-bar {
-      background: white;
+    .avatar {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #378add;
+      color: #fff;
+      font-size: 26px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .nav-icon {
+      width: 62px;
+      height: 62px;
       border-radius: 12px;
-      padding: 14px 20px;
-      border: 0.5px solid #B5D4F4;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #7aabcf;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-icon:hover { background: #26527d; color: #fff; }
+    .nav-icon.active { background: #378add; color: #fff; }
+
+    .sidebar-spacer { flex: 1; }
+
+    .logout-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #7aabcf;
+      transition: background 0.2s, color 0.2s;
+    }
+    .logout-icon:hover { background: #c0392b22; color: #e07070; }
+
+    /* ── Main ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
-    .profile-fields { display: flex; gap: 32px; align-items: center; }
-    .profile-field { display: flex; flex-direction: column; gap: 3px; }
-
-    .profile-field-label {
-      font-size: 10px;
-      color: #378ADD;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+    /* ── Profile bar ── */
+    .profile-bar {
+      background: #fff;
+      border-bottom: 1px solid #c4d9ec;
+      padding: 20px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
     }
 
-    .profile-field-val {
+    .profile-info {
+      display: flex;
+      align-items: flex-end;
+      gap: 48px;
+    }
+
+    .profile-name-block .label {
+      font-size: 20px;
+      color: #8aacca;
+      margin-bottom: 4px;
+    }
+
+    .profile-name-block .name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a3a5c;
+    }
+
+    .profile-field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .profile-field .f-label {
+      font-size: 20px;
+      color: #8aacca;
+    }
+
+    .profile-field .f-value {
+      font-size: 20px;
+      color: #1a3a5c;
+      font-weight: 500;
+    }
+
+    .edit-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f0f7fc;
+      border: 1.5px solid #a0c0dc;
+      border-radius: 8px;
+      padding: 12px 22px;
       font-size: 16px;
+      color: #1a3a5c;
+      cursor: pointer;
+      font-family: 'Microsoft JhengHei', sans-serif;
       font-weight: 500;
-      color: #0C447C;
-    }
-
-    .profile-actions { display: flex; gap: 8px; align-items: center; }
-
-    .btn-edit-profile {
-      font-size: 10px;
-      background: #E6F1FB;
-      color: #185FA5;
-      border: none;
-      border-radius: 5px;
-      padding: 5px 11px;
-      cursor: pointer;
-      white-space: nowrap;
       transition: background 0.2s;
     }
-    .btn-edit-profile:hover { background: #B5D4F4; }
+    .edit-btn:hover { background: #ddeef8; }
 
-    .btn-logout {
-      font-size: 10px;
-      background: #FCEBEB;
-      color: #A32D2D;
-      border: none;
-      border-radius: 5px;
-      padding: 5px 11px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.2s;
-    }
-    .btn-logout:hover { background: #F7C1C1; }
-
-    /* ── 個案區標題列 ── */
-    .case-header {
+    /* ── Content area ── */
+    .content {
+      flex: 1;
+      padding: 28px 36px;
       display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .list-header {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    .list-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a3a5c;
+    }
+
+    .add-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #1a3a5c;
+      color: #e8f2fb;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 28px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Microsoft JhengHei', sans-serif;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: #0f2540; }
+
+    /* ── Patient card grid ── */
+    .cards-area {
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 22px;
+      align-content: start;
+      padding-right: 4px;
+    }
+
+    .cards-area::-webkit-scrollbar { width: 6px; }
+    .cards-area::-webkit-scrollbar-track { background: transparent; }
+    .cards-area::-webkit-scrollbar-thumb { background: #c4d9ec; border-radius: 3px; }
+
+    .patient-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #c4d9ec;
+      padding: 30px 34px;
+      box-shadow: 0 2px 12px rgba(26,58,92,0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .patient-card:hover {
+      box-shadow: 0 6px 24px rgba(26,58,92,0.14);
+      transform: translateY(-2px);
+    }
+
+    .card-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a3a5c;
+    }
+
+    .card-fields {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px 24px;
       align-items: center;
     }
 
-    .case-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: #0C447C;
+    .card-label {
+      font-size: 19px;
+      color: #8aacca;
+      white-space: nowrap;
     }
 
-    .btn-add-case {
-      font-size: 10px;
-      background: #185FA5;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 5px 11px;
+    .card-value {
+      font-size: 19px;
+      color: #1a3a5c;
+      font-weight: 500;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 10px;
+      border-top: 1px solid #eaf3fb;
+    }
+
+    .delete-btn {
+      background: #fff0f0;
+      border: 1px solid #f5c0c0;
+      color: #c0392b;
+      border-radius: 7px;
+      padding: 9px 22px;
+      font-size: 16px;
       cursor: pointer;
+      font-family: 'Microsoft JhengHei', sans-serif;
       transition: background 0.2s;
     }
-    .btn-add-case:hover { background: #0C447C; }
+    .delete-btn:hover { background: #fde0e0; }
 
-    /* ── 空狀態 ── */
+    /* ── Empty state ── */
     .empty-state {
       flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      border: 1.5px dashed #c4d9ec;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      padding: 60px 20px;
-      background: white;
-      border-radius: 12px;
-      border: 0.5px dashed #B5D4F4;
     }
 
-    .empty-icon {
-      width: 56px;
-      height: 56px;
+    .empty-inner { text-align: center; }
+
+    .empty-icon-wrap {
+      width: 100px;
+      height: 100px;
+      background: #ddeef8;
       border-radius: 50%;
-      background: #E6F1FB;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 0 auto 28px;
     }
 
-    .empty-icon svg {
-      width: 26px;
-      height: 26px;
-      fill: #378ADD;
+    .empty-icon-wrap svg {
+      width: 48px;
+      height: 48px;
+      stroke: #378add;
     }
 
     .empty-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: #0C447C;
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a3a5c;
+      margin-bottom: 14px;
     }
 
     .empty-sub {
-      font-size: 12px;
-      color: #378ADD;
-      text-align: center;
+      font-size: 18px;
+      color: #5a7a9a;
       line-height: 1.7;
     }
-
-    .btn-empty-add {
-      font-size: 12px;
-      background: #185FA5;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 20px;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin-top: 4px;
-    }
-    .btn-empty-add:hover { background: #0C447C; }
-
-    /* ── 個案卡片 Grid ── */
-    .case-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
-    }
-
-    .case-card {
-      background: white;
-      border-radius: 10px;
-      border: 0.5px solid #B5D4F4;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: border-color 0.2s;
-    }
-
-    .case-card:hover { border-color: #378ADD; }
-
-    .case-name {
-      font-size: 16px;
-      font-weight: 500;
-      color: #0C447C;
-    }
-
-    .case-info { display: flex; flex-direction: column; gap: 4px; }
-
-    .case-info-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .case-info-label {
-      font-size: 10px;
-      color: #378ADD;
-      min-width: 36px;
-    }
-
-    .case-info-val {
-      font-size: 13px;
-      color: #185FA5;
-      font-weight: 500;
-    }
-
-    .case-kl {
-      font-size: 12px;
-      font-weight: 500;
-      background: #185FA5;
-      color: white;
-      border-radius: 12px;
-      padding: 2px 10px;
-      display: inline-block;
-    }
-
-    .case-actions {
-      display: flex;
-      gap: 6px;
-      justify-content: flex-end;
-      margin-top: 2px;
-    }
-
-    .btn-case-edit {
-      font-size: 10px;
-      background: #E6F1FB;
-      color: #185FA5;
-      border: none;
-      border-radius: 4px;
-      padding: 3px 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-case-edit:hover { background: #B5D4F4; }
-
-    .btn-case-del {
-      font-size: 10px;
-      background: #FCEBEB;
-      color: #A32D2D;
-      border: none;
-      border-radius: 4px;
-      padding: 3px 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-case-del:hover { background: #F7C1C1; }
   </style>
 </head>
 <body>
+<div class="app">
 
-  <!-- 側邊欄 -->
+  <!-- Sidebar -->
   <nav class="sidebar">
     <div class="avatar" id="sidebarAvatar">—</div>
-    <div class="nav-icon active" title="首頁">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+
+    <div class="nav-icon active" title="個案列表">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
     </div>
+
     <div class="nav-icon" title="治療計畫" onclick="location.href='/treatment-plan'">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+        <rect x="9" y="3" width="6" height="4" rx="1"/>
+        <path d="M9 12h6M9 16h4"/>
+      </svg>
     </div>
+
     <div class="nav-icon" title="訓練結果" onclick="location.href='/training-results'">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
     </div>
-    <div class="nav-icon logout" title="登出" onclick="location.href='/'">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M17 16l4-4-4-4M21 12H9"/><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/></svg>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="logout-icon" title="登出" onclick="location.href='/'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+        <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
     </div>
   </nav>
 
-  <!-- 主內容 -->
+  <!-- Main -->
   <div class="main">
 
-    <!-- 個人資料列 -->
+    <!-- Profile bar -->
     <div class="profile-bar">
-      <div class="profile-fields">
-        <div class="profile-field">
-          <div class="profile-field-label">姓名</div>
-          <div class="profile-field-val" id="pf-name">—</div>
+      <div class="profile-info">
+        <div class="profile-name-block">
+          <div class="label">姓名</div>
+          <div class="name" id="pf-name">—</div>
         </div>
         <div class="profile-field">
-          <div class="profile-field-label">所屬機構</div>
-          <div class="profile-field-val" id="pf-institution">—</div>
+          <span class="f-label">所屬機構</span>
+          <span class="f-value" id="pf-institution">—</span>
         </div>
         <div class="profile-field">
-          <div class="profile-field-label">科別</div>
-          <div class="profile-field-val" id="pf-department">—</div>
+          <span class="f-label">科別</span>
+          <span class="f-value" id="pf-department">—</span>
         </div>
         <div class="profile-field">
-          <div class="profile-field-label">職種</div>
-          <div class="profile-field-val" id="pf-profession">—</div>
+          <span class="f-label">職種</span>
+          <span class="f-value" id="pf-profession">—</span>
         </div>
         <div class="profile-field">
-          <div class="profile-field-label">專科</div>
-          <div class="profile-field-val" id="pf-specialty">—</div>
+          <span class="f-label">專科</span>
+          <span class="f-value" id="pf-specialty">—</span>
         </div>
         <div class="profile-field">
-          <div class="profile-field-label">年資</div>
-          <div class="profile-field-val" id="pf-years">—</div>
+          <span class="f-label">年資</span>
+          <span class="f-value" id="pf-years">—</span>
         </div>
         <div class="profile-field">
-          <div class="profile-field-label">診間地點</div>
-          <div class="profile-field-val" id="pf-clinic">—</div>
+          <span class="f-label">診間地點</span>
+          <span class="f-value" id="pf-clinic">—</span>
         </div>
       </div>
-      <div class="profile-actions">
-        <button class="btn-edit-profile" onclick="location.href='/edit-clinician-profile'">✎ 編輯資料</button>
-      </div>
+      <button class="edit-btn" onclick="location.href='/edit-clinician-profile'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        編輯資料
+      </button>
     </div>
 
-    <!-- 個案標題 -->
-    <div class="case-header">
-      <div class="case-title" id="case-title">個案列表</div>
-      <button class="btn-add-case" onclick="location.href='/add-patient'">＋ 新增個案</button>
-    </div>
-
-    <!-- 個案卡片（動態） -->
-    <div class="case-grid" id="case-grid"></div>
-
-    <!-- 空狀態（無個案時顯示） -->
-    <div class="empty-state" id="empty-state" style="display:none;">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg>
+    <!-- Content -->
+    <div class="content">
+      <div class="list-header">
+        <span class="list-title" id="case-title">個案列表</span>
+        <button class="add-btn" onclick="location.href='/add-patient'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          新增個案
+        </button>
       </div>
-      <div class="empty-title">尚無個案資料</div>
-      <div class="empty-sub">目前還沒有任何個案<br>點擊右上方按鈕新增第一筆個案</div>
+
+      <div class="cards-area" id="case-grid"></div>
+
+      <div class="empty-state" id="empty-state" style="display:none;">
+        <div class="empty-inner">
+          <div class="empty-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <div class="empty-title">尚無個案資料</div>
+          <div class="empty-sub">目前還沒有任何個案<br>點擊右上方按鈕新增第一筆個案</div>
+        </div>
+      </div>
     </div>
 
   </div>
+</div>
 
-  <script>
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-      return match ? decodeURIComponent(match[1]) : null;
+<script>
+  const MAX_RETRIES = 3;
+  const _retry = {};
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  async function loadProfile() {
+    const clinicianId = getCookie('clinician_id');
+    const sessionId   = getCookie('session_id');
+    if (!clinicianId || !sessionId) {
+      alert('cookie 不存在：clinician_id 或 session_id 遺失');
+      return;
     }
-
-    async function loadProfile() {
-      const clinicianId = getCookie('clinician_id');
-      const sessionId = getCookie('session_id');
-      if (!clinicianId || !sessionId) {
-        alert('cookie 不存在：clinician_id 或 session_id 遺失');
+    try {
+      const res  = await fetch(`/clinicians/${clinicianId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 500 && (_retry.loadProfile || 0) < MAX_RETRIES) {
+          _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+          setTimeout(loadProfile, 3000);
+        } else { _retry.loadProfile = 0; alert(data.message || '載入失敗'); }
         return;
       }
-
-      try {
-        const res = await fetch(`/clinicians/${clinicianId}`, {
-          headers: { 'Authorization': `Bearer ${sessionId}` },
-        });
-
-        const data = await res.json();
-        if (!data.result) {
-          alert(data.message);
-          return;
-        }
-
-        const c = data.data;
-        if (c.name) document.getElementById('sidebarAvatar').textContent = c.name.charAt(0);
-        document.getElementById('pf-name').textContent        = c.name || '—';
-        document.getElementById('pf-institution').textContent = c.institution || '—';
-        document.getElementById('pf-department').textContent  = c.department || '—';
-        document.getElementById('pf-profession').textContent  = c.profession || '—';
-        document.getElementById('pf-specialty').textContent   = c.specialty || '—';
-        document.getElementById('pf-years').textContent       = c.years_of_experience != null ? `${c.years_of_experience} 年` : '—';
-        document.getElementById('pf-clinic').textContent      = c.clinic_location || '—';
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
-      }
+      _retry.loadProfile = 0;
+      if (!data.result) { alert(data.message); return; }
+      const c = data.data;
+      if (c.name) document.getElementById('sidebarAvatar').textContent = c.name.charAt(0);
+      document.getElementById('pf-name').textContent        = c.name || '—';
+      document.getElementById('pf-institution').textContent = c.institution || '—';
+      document.getElementById('pf-department').textContent  = c.department || '—';
+      document.getElementById('pf-profession').textContent  = c.profession || '—';
+      document.getElementById('pf-specialty').textContent   = c.specialty || '—';
+      document.getElementById('pf-years').textContent       = c.years_of_experience != null ? `${c.years_of_experience} 年` : '—';
+      document.getElementById('pf-clinic').textContent      = c.clinic_location || '—';
+    } catch (e) {
+      if ((_retry.loadProfile || 0) < MAX_RETRIES) {
+        _retry.loadProfile = (_retry.loadProfile || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
+        setTimeout(loadProfile, 3000);
+      } else { _retry.loadProfile = 0; alert('伺服器資料庫啟動中...'); }
     }
+  }
 
-    async function loadPatients() {
-      const clinicianId = getCookie('clinician_id');
-      const sessionId = getCookie('session_id');
-      if (!clinicianId || !sessionId) return;
-
-      try {
-        const res = await fetch(`/clinicians/${clinicianId}/patients`, {
-          headers: { 'Authorization': `Bearer ${sessionId}` },
-        });
-        const data = await res.json();
-        if (!data.result) {
-          alert(data.message);
-          return;
-        }
-
-        const patients = data.data;
-        document.getElementById('case-title').textContent = `個案列表 (${patients.length})`;
-
-        const grid = document.getElementById('case-grid');
-        const empty = document.getElementById('empty-state');
-
-        grid.innerHTML = '';
-
-        if (patients.length === 0) {
-          empty.style.display = 'flex';
-          return;
-        }
-
-        empty.style.display = 'none';
-        grid.innerHTML = patients.map(p => {
-          const age = new Date().getFullYear() - new Date(p.date_of_birth * 1000).getFullYear();
-          return `
-            <div class="case-card" onclick="location.href='/patient-detail?id=${p.patient_id}'" style="cursor:pointer;">
-              <div class="case-name">${p.name}</div>
-              <div class="case-info">
-                <div class="case-info-row">
-                  <span class="case-info-label">性別</span>
-                  <span class="case-info-val">${p.gender === 1 ? '男' : '女'}</span>
-                </div>
-                <div class="case-info-row">
-                  <span class="case-info-label">年紀</span>
-                  <span class="case-info-val">${age} 歲</span>
-                </div>
-                <div class="case-info-row">
-                  <span class="case-info-label">診斷</span>
-                  <span class="case-info-val">${p.diagnosis || '—'}</span>
-                </div>
-              </div>
-              <div class="case-actions">
-                <button class="btn-case-del" onclick="event.stopPropagation(); deletePatient(${p.patient_id})">刪除</button>
-              </div>
-            </div>`;
-        }).join('');
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
+  async function loadPatients() {
+    const clinicianId = getCookie('clinician_id');
+    const sessionId   = getCookie('session_id');
+    if (!clinicianId || !sessionId) return;
+    try {
+      const res  = await fetch(`/clinicians/${clinicianId}/patients`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 500 && (_retry.loadPatients || 0) < MAX_RETRIES) {
+          _retry.loadPatients = (_retry.loadPatients || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
+          setTimeout(loadPatients, 3000);
+        } else { _retry.loadPatients = 0; alert(data.message || '載入失敗'); }
+        return;
       }
+      _retry.loadPatients = 0;
+      if (!data.result) { alert(data.message); return; }
+
+      const patients = data.data;
+      document.getElementById('case-title').textContent = `個案列表 (${patients.length})`;
+
+      const grid  = document.getElementById('case-grid');
+      const empty = document.getElementById('empty-state');
+      grid.innerHTML = '';
+
+      if (patients.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = 'flex';
+        return;
+      }
+      empty.style.display = 'none';
+      grid.style.display = 'grid';
+      grid.innerHTML = patients.map(p => {
+        const age = new Date().getFullYear() - new Date(p.date_of_birth * 1000).getFullYear();
+        return `
+          <div class="patient-card" onclick="location.href='/patient-detail?id=${p.patient_id}'">
+            <div class="card-name">${p.name}</div>
+            <div class="card-fields">
+              <span class="card-label">性別</span>
+              <span class="card-value">${p.gender === 1 ? '男' : '女'}</span>
+              <span class="card-label">年紀</span>
+              <span class="card-value">${age} 歲</span>
+              <span class="card-label">診斷</span>
+              <span class="card-value">${p.diagnosis || '—'}</span>
+            </div>
+            <div class="card-footer">
+              <button class="delete-btn" onclick="event.stopPropagation(); deletePatient(${p.patient_id})">刪除</button>
+            </div>
+          </div>`;
+      }).join('');
+    } catch (e) {
+      if ((_retry.loadPatients || 0) < MAX_RETRIES) {
+        _retry.loadPatients = (_retry.loadPatients || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
+        setTimeout(loadPatients, 3000);
+      } else { _retry.loadPatients = 0; alert('伺服器資料庫啟動中...'); }
     }
+  }
 
-    async function deletePatient(patientId) {
-      if (!confirm('確定要刪除此個案？')) return;
-      const sessionId = getCookie('session_id');
-      try {
-        const res = await fetch(`/patients/${patientId}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${sessionId}` },
-        });
-        const data = await res.json();
-        if (data.result) {
-          loadPatients();
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
+  async function deletePatient(patientId) {
+    if (!confirm('確定要刪除此個案？')) return;
+    const sessionId = getCookie('session_id');
+    try {
+      const res  = await fetch(`/patients/${patientId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${sessionId}` } });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 500 && (_retry.deletePatient || 0) < MAX_RETRIES) {
+          _retry.deletePatient = (_retry.deletePatient || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePatient}/${MAX_RETRIES})`);
+          setTimeout(() => deletePatient(patientId), 3000);
+        } else { _retry.deletePatient = 0; alert(data.message || '刪除失敗'); }
+        return;
       }
+      _retry.deletePatient = 0;
+      if (data.result) { loadPatients(); } else { alert(data.message); }
+    } catch (e) {
+      if ((_retry.deletePatient || 0) < MAX_RETRIES) {
+        _retry.deletePatient = (_retry.deletePatient || 0) + 1;
+        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePatient}/${MAX_RETRIES})`);
+        setTimeout(() => deletePatient(patientId), 3000);
+      } else { _retry.deletePatient = 0; alert('伺服器資料庫啟動中...'); }
     }
+  }
 
-    loadProfile();
-    loadPatients();
+  loadProfile();
+  loadPatients();
 
-    // keep-alive: ping /health every 10s to prevent Railway sleeping
-        // keep-alive: ping /health every 10s to prevent Railway sleeping
-    setInterval(async () => {
-      try {
-        const res = await fetch(`/health`);
-        if (res.ok) {
-          document.getElementById('connectionOverlay').style.display = 'none';
-        } else {
-          document.getElementById('connectionOverlay').style.display = 'flex';
-        }
-      } catch (e) {
-        document.getElementById('connectionOverlay').style.display = 'flex';
-      }
-    }, 10000);
-  </script>
+  // keep-alive
+  setInterval(async () => {
+    try {
+      const res = await fetch('/health');
+      document.getElementById('connectionOverlay').style.display = res.ok ? 'none' : 'flex';
+    } catch (e) {
+      document.getElementById('connectionOverlay').style.display = 'flex';
+    }
+  }, 10000);
+</script>
 
-  <!-- 連線失敗提示 -->
-  <div id="connectionOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:12px; padding:32px 28px; text-align:center; display:flex; flex-direction:column; gap:14px; max-width:300px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
-      <div style="font-size:16px; font-weight:600; color:#0C447C;">嘗試連線中</div>
-      <div style="font-size:13px; color:#378ADD; line-height:1.6;">請確保在網路環境下操作</div>
-      <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:14px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
-    </div>
+<!-- 連線失敗提示 -->
+<div id="connectionOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:12px; padding:32px 28px; text-align:center; display:flex; flex-direction:column; gap:14px; max-width:300px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <div style="font-size:16px; font-weight:600; color:#0C447C;">嘗試連線中</div>
+    <div style="font-size:13px; color:#378ADD; line-height:1.6;">請確保在網路環境下操作</div>
+    <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:14px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
   </div>
+</div>
 </body>
 </html>
