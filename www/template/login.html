@@ -31,6 +31,26 @@
     .left-panel {
       flex: 1;
       text-align: center;
+      min-width: 0;
+    }
+
+    @media (max-width: 860px) {
+      .wrapper {
+        flex-direction: column;
+        padding: 3rem 2rem;
+        gap: 2rem;
+      }
+      .left-panel {
+        width: 100%;
+      }
+      .card {
+        flex: unset !important;
+        width: 100%;
+        max-width: 480px;
+      }
+      h1 {
+        font-size: 40px !important;
+      }
     }
 
     .badge {
@@ -160,13 +180,14 @@
 <body>
   <div class="wrapper">
 
-    <div class="badge">
-      <span class="badge-dot"></span>
-      RehabSync@master
+    <div class="left-panel">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        RehabSync@master
+      </div>
+      <h1>膝關節炎<br>數位運動介入系統</h1>
+      <p class="subtitle">Digital Intervention System for Arthritis</p>
     </div>
-
-    <h1>膝關節炎<br>數位運動介入系統</h1>
-    <p class="subtitle">Digital Intervention System for Arthritis</p>
 
     <div class="card">
       <div class="field">
