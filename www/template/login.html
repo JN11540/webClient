@@ -4,24 +4,181 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>退化性關節炎臨床驗證平台</title>
-  <link rel="stylesheet" href="/static/css/login.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      min-height: 100vh;
+      background: #ddeef8;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 860px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem 4rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1a3a5c;
+      color: #b8d4f0;
+      padding: 10px 28px;
+      border-radius: 30px;
+      font-size: 15px;
+      letter-spacing: 0.14em;
+      margin-bottom: 2rem;
+      align-self: center;
+    }
+
+    .badge-dot {
+      width: 9px;
+      height: 9px;
+      background: #5aa3e0;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    h1 {
+      font-size: 56px;
+      font-weight: 700;
+      color: #1a3a5c;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      color: #5a7a9a;
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #c4d9ec;
+      padding: 3rem 3.5rem;
+      box-shadow: 0 6px 32px rgba(26, 58, 92, 0.1);
+    }
+
+    .field {
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 22px;
+      color: #5a7a9a;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 18px 20px;
+      font-size: 20px;
+      border: 1.5px solid #c4d9ec;
+      border-radius: 10px;
+      background: #f0f7fc;
+      color: #1a3a5c;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #378add;
+      background: #ffffff;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 20px;
+      background: #1a3a5c;
+      color: #e8f2fb;
+      border: none;
+      border-radius: 10px;
+      font-size: 22px;
+      cursor: pointer;
+      margin-bottom: 14px;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: #0f2540; }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 19px;
+      background: transparent;
+      color: #1a3a5c;
+      border: 1.5px solid #a0c0dc;
+      border-radius: 10px;
+      font-size: 22px;
+      cursor: pointer;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover { background: #eaf3fb; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #ddeef8;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .footer-note {
+      font-size: 15px;
+      color: #8aacca;
+      letter-spacing: 0.03em;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="badge-top">▸ CLINICAL TRIAL SYSTEM</div>
-    <div class="main-title">退化性關節炎<br>臨床驗證平台</div>
-    <div class="sub-title">OA Validation System</div>
+  <div class="wrapper">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      CLINICAL TRIAL SYSTEM
+    </div>
+
+    <h1>退化性關節炎<br>臨床驗證平台</h1>
+    <p class="subtitle">OA Validation System</p>
+
     <div class="card">
-      <div class="field-label">臨床人員帳號</div>
-      <input class="field-input" type="text" id="username">
-      <div class="field-label">驗證密碼</div>
-      <input class="field-input" type="password" id="password">
+      <div class="field">
+        <label for="username">臨床人員帳號</label>
+        <input type="text" id="username">
+      </div>
+      <div class="field" style="margin-bottom: 1.5rem;">
+        <label for="password">驗證密碼</label>
+        <input type="password" id="password">
+      </div>
       <button class="btn-primary" onclick="submitLogin()">進入系統</button>
       <button class="btn-secondary" onclick="location.href='register.html'">註冊新帳號</button>
       <hr class="divider">
-      <div class="footer-text">僅限授權臨床人員存取 · 所有操作均有記錄</div>
+      <p class="footer-note">僅限授權臨床人員存取 · 所有操作均有記錄</p>
     </div>
+
   </div>
+
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
     const MAX_RETRIES = 3;
@@ -53,6 +210,7 @@
             alert(data.message || '登入失敗');
           }
           return;
+          return;
         }
         _retry.submitLogin = 0;
         if (data.clinician_id) localStorage.setItem('clinician_id', String(data.clinician_id));
@@ -66,11 +224,18 @@
           _retry.submitLogin = 0;
           alert('伺服器資料庫啟動中...');
         }
+        if ((_retry.submitLogin || 0) < MAX_RETRIES) {
+          _retry.submitLogin = (_retry.submitLogin || 0) + 1;
+          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitLogin}/${MAX_RETRIES})`);
+          setTimeout(submitLogin, 3000);
+        } else {
+          _retry.submitLogin = 0;
+          alert('伺服器資料庫啟動中...');
+        }
       }
     }
 
     // keep-alive: ping /health every 10s to prevent Railway sleeping
-        // keep-alive: ping /health every 10s to prevent Railway sleeping
     setInterval(async () => {
       try {
         const res = await fetch(`${API_URL}/health`);
