@@ -8,16 +8,14 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
-      background: #EBF4FC;
+      font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+      background: #deeaf5;
       min-height: 100vh;
-      padding: 32px 20px;
+      padding: 16px;
     }
 
     .container {
       width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -31,8 +29,8 @@
     }
 
     .btn-back {
-      font-size: 12px;
-      color: #378ADD;
+      font-size: 20px;
+      color: #2a6db5;
       background: none;
       border: none;
       cursor: pointer;
@@ -42,22 +40,23 @@
     .btn-back:hover { color: #185FA5; }
 
     .case-name {
-      font-size: 22px;
-      font-weight: 500;
-      color: #0C447C;
+      font-size: 32px;
+      font-weight: bold;
+      color: #1a1a1a;
     }
 
     .topbar-actions { display: flex; gap: 8px; }
 
     .btn-edit-patient {
-      font-size: 12px;
+      font-size: 20px;
       background: #E6F1FB;
       color: #185FA5;
       border: none;
-      border-radius: 5px;
-      padding: 6px 14px;
+      border-radius: 8px;
+      padding: 10px 20px;
       cursor: pointer;
       font-family: inherit;
+      font-weight: 500;
       transition: background 0.2s;
     }
     .btn-edit-patient:hover { background: #B5D4F4; }
@@ -66,35 +65,33 @@
     .card {
       background: white;
       border-radius: 12px;
-      border: 0.5px solid #B5D4F4;
-      padding: 18px 22px;
+      border: 0.5px solid #c5d8ee;
+      padding: 20px 24px;
     }
 
     .sec-hd {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #185FA5;
-      padding-bottom: 8px;
-      border-bottom: 0.5px solid #E6F1FB;
-      margin-bottom: 14px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #2a6db5;
+      padding-bottom: 10px;
+      border-bottom: 0.5px solid #c5d8ee;
+      margin-bottom: 16px;
     }
 
     /* ── 個案基本資料 ── */
     .info-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px 20px;
-      margin-bottom: 14px;
+      gap: 14px 20px;
+      margin-bottom: 16px;
     }
 
-    .info-field { display: flex; flex-direction: column; gap: 3px; }
+    .info-field { display: flex; flex-direction: column; gap: 4px; }
 
-    .info-lbl { font-size: 10px; color: #378ADD; }
+    .info-lbl { font-size: 20px; color: #378ADD; }
 
     .info-val {
-      font-size: 14px;
+      font-size: 20px;
       font-weight: 500;
       color: #0C447C;
     }
@@ -103,22 +100,22 @@
 
     .divider {
       border: none;
-      border-top: 0.5px solid #E6F1FB;
-      margin: 12px 0;
+      border-top: 0.5px solid #c5d8ee;
+      margin: 14px 0;
     }
 
-    .info-block { display: flex; flex-direction: column; gap: 8px; }
-    .info-row { display: flex; flex-direction: column; gap: 3px; }
-    .info-lbl-sm { font-size: 10px; color: #378ADD; }
-    .info-txt { font-size: 13px; color: #0C447C; line-height: 1.6; }
+    .info-block { display: flex; flex-direction: column; gap: 12px; }
+    .info-row { display: flex; flex-direction: column; gap: 4px; }
+    .info-lbl-sm { font-size: 20px; color: #378ADD; }
+    .info-txt { font-size: 20px; color: #0C447C; line-height: 1.6; }
     .info-txt.empty { color: #B4B2A9; }
 
     /* ── 空白預留 ── */
     .placeholder {
-      font-size: 12px;
+      font-size: 16px;
       color: #B5D4F4;
       text-align: center;
-      padding: 20px;
+      padding: 24px;
       border: 0.5px dashed #B5D4F4;
       border-radius: 8px;
     }
@@ -128,31 +125,32 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .btn-group { display: flex; gap: 8px; }
 
     .btn-add {
-      font-size: 11px;
-      padding: 5px 12px;
-      border-radius: 5px;
+      font-size: 20px;
+      padding: 8px 18px;
+      border-radius: 6px;
       border: none;
       background: #185FA5;
       color: white;
       cursor: pointer;
       font-family: inherit;
+      font-weight: 500;
       transition: background 0.2s;
     }
     .btn-add:hover { background: #0C447C; }
 
-    .assessment-cards { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .assessment-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
     .assessment-card {
       background: #EBF4FC;
       border: 0.5px solid #B5D4F4;
       border-radius: 8px;
-      padding: 10px 16px;
+      padding: 12px 18px;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -161,23 +159,21 @@
     }
 
     .assessment-card-num {
-      font-size: 9px;
+      font-size: 20px;
       font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
       color: #378ADD;
       white-space: nowrap;
-      min-width: 72px;
+      min-width: 90px;
     }
 
-    .assessment-card-name { font-size: 13px; font-weight: 500; color: #0C447C; flex: 1; }
-    .assessment-card-date { font-size: 11px; color: #378ADD; white-space: nowrap; }
-    .assessment-card-btns { display: flex; gap: 6px; margin-left: auto; }
+    .assessment-card-name { font-size: 20px; font-weight: 500; color: #0C447C; flex: 1; }
+    .assessment-card-date { font-size: 20px; color: #378ADD; white-space: nowrap; }
+    .assessment-card-btns { display: flex; gap: 8px; margin-left: auto; }
 
     .assessment-card-btn-edit {
-      font-size: 9px;
-      padding: 3px 10px;
-      border-radius: 4px;
+      font-size: 20px;
+      padding: 6px 16px;
+      border-radius: 6px;
       cursor: pointer;
       border: 0.5px solid #B5D4F4;
       background: white;
@@ -188,9 +184,9 @@
     .assessment-card-btn-edit:hover { background: #E6F1FB; }
 
     .assessment-card-btn-del {
-      font-size: 9px;
-      padding: 3px 10px;
-      border-radius: 4px;
+      font-size: 20px;
+      padding: 6px 16px;
+      border-radius: 6px;
       cursor: pointer;
       border: 0.5px solid #F7C1C1;
       background: #FCEBEB;
@@ -206,12 +202,12 @@
       flex-direction: column;
       align-items: center;
       gap: 12px;
-      padding: 40px 20px;
+      padding: 48px 20px;
     }
 
     .empty-icon {
-      width: 52px;
-      height: 52px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: #E6F1FB;
       display: flex;
@@ -220,19 +216,19 @@
     }
 
     .empty-icon svg {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
       fill: #378ADD;
     }
 
     .empty-title {
-      font-size: 15px;
+      font-size: 20px;
       font-weight: 500;
       color: #0C447C;
     }
 
     .empty-sub {
-      font-size: 12px;
+      font-size: 20px;
       color: #378ADD;
       text-align: center;
       line-height: 1.8;
@@ -240,73 +236,72 @@
 
     /* ── 治療前後比較：子標題 ── */
     .sub-lbl {
-      font-size: 11px;
-      font-weight: 500;
+      font-size: 20px;
+      font-weight: 600;
       color: #185FA5;
-      margin: 14px 0 8px;
-      padding-left: 8px;
-      border-left: 2px solid #B5D4F4;
+      margin: 16px 0 10px;
+      padding-left: 10px;
+      border-left: 3px solid #B5D4F4;
     }
 
     /* ── 表格 ── */
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    table th { background: #E6F1FB; color: #185FA5; padding: 7px 10px; text-align: left; font-weight: 500; border-bottom: 0.5px solid #B5D4F4; }
-    table td { padding: 7px 10px; color: #0C447C; border-bottom: 0.5px solid #EBF4FC; }
+    table { width: 100%; border-collapse: collapse; font-size: 20px; }
+    table th { background: #E6F1FB; color: #185FA5; padding: 10px 14px; text-align: left; font-weight: 600; border-bottom: 0.5px solid #B5D4F4; font-size: 20px; }
+    table td { padding: 10px 14px; color: #0C447C; border-bottom: 0.5px solid #EBF4FC; font-size: 20px; }
     table tr:last-child td { border-bottom: none; }
     table tr:hover td { background: #F5FAFF; }
 
-
     /* ════ 治療計畫 ════ */
-    .plan-section-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-    .plan-list { display:flex; flex-direction:column; gap:10px; }
+    .plan-section-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .plan-list { display:flex; flex-direction:column; gap:12px; }
     .plan-card { border:0.5px solid #B5D4F4; border-radius:10px; overflow:hidden; background:#F5FAFF; }
-    .plan-card-header { display:flex; align-items:center; gap:12px; padding:10px 14px; background:#EBF4FC; border-bottom:0.5px solid #D4E9F8; }
+    .plan-card-header { display:flex; align-items:center; gap:12px; padding:12px 16px; background:#EBF4FC; border-bottom:0.5px solid #D4E9F8; }
     .plan-card-header-title { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
-    .plan-card-name { font-size:13px; font-weight:600; color:#0C447C; flex:1; min-width:0; }
-    .plan-card-actions { display:flex; gap:5px; flex-shrink:0; }
-    .plan-card-btn { font-size:9px; padding:3px 10px; border-radius:4px; cursor:pointer; font-family:inherit; transition:background .15s; }
+    .plan-card-name { font-size:20px; font-weight:600; color:#0C447C; flex:1; min-width:0; }
+    .plan-card-actions { display:flex; gap:6px; flex-shrink:0; }
+    .plan-card-btn { font-size:20px; padding:6px 16px; border-radius:6px; cursor:pointer; font-family:inherit; transition:background .15s; }
     .plan-card-btn-edit { border:0.5px solid #B5D4F4; background:#E6F1FB; color:#185FA5; }
     .plan-card-btn-edit:hover { background:#B5D4F4; }
     .plan-card-btn-del { border:0.5px solid #F7C1C1; background:#FCEBEB; color:#A32D2D; }
     .plan-card-btn-del:hover { background:#F7C1C1; }
     .export-countdown { font-size:52px; font-weight:700; color:#185FA5; line-height:1; }
-    .export-status { font-size:13px; color:#378ADD; min-height:20px; }
-    .export-result { font-size:13px; font-weight:500; color:#0C447C; line-height:1.6; }
-    .export-confirm-btn { padding:8px 28px; background:#185FA5; color:#fff; border:none; border-radius:6px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; margin-top:4px; transition:background .15s; }
+    .export-status { font-size:20px; color:#378ADD; min-height:20px; }
+    .export-result { font-size:20px; font-weight:500; color:#0C447C; line-height:1.6; }
+    .export-confirm-btn { padding:10px 32px; background:#185FA5; color:#fff; border:none; border-radius:6px; font-family:inherit; font-size:20px; font-weight:600; cursor:pointer; margin-top:4px; transition:background .15s; }
     .export-confirm-btn:hover { background:#0C447C; }
     .export-confirm-btn.err { background:#A32D2D; }
     .export-confirm-btn.err:hover { background:#7a1f1f; }
     .plan-card-body { display:block; padding:0; }
-    .plan-qr-row { padding:8px 14px; background:#EBF4FC; border-bottom:0.5px solid #D4E9F8; display:flex; align-items:center; gap:10px; }
+    .plan-qr-row { padding:10px 16px; background:#EBF4FC; border-bottom:0.5px solid #D4E9F8; display:flex; align-items:center; gap:10px; }
     .plan-qr-row .qrcode-area { margin-top:8px; width:100%; }
     .plan-meta-bar { display:flex; align-items:stretch; border-bottom:0.5px solid #E6F1FB; background:white; }
-    .plan-meta-item { flex:1; padding:10px 14px; display:flex; flex-direction:column; gap:2px; }
-    .plan-meta-label { font-size:9px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#9BBCDC; }
-    .plan-meta-value { font-size:12px; font-weight:600; color:#0C447C; }
+    .plan-meta-item { flex:1; padding:12px 16px; display:flex; flex-direction:column; gap:4px; }
+    .plan-meta-label { font-size:20px; font-weight:600; color:#9BBCDC; }
+    .plan-meta-value { font-size:20px; font-weight:600; color:#0C447C; }
     .plan-meta-divider { width:0.5px; background:#E6F1FB; flex-shrink:0; }
-    .plan-schedule-wrap { padding:14px 14px 16px; }
-    .plan-schedule-label { font-size:10px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#185FA5; margin-bottom:10px; }
+    .plan-schedule-wrap { padding:16px 16px 20px; }
+    .plan-schedule-label { font-size:20px; font-weight:600; color:#185FA5; margin-bottom:12px; }
     .plan-table-wrap { border:0.5px solid #B5D4F4; border-radius:8px; overflow:hidden; }
-    .plan-table { width:100%; border-collapse:collapse; font-size:12px; }
+    .plan-table { width:100%; border-collapse:collapse; font-size:20px; }
     .plan-table thead tr { background:#185FA5; }
-    .plan-table th { padding:8px 12px; font-size:11px; font-weight:600; color:#fff; letter-spacing:.05em; text-align:left; border:none; background:transparent; }
-    .plan-table th.col-week { width:130px; text-align:center; }
+    .plan-table th { padding:10px 14px; font-size:20px; font-weight:600; color:#fff; text-align:left; border:none; background:transparent; }
+    .plan-table th.col-week { width:200px; text-align:center; }
     .plan-table tbody tr { border-bottom:0.5px solid #E6F1FB; }
     .plan-table tbody tr:last-child { border-bottom:none; }
     .plan-table tbody tr:nth-child(even) td { background:#F5FAFF; }
     .plan-table tbody tr:hover td { background:#EBF4FC; }
-    .plan-table td { padding:12px; vertical-align:top; color:#0C447C; border:none; }
+    .plan-table td { padding:14px; vertical-align:top; color:#0C447C; border:none; font-size:20px; }
     .plan-table td.td-week { text-align:center; background:#F0F7FF; border-right:0.5px solid #E6F1FB; }
-    .plan-week-badge { display:inline-block; font-size:10px; font-weight:700; background:#185FA5; color:#fff; padding:2px 9px; border-radius:20px; margin-bottom:5px; }
-    .plan-week-range { font-size:10px; font-weight:600; color:#378ADD; line-height:1.6; }
-    .ex-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-    .ex-item { display:flex; align-items:flex-start; gap:7px; line-height:1.5; }
-    .ex-bullet { width:6px; height:6px; border-radius:50%; background:#185FA5; flex-shrink:0; margin-top:5px; }
-    .ex-name { font-weight:600; color:#0C447C; font-size:12px; }
-    .ex-params { color:#378ADD; font-size:11px; }
-    .ex-day-tags { display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
-    .ex-day-tag { font-size:10px; background:#E6F1FB; color:#185FA5; border-radius:4px; padding:1px 6px; font-weight:500; }
-    .no-ex { color:#B5D4F4; font-style:italic; font-size:12px; }
+    .plan-week-badge { display:inline-block; font-size:20px; font-weight:700; background:#185FA5; color:#fff; padding:4px 14px; border-radius:20px; margin-bottom:6px; }
+    .plan-week-range { font-size:20px; font-weight:600; color:#378ADD; line-height:1.6; }
+    .ex-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+    .ex-item { display:flex; align-items:flex-start; gap:8px; line-height:1.5; }
+    .ex-bullet { width:8px; height:8px; border-radius:50%; background:#185FA5; flex-shrink:0; margin-top:8px; }
+    .ex-name { font-weight:600; color:#0C447C; font-size:20px; }
+    .ex-params { color:#378ADD; font-size:20px; }
+    .ex-day-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+    .ex-day-tag { font-size:20px; background:#E6F1FB; color:#185FA5; border-radius:4px; padding:3px 10px; font-weight:500; }
+    .no-ex { color:#B5D4F4; font-style:italic; font-size:20px; }
 
     @media (max-width: 600px) {
       .info-grid { grid-template-columns: repeat(2, 1fr); }
@@ -325,7 +320,7 @@
 
     <!-- 個案基本資料 -->
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:0.5px solid #E6F1FB; margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:0.5px solid #c5d8ee; margin-bottom:16px;">
         <div class="sec-hd" style="border:none; padding:0; margin:0;">個案基本資料</div>
         <button class="btn-edit-patient" id="btn-edit">✎ 編輯個案</button>
       </div>
@@ -399,14 +394,14 @@
         </div>
         <div class="info-row" style="margin-top: 4px;">
           <div class="info-lbl-sm">是否有接受其他膝蓋治療</div>
-          <div style="display: flex; gap: 16px; align-items: center; margin-top: 4px;">
-            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #0C447C;">
+          <div style="display: flex; gap: 24px; align-items: center; margin-top: 4px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 20px; color: #0C447C;">
               <input type="radio" name="otherTx" value="yes" id="otherTx-yes"
-                     style="accent-color: #185FA5; width: 14px; height: 14px;" disabled> 是
+                     style="accent-color: #185FA5; width: 20px; height: 20px;" disabled> 是
             </label>
-            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #0C447C;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 20px; color: #0C447C;">
               <input type="radio" name="otherTx" value="no" id="otherTx-no" checked
-                     style="accent-color: #185FA5; width: 14px; height: 14px;" disabled> 否
+                     style="accent-color: #185FA5; width: 20px; height: 20px;" disabled> 否
             </label>
           </div>
           <div id="otherTx-txt" class="info-txt"
