@@ -24,217 +24,342 @@
   --radius-md: 10px;
   --radius-lg: 14px;
 }
-body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); color: var(--text-primary); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); color: var(--text-primary); font-size: 20px; line-height: 1.6; min-height: 100vh; }
 
-.main { display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+/* Sidebar */
+.app { display:flex; height:100vh; width:100vw; }
+.sidebar { width:110px; background:#1a3a5c; display:flex; flex-direction:column; align-items:center; padding:18px 0; gap:10px; flex-shrink:0; }
+.avatar { width:62px; height:62px; border-radius:50%; background:#378add; color:#fff; font-size:26px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+.nav-icon { width:62px; height:62px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#7aabcf; cursor:pointer; transition:background .2s,color .2s; }
+.nav-icon:hover { background:#26527d; color:#fff; }
+.nav-icon.active { background:#378add; color:#fff; }
+.sidebar-spacer { flex:1; }
+.logout-icon { width:62px; height:62px; border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#7aabcf; transition:background .2s,color .2s; }
+.logout-icon:hover { background:#c0392b22; color:#e07070; }
+
+.main { flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; }
 
 /* Page header */
-.page-header { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:center; flex-shrink:0; }
-.back-link { display:flex; align-items:center; gap:5px; color:var(--blue-mid); font-size:13px; cursor:pointer; text-decoration:none; }
+.page-header { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:14px 28px; display:flex; align-items:center; flex-shrink:0; }
+.back-link { display:flex; align-items:center; gap:5px; color:var(--blue-mid); font-size:20px; cursor:pointer; text-decoration:none; }
 .back-link:hover { text-decoration:underline; }
-.page-title { font-size:17px; font-weight:600; color:var(--text-primary); flex:1; text-align:center; }
+.page-title { font-size:20px; font-weight:700; color:var(--text-primary); flex:1; text-align:center; }
+
+/* Toggle button */
+.info-toggle-btn { display:flex; align-items:center; gap:6px; padding:9px 18px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-white); color:var(--blue-mid); font-family:inherit; font-size:20px; cursor:pointer; transition:background .15s; white-space:nowrap; }
+.info-toggle-btn:hover { background:var(--blue-light); }
+.info-toggle-btn.active { background:var(--blue-light); border-color:var(--blue-mid); font-weight:600; }
 
 /* Top controls */
-.top-controls { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:10px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; flex-shrink:0; }
-.ctrl-group { display:flex; flex-direction:column; gap:3px; }
-.ctrl-label { font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; }
-.ctrl-date-display { padding:6px 10px; border:1px solid var(--border-light); border-radius:var(--radius-sm); font-size:13px; color:var(--text-secondary); background:var(--bg-section); min-width:120px; display:inline-block; }
-.date-pair { display:flex; align-items:center; gap:6px; }
-.date-sep { color:var(--text-muted); font-size:13px; }
-.ctrl-divider { width:1px; height:32px; background:var(--border-light); margin:0 2px; align-self:center; }
+.top-controls { background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:14px 28px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; flex-shrink:0; }
+.ctrl-group { display:flex; flex-direction:column; gap:4px; }
+.ctrl-label { font-size:20px; font-weight:600; color:var(--text-muted); letter-spacing:.04em; text-transform:uppercase; }
+.ctrl-date-display { padding:9px 13px; border:1px solid var(--border-light); border-radius:var(--radius-sm); font-size:20px; color:var(--text-secondary); background:var(--bg-section); min-width:150px; display:inline-block; }
+.date-pair { display:flex; align-items:center; gap:8px; }
+.date-sep { color:var(--text-muted); font-size:20px; }
+.ctrl-divider { width:1px; height:38px; background:var(--border-light); margin:0 2px; align-self:center; }
 
 /* Patient info bar */
 .patient-bar { display:flex; align-items:center; gap:10px; }
-.patient-bar-name { font-size:15px; font-weight:700; color:var(--blue-dark); }
-.patient-bar-chips { display:flex; gap:6px; align-items:center; }
-.patient-chip { font-size:11px; font-weight:600; padding:2px 10px; border-radius:20px; background:var(--blue-light); color:var(--blue-mid); white-space:nowrap; }
+.patient-bar-name { font-size:20px; font-weight:700; color:var(--blue-dark); }
+.patient-bar-chips { display:flex; gap:8px; align-items:center; }
+.patient-chip { font-size:18px; font-weight:600; padding:3px 14px; border-radius:20px; background:var(--blue-light); color:var(--blue-mid); white-space:nowrap; }
 
-/* Content 1:1 */
-.content-row { flex:1; display:grid; grid-template-columns:1fr 1fr; min-height:0; overflow:hidden; }
+/* Content row */
+.content-row { flex:1; display:flex; min-height:0; overflow:hidden; }
 
-/* Left panel */
-.left-panel { background:var(--bg-white); border-right:1px solid var(--border-light); overflow-y:auto; display:flex; flex-direction:column; }
-.left-basic { padding:18px 16px; flex-shrink:0; }
-.panel-title { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; padding-bottom:7px; border-bottom:1px solid var(--border-light); }
-.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 8px; margin-bottom:12px; }
-.info-item { display:flex; flex-direction:column; gap:1px; }
-.il { font-size:11px; color:var(--text-muted); font-weight:500; }
-.iv { font-size:13px; color:var(--text-primary); font-weight:500; }
-.info-block { margin-bottom:8px; }
-.info-block .il { font-size:11px; color:var(--blue-mid); font-weight:600; margin-bottom:1px; }
-.info-block .iv { font-size:12px; font-weight:400; line-height:1.5; }
-.divider { border:none; border-top:1px solid var(--border-light); margin:12px 0; }
-.left-compare { border-top:1px solid var(--border-light); }
-.compare-title-bar { padding:10px 16px 8px; }
-.compare-section-title { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
-.ctbl-section { padding:0 12px 12px; }
-.ctbl-section-label { font-size:11px; font-weight:600; color:var(--blue-mid); margin:10px 0 5px; padding-left:6px; border-left:3px solid var(--blue-mid); }
-.ctbl { width:100%; border-collapse:collapse; font-size:11px; border:1px solid var(--border-light); border-radius:var(--radius-sm); overflow:hidden; }
-.ctbl th { padding:6px 8px; background:var(--bg-section); color:var(--text-muted); font-weight:600; text-align:left; border-bottom:1px solid var(--border-light); white-space:nowrap; font-size:10px; letter-spacing:.03em; }
-.ctbl td { padding:6px 8px; border-bottom:1px solid var(--border-light); color:var(--text-primary); vertical-align:middle; }
+/* Patient info modal */
+.pi-overlay { display:none; position:fixed; inset:0; background:rgba(20,40,80,.45); z-index:600; align-items:center; justify-content:center; padding:20px; }
+.pi-overlay.open { display:flex; }
+.pi-panel { background:var(--bg-white); border-radius:var(--radius-lg); width:90vw; max-width:1100px; max-height:92vh; overflow-y:auto; box-shadow:0 8px 40px rgba(26,61,107,.22); display:flex; flex-direction:column; }
+.pi-header { padding:18px 28px; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:var(--bg-white); z-index:1; }
+.pi-title { font-size:20px; font-weight:700; color:var(--text-primary); }
+.pi-close { cursor:pointer; color:var(--text-muted); font-size:28px; line-height:1; }
+.pi-close:hover { color:var(--text-primary); }
+.pi-body { padding:24px 28px; display:flex; flex-direction:column; gap:0; }
+
+/* Patient info content */
+.left-basic { padding:0; flex-shrink:0; }
+.panel-title { font-size:20px; font-weight:700; letter-spacing:.03em; color:var(--text-muted); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border-light); }
+.info-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:20px 16px; margin-bottom:20px; }
+.info-item { display:flex; flex-direction:column; gap:4px; }
+.il { font-size:20px; color:var(--text-muted); font-weight:500; }
+.iv { font-size:20px; color:var(--text-primary); font-weight:600; }
+.info-block { margin-bottom:14px; }
+.info-block .il { font-size:20px; color:var(--blue-mid); font-weight:600; margin-bottom:4px; }
+.info-block .iv { font-size:20px; font-weight:400; line-height:1.6; }
+.divider { border:none; border-top:1px solid var(--border-light); margin:18px 0; }
+.left-compare { border-top:1px solid var(--border-light); margin-top:6px; }
+.compare-title-bar { padding:18px 0 10px; }
+.compare-section-title { font-size:20px; font-weight:700; letter-spacing:.03em; color:var(--text-muted); }
+.ctbl-section { padding:0 0 16px; }
+.ctbl-section-label { font-size:20px; font-weight:600; color:var(--blue-mid); margin:14px 0 8px; padding-left:8px; border-left:3px solid var(--blue-mid); }
+.ctbl { width:100%; border-collapse:collapse; font-size:20px; border:1px solid var(--border-light); border-radius:var(--radius-sm); overflow:hidden; }
+.ctbl th { padding:10px 12px; background:var(--bg-section); color:var(--text-muted); font-weight:600; text-align:left; border-bottom:1px solid var(--border-light); white-space:nowrap; font-size:20px; letter-spacing:.03em; }
+.ctbl td { padding:10px 12px; border-bottom:1px solid var(--border-light); color:var(--text-primary); vertical-align:middle; }
 .ctbl tr:last-child td { border-bottom:none; }
 .ctbl tr:hover td { background:var(--bg-section); }
 .ctbl .muted { color:var(--text-muted); }
 
 /* Right panel */
-.right-panel { overflow-y:auto; padding:20px 20px 32px; display:flex; flex-direction:column; gap:14px; }
+.right-panel { flex:1; overflow-y:auto; padding:24px 24px 40px; display:flex; flex-direction:column; gap:16px; }
 .plan-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; color:var(--text-muted); gap:10px; }
-.plan-loading-text { font-size:13px; }
+.plan-loading-text { font-size:20px; }
 
 /* Schedule card */
 .schedule-card { background:var(--bg-white); border-radius:var(--radius-lg); overflow:hidden; }
-.schedule-card-header { padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-light); }
-.schedule-card-title { font-size:14px; font-weight:600; }
-.plan-name-group { display:flex; align-items:center; gap:8px; }
-.plan-name-label { font-size:11px; color:var(--text-muted); font-weight:500; white-space:nowrap; }
-.plan-name-input { padding:4px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); background:var(--bg-white); width:180px; transition:border-color .15s; }
+.schedule-card-header { padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-light); }
+.schedule-card-title { font-size:20px; font-weight:700; }
+.plan-name-group { display:flex; align-items:center; gap:10px; }
+.plan-name-label { font-size:20px; color:var(--text-muted); font-weight:500; white-space:nowrap; }
+.plan-name-input { padding:7px 13px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:20px; color:var(--text-primary); background:var(--bg-white); width:220px; transition:border-color .15s; }
 .plan-name-input:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
-.week-badge { display:inline-block; font-size:10px; font-weight:700; background:var(--blue-mid); color:#fff; padding:2px 8px; border-radius:20px; margin-bottom:4px; }
-.week-range-text { font-size:11px; font-weight:600; color:var(--text-secondary); display:block; }
+.week-badge { display:inline-block; font-size:20px; font-weight:700; background:var(--blue-mid); color:#fff; padding:3px 12px; border-radius:20px; margin-bottom:5px; }
+.week-range-text { font-size:20px; font-weight:600; color:var(--text-secondary); display:block; }
 
 /* Exercise picker */
 .ex-picker { position:relative; }
-.ex-panel { display:none; position:absolute; left:0; top:calc(100% + 4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); width:280px; }
+.ex-trigger { display:flex; align-items:center; flex-wrap:wrap; gap:5px; padding:7px 11px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-white); cursor:pointer; min-height:44px; transition:border-color .15s; }
+.ex-trigger:hover { border-color:var(--blue-accent); }
+.ex-trigger.open { border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
+.ex-placeholder { font-size:20px; color:var(--text-muted); user-select:none; flex:1; }
+.ex-tag { display:inline-flex; align-items:center; gap:4px; background:var(--blue-light); color:var(--blue-dark); font-size:20px; font-weight:500; padding:3px 10px; border-radius:20px; }
+.ex-tag span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px; }
+.ex-tag-rm { cursor:pointer; color:var(--blue-mid); font-size:20px; line-height:1; }
+.ex-tag-rm:hover { color:#c0392b; }
+.ex-arrow { margin-left:auto; flex-shrink:0; color:var(--text-muted); transition:transform .2s; }
+.ex-trigger.open .ex-arrow { transform:rotate(180deg); }
+.ex-panel { display:none; position:absolute; left:0; top:calc(100% + 4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); width:340px; }
 .ex-panel.open { display:block; }
-.ex-list { max-height:200px; overflow-y:auto; padding:4px 0; }
-.ex-opt { display:flex; align-items:flex-start; gap:7px; padding:6px 12px; cursor:pointer; font-size:12px; line-height:1.4; transition:background .1s; }
+.ex-search { padding:10px 12px; border-bottom:1px solid var(--border-light); }
+.ex-search input { width:100%; padding:7px 11px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:20px; outline:none; }
+.ex-search input:focus { border-color:var(--blue-mid); }
+.ex-list { max-height:240px; overflow-y:auto; padding:4px 0; }
+.ex-opt { display:flex; align-items:flex-start; gap:8px; padding:8px 14px; cursor:pointer; font-size:20px; line-height:1.4; transition:background .1s; }
 .ex-opt:hover, .ex-opt.checked { background:var(--blue-light); }
-.ex-opt input { margin-top:2px; flex-shrink:0; accent-color:var(--blue-mid); cursor:pointer; }
-.ex-footer { padding:7px 10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; }
-.ex-count { font-size:11px; color:var(--text-muted); }
+.ex-opt input { margin-top:3px; flex-shrink:0; accent-color:var(--blue-mid); cursor:pointer; }
+.ex-footer { padding:9px 12px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; }
+.ex-count { font-size:20px; color:var(--text-muted); }
+.ex-clear { font-size:20px; color:#c0392b; cursor:pointer; background:none; border:none; font-family:inherit; }
+.ex-clear:hover { text-decoration:underline; }
 
 /* Week exercise list */
-.wex-list { display:flex; flex-direction:column; gap:6px; padding:6px 0 2px; }
-.wex-item { border:1px solid var(--border-light); border-radius:var(--radius-sm); background:var(--bg-white); display:flex; align-items:center; gap:8px; padding:6px 10px; overflow:hidden; }
-.wex-num-badge { width:22px; height:22px; border-radius:50%; background:var(--blue-mid); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.wex-item-name { font-size:12px; font-weight:500; color:var(--text-primary); max-width:160px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; }
-.wex-item-chips { display:flex; gap:5px; align-items:center; flex-shrink:0; }
-.wex-chip { font-size:11px; color:var(--text-secondary); background:var(--bg-section); border:1px solid var(--border-light); border-radius:4px; padding:2px 7px; white-space:nowrap; flex-shrink:0; }
+.wex-list { display:flex; flex-direction:column; gap:8px; padding:8px 0 4px; }
+.wex-item { border:1px solid var(--border-light); border-radius:var(--radius-sm); background:var(--bg-white); display:flex; align-items:center; gap:10px; padding:9px 13px; overflow:hidden; }
+.wex-num-badge { width:36px; height:36px; border-radius:50%; background:var(--blue-mid); color:#fff; font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.wex-item-name { font-size:20px; font-weight:500; color:var(--text-primary); max-width:200px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; }
+.wex-item-chips { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+.wex-chip { font-size:20px; color:var(--text-secondary); background:var(--bg-section); border:1px solid var(--border-light); border-radius:4px; padding:3px 9px; white-space:nowrap; flex-shrink:0; }
 .wex-chip b { color:var(--blue-mid); font-weight:600; }
-.wex-item-actions { display:flex; gap:4px; flex-shrink:0; margin-left:auto; }
-.wex-action-btn { cursor:pointer; padding:3px 10px; border-radius:4px; font-size:11px; font-family:inherit; border:1px solid var(--border); background:var(--bg-white); color:var(--text-secondary); transition:background .1s,color .1s; white-space:nowrap; flex-shrink:0; }
+.wex-item-actions { display:flex; gap:5px; flex-shrink:0; margin-left:auto; }
+.wex-action-btn { cursor:pointer; padding:5px 13px; border-radius:4px; font-size:20px; font-family:inherit; border:1px solid var(--border); background:var(--bg-white); color:var(--text-secondary); transition:background .1s,color .1s; white-space:nowrap; flex-shrink:0; }
 .wex-action-btn:hover { background:var(--blue-light); color:var(--blue-mid); border-color:var(--blue-accent); }
 .wex-action-btn.rm:hover { background:#fef0ef; color:#c0392b; border-color:#e8b4b0; }
-.wex-add-area { padding:6px 8px 8px; }
-.wex-add-btn { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; padding:7px; border:1px dashed var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--blue-mid); font-family:inherit; font-size:12px; cursor:pointer; transition:background .15s,border-color .15s; }
+.wex-add-area { padding:8px 10px 10px; }
+.wex-add-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px; border:1px dashed var(--border); border-radius:var(--radius-sm); background:transparent; color:var(--blue-mid); font-family:inherit; font-size:20px; cursor:pointer; transition:background .15s,border-color .15s; }
 .wex-add-btn:hover { background:var(--blue-light); border-color:var(--blue-accent); }
 
 /* Day layout */
-.day-num-chip { width:22px; height:22px; border-radius:50%; background:var(--blue-light); border:1.5px solid var(--blue-accent); color:var(--blue-dark); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:default; }
-.day-num-chip.removable { cursor:pointer; }
-.day-num-chip.removable:hover { background:#fef0ef; border-color:#e8b4b0; color:#c0392b; }
-.day-add-wrap { position:relative; flex-shrink:0; }
-.day-add-btn { display:flex; align-items:center; gap:3px; padding:3px 8px; border:1px dashed var(--border); border-radius:4px; font-size:11px; font-family:inherit; color:var(--blue-mid); background:transparent; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:background .1s,border-color .1s; }
+.day-schedule-wrap { padding:10px 14px; }
+.day-grid { display:flex; flex-direction:column; gap:8px; }
+.day-row { display:flex; align-items:center; gap:8px; border:1px solid var(--border-light); border-radius:var(--radius-sm); padding:8px 12px; background:var(--bg-white); }
+.day-label { font-size:20px; font-weight:600; color:var(--text-secondary); white-space:nowrap; min-width:120px; padding-right:10px; border-right:1px solid var(--border-light); }
+.day-nums { display:flex; flex-wrap:wrap; gap:6px; flex:1; align-items:center; }
+.day-num-chip { width:36px; height:36px; border-radius:50%; background:var(--blue-light); border:1.5px solid var(--blue-accent); color:var(--blue-dark); font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:default; }
+.day-empty-hint { font-size:20px; color:var(--text-muted); font-style:italic; }
+.day-add-btn { display:flex; align-items:center; gap:4px; padding:5px 11px; border:1px dashed var(--border); border-radius:4px; font-size:20px; font-family:inherit; color:var(--blue-mid); background:transparent; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:background .1s,border-color .1s; }
 .day-add-btn:hover { background:var(--blue-light); border-color:var(--blue-accent); }
-.day-pick-panel { display:none; position:absolute; left:0; top:calc(100%+4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); min-width:200px; }
+.day-num-chip.removable { cursor:pointer; position:relative; }
+.day-num-chip.removable:hover { background:#fef0ef; border-color:#e8b4b0; color:#c0392b; }
+.day-pick-panel { display:none; position:absolute; left:0; top:calc(100%+4px); z-index:400; background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 6px 20px rgba(26,61,107,.14); min-width:240px; }
 .day-pick-panel.open { display:block; }
-.day-pick-list { max-height:220px; overflow-y:auto; padding:4px 0; }
-.day-pick-opt { display:flex; align-items:center; gap:8px; padding:6px 12px; cursor:pointer; font-size:12px; transition:background .1s; }
+.day-pick-list { max-height:260px; overflow-y:auto; padding:4px 0; }
+.day-pick-opt { display:flex; align-items:center; gap:10px; padding:9px 15px; cursor:pointer; font-size:20px; transition:background .1s; }
 .day-pick-opt:hover { background:var(--blue-light); }
-.day-pick-opt .dp-num { width:20px; height:20px; border-radius:50%; background:var(--blue-mid); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.day-pick-opt .dp-num { width:36px; height:36px; border-radius:50%; background:var(--blue-mid); color:#fff; font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .day-pick-opt.already { opacity:.45; pointer-events:none; }
+.day-add-wrap { position:relative; flex-shrink:0; }
 
 /* Modal */
 .modal-overlay { position:fixed; inset:0; background:rgba(20,40,80,.35); z-index:500; display:flex; align-items:center; justify-content:center; }
-.modal-box { background:var(--bg-white); border-radius:var(--radius-lg); box-shadow:0 8px 32px rgba(26,61,107,.18); width:360px; max-width:94vw; overflow:hidden; }
-.modal-header { padding:14px 18px 12px; border-bottom:1px solid var(--border-light); display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-.modal-title { font-size:13px; font-weight:600; color:var(--text-primary); line-height:1.4; flex:1; }
-.modal-close { cursor:pointer; color:var(--text-muted); font-size:18px; line-height:1; flex-shrink:0; margin-top:1px; }
+.modal-box { background:var(--bg-white); border-radius:var(--radius-lg); box-shadow:0 8px 32px rgba(26,61,107,.18); width:420px; max-width:94vw; overflow:hidden; }
+.modal-header { padding:16px 22px 14px; border-bottom:1px solid var(--border-light); display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.modal-title { font-size:20px; font-weight:600; color:var(--text-primary); line-height:1.4; flex:1; }
+.modal-close { cursor:pointer; color:var(--text-muted); font-size:22px; line-height:1; flex-shrink:0; margin-top:1px; }
 .modal-close:hover { color:var(--text-primary); }
-.modal-body { padding:16px 18px; display:grid; gap:12px; }
-.modal-field { display:flex; flex-direction:column; gap:4px; }
-.modal-field-label { font-size:11px; font-weight:600; color:var(--text-secondary); }
-.modal-field-input { padding:7px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-primary); transition:border-color .15s; }
+.modal-body { padding:20px 22px; display:grid; gap:14px; }
+.modal-field { display:flex; flex-direction:column; gap:5px; }
+.modal-field-label { font-size:20px; font-weight:600; color:var(--text-secondary); }
+.modal-field-input { padding:9px 13px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:20px; color:var(--text-primary); transition:border-color .15s; }
 .modal-field-input:focus { outline:none; border-color:var(--blue-mid); box-shadow:0 0 0 3px rgba(37,99,168,.1); }
-.modal-footer { padding:12px 18px; border-top:1px solid var(--border-light); display:flex; justify-content:flex-end; gap:8px; background:var(--bg-section); }
-.modal-btn-cancel { padding:7px 16px; background:var(--bg-white); color:var(--text-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; cursor:pointer; }
+.modal-footer { padding:14px 22px; border-top:1px solid var(--border-light); display:flex; justify-content:flex-end; gap:10px; background:var(--bg-section); }
+.modal-btn-cancel { padding:9px 20px; background:var(--bg-white); color:var(--text-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:20px; cursor:pointer; }
 .modal-btn-cancel:hover { background:var(--bg-section); }
-.modal-btn-confirm { padding:7px 16px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; }
+.modal-btn-confirm { padding:9px 20px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:20px; font-weight:500; cursor:pointer; }
 .modal-btn-confirm:hover { background:var(--blue-dark); }
 
 /* Actions */
-.action-row { display:flex; justify-content:flex-end; gap:10px; padding:12px 16px; border-top:1px solid var(--border-light); background:var(--bg-section); }
-.btn-cancel { padding:7px 18px; background:var(--bg-white); color:var(--text-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; cursor:pointer; }
+.action-row { display:flex; justify-content:flex-end; gap:12px; padding:14px 20px; border-top:1px solid var(--border-light); background:var(--bg-section); }
+.btn-cancel { padding:10px 22px; background:var(--bg-white); color:var(--text-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:20px; cursor:pointer; }
 .btn-cancel:hover { background:var(--bg-section); }
-.btn-save { padding:7px 18px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:5px; }
+.btn-save { padding:10px 22px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:20px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; }
 .btn-save:hover { background:var(--blue-dark); }
 
-.toast { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-12px); background:var(--blue-dark); color:#fff; padding:10px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:500; opacity:0; transition:opacity .3s,transform .3s; pointer-events:none; z-index:9999; display:flex; align-items:center; white-space:nowrap; }
+.toast { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-12px); background:var(--blue-dark); color:#fff; padding:12px 22px; border-radius:var(--radius-md); font-size:20px; font-weight:500; opacity:0; transition:opacity .3s,transform .3s; pointer-events:none; z-index:9999; display:flex; align-items:center; white-space:nowrap; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
 
-/* Confirmation Overlay */
-.confirm-page { max-width:900px; margin:0 auto; padding:0 24px 48px; }
-.confirm-header { position:sticky; top:0; z-index:10; background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:12px 24px; margin:0 -24px; display:flex; align-items:center; gap:12px; }
-.confirm-back-btn { display:flex; align-items:center; gap:5px; padding:7px 14px; background:var(--bg-section); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text-secondary); cursor:pointer; transition:background .15s; flex-shrink:0; }
+/* Confirm page */
+.confirm-page { padding:0 32px 56px; }
+.confirm-header { position:sticky; top:0; z-index:10; background:var(--bg-white); border-bottom:1px solid var(--border-light); padding:16px 32px; margin:0 -32px; display:flex; align-items:center; gap:16px; }
+.confirm-back-btn { display:flex; align-items:center; gap:6px; padding:10px 20px; background:var(--bg-section); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:20px; color:var(--text-secondary); cursor:pointer; transition:background .15s; flex-shrink:0; }
 .confirm-back-btn:hover { background:var(--border-light); }
 .confirm-header-center { flex:1; text-align:center; }
-.confirm-header-label { font-size:11px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; }
-.confirm-plan-name { font-size:16px; font-weight:700; color:var(--blue-dark); letter-spacing:.03em; }
-.confirm-header-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-.confirm-submit-btn { display:flex; align-items:center; gap:6px; padding:7px 18px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+.confirm-header-label { font-size:20px; font-weight:600; color:var(--text-muted); letter-spacing:.04em; text-transform:uppercase; }
+.confirm-plan-name { font-size:20px; font-weight:700; color:var(--blue-dark); letter-spacing:.03em; }
+.confirm-header-actions { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.confirm-submit-btn { display:flex; align-items:center; gap:8px; padding:11px 26px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:20px; font-weight:600; cursor:pointer; transition:background .15s; }
 .confirm-submit-btn:hover { background:var(--blue-dark); }
-.confirm-meta-bar { display:flex; align-items:center; gap:0; background:var(--bg-white); border:1px solid var(--border-light); border-radius:var(--radius-md); margin:20px 0; overflow:hidden; }
-.confirm-meta-item { flex:1; padding:12px 18px; }
-.confirm-meta-label { font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:3px; }
-.confirm-meta-value { font-size:13px; font-weight:600; color:var(--text-primary); }
-.confirm-meta-divider { width:1px; height:40px; background:var(--border-light); flex-shrink:0; }
+.confirm-meta-bar { display:flex; align-items:center; gap:0; background:var(--bg-white); border:1px solid var(--border-light); border-radius:var(--radius-md); margin:24px 0; overflow:hidden; }
+.confirm-meta-item { flex:1; padding:20px 28px; }
+.confirm-meta-label { font-size:20px; font-weight:600; color:var(--text-muted); letter-spacing:.04em; text-transform:uppercase; display:block; margin-bottom:6px; }
+.confirm-meta-value { font-size:20px; font-weight:700; color:var(--text-primary); }
+.confirm-meta-divider { width:1px; height:60px; background:var(--border-light); flex-shrink:0; }
 .confirm-table-wrap { border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border); }
 .confirm-table { width:100%; border-collapse:collapse; }
 .confirm-table thead tr { background:var(--blue-dark); }
-.confirm-table th { padding:10px 16px; font-size:12px; font-weight:700; color:#fff; letter-spacing:.06em; text-align:left; }
-.confirm-table th.col-week { width:160px; text-align:center; }
+.confirm-table th { padding:16px 24px; font-size:20px; font-weight:700; color:#fff; letter-spacing:.04em; text-align:left; }
+.confirm-table th.col-week { width:220px; text-align:center; }
 .confirm-table tbody tr { border-bottom:1px solid var(--border-light); transition:background .1s; }
 .confirm-table tbody tr:last-child { border-bottom:none; }
 .confirm-table tbody tr:nth-child(even) { background:var(--bg-section); }
 .confirm-table tbody tr:hover { background:var(--blue-light); }
-.confirm-table td { padding:14px 16px; vertical-align:top; font-size:13px; }
+.confirm-table td { padding:20px 24px; vertical-align:top; font-size:20px; }
 .confirm-table td.td-week { text-align:center; background:var(--bg-section); border-right:1px solid var(--border-light); }
-.confirm-week-badge { display:inline-block; font-size:11px; font-weight:700; background:var(--blue-mid); color:#fff; padding:3px 10px; border-radius:20px; margin-bottom:6px; }
-.confirm-week-range { font-size:11px; font-weight:600; color:var(--text-secondary); line-height:1.6; }
-.confirm-ex-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
-.confirm-ex-item { display:flex; align-items:flex-start; gap:8px; line-height:1.5; }
-.confirm-ex-bullet { width:6px; height:6px; border-radius:50%; background:var(--blue-mid); flex-shrink:0; margin-top:6px; }
+.confirm-week-badge { display:inline-block; font-size:20px; font-weight:700; background:var(--blue-mid); color:#fff; padding:5px 16px; border-radius:20px; margin-bottom:8px; }
+.confirm-week-range { font-size:20px; font-weight:600; color:var(--text-secondary); line-height:1.6; }
+.confirm-ex-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
+.confirm-ex-item { display:flex; align-items:flex-start; gap:10px; line-height:1.5; }
+.confirm-ex-bullet { width:9px; height:9px; border-radius:50%; background:var(--blue-mid); flex-shrink:0; margin-top:8px; }
 .confirm-ex-name { font-weight:600; color:var(--text-primary); }
-.confirm-ex-params { color:var(--text-secondary); font-size:12px; }
-.confirm-day-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
-.confirm-day-tag { font-size:10px; background:var(--blue-light); color:var(--blue-mid); border-radius:4px; padding:1px 7px; font-weight:500; }
-.confirm-no-ex { color:var(--text-muted); font-style:italic; font-size:12px; }
-.confirm-footer-note { display:flex; align-items:center; gap:8px; margin-top:16px; padding:10px 16px; background:var(--blue-light); border-radius:var(--radius-sm); font-size:12px; color:var(--blue-dark); }
+.confirm-ex-params { color:var(--text-secondary); font-size:20px; }
+.confirm-day-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.confirm-day-tag { font-size:20px; background:var(--blue-light); color:var(--blue-mid); border-radius:4px; padding:3px 12px; font-weight:500; }
+.confirm-no-ex { color:var(--text-muted); font-style:italic; font-size:20px; }
+.confirm-footer-note { display:flex; align-items:center; gap:10px; margin-top:20px; padding:14px 22px; background:var(--blue-light); border-radius:var(--radius-sm); font-size:20px; color:var(--blue-dark); }
+
+@media print {
+  .sidebar, .confirm-header, .confirm-back-btn { display:none !important; }
+  .app { display:block; }
+  .confirm-page { padding:0; }
+}
 </style>
 </head>
 <body>
+<div class="app">
 
-<div class="main">
-  <div class="page-header">
-    <a class="back-link" id="backLink">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg> 返回個案詳情
-    </a>
-    <div class="page-title">編輯治療計畫</div>
-    <div style="width:100px"></div>
-  </div>
+  <nav class="sidebar">
+    <div class="avatar" id="sidebarAvatar">—</div>
 
-  <div class="top-controls">
-    <div class="patient-bar" id="patientBar">
-      <span class="patient-bar-name" id="pbName">載入中…</span>
-      <div class="patient-bar-chips" id="pbChips"></div>
+    <div class="nav-icon" title="個案列表" onclick="location.href='/home'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
     </div>
-    <div class="ctrl-divider"></div>
-    <div class="ctrl-group">
-      <span class="ctrl-label">治療計畫期間</span>
-      <div class="date-pair">
-        <span class="ctrl-date-display" id="startDateDisplay">—</span>
-        <span class="date-sep">→</span>
-        <span class="ctrl-date-display" id="endDateDisplay">—</span>
+
+    <div class="nav-icon active" title="治療計畫">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+        <rect x="9" y="3" width="6" height="4" rx="1"/>
+        <path d="M9 12h6M9 16h4"/>
+      </svg>
+    </div>
+
+    <div class="nav-icon" title="訓練結果" onclick="location.href='/training-results'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+    </div>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="logout-icon" title="登出" onclick="location.href='/'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+        <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="page-header">
+      <a class="back-link" id="backLink">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        返回個案詳情
+      </a>
+      <div class="page-title">編輯治療計畫</div>
+      <button class="info-toggle-btn" id="infoToggleBtn" onclick="toggleInfo()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        個案基本資料
+      </button>
+    </div>
+
+    <div class="top-controls">
+      <div class="patient-bar" id="patientBar">
+        <span class="patient-bar-name" id="pbName">載入中…</span>
+        <div class="patient-bar-chips" id="pbChips"></div>
+      </div>
+      <div class="ctrl-divider"></div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">治療計畫期間</span>
+        <div class="date-pair">
+          <span class="ctrl-date-display" id="startDateDisplay">—</span>
+          <span class="date-sep">→</span>
+          <span class="ctrl-date-display" id="endDateDisplay">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-row">
+      <div class="right-panel">
+        <div class="plan-loading" id="planLoading">
+          <div class="plan-loading-text">載入計畫中…</div>
+        </div>
+        <div id="scheduleWrap" style="display:none">
+          <div class="schedule-card">
+            <div class="schedule-card-header">
+              <span class="schedule-card-title">週/日治療安排</span>
+              <div class="plan-name-group">
+                <span class="plan-name-label">治療計畫名稱</span>
+                <input type="text" class="plan-name-input" id="planNameInput" placeholder="計畫名稱">
+              </div>
+            </div>
+            <div id="planBody"></div>
+            <div class="action-row">
+              <button class="btn-cancel" onclick="cancelPlan()">取消</button>
+              <button class="btn-save" onclick="savePlan()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                儲存修改
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+</div><!-- /.app -->
 
-  <div class="content-row">
-    <!-- LEFT -->
-    <div class="left-panel">
+<!-- 個案基本資料彈出視窗 -->
+<div class="pi-overlay" id="piOverlay" onclick="closePatientInfo()">
+  <div class="pi-panel" onclick="event.stopPropagation()">
+    <div class="pi-header">
+      <div class="pi-title">個案基本資料</div>
+      <span class="pi-close" onclick="closePatientInfo()">×</span>
+    </div>
+    <div class="pi-body">
       <div id="patientInfoBlock" style="display:none">
         <div class="left-basic">
-          <div class="panel-title">個案基本資料</div>
           <div class="info-grid">
             <div class="info-item"><span class="il">姓名</span><span class="iv" id="iName"></span></div>
             <div class="info-item"><span class="il">性別</span><span class="iv" id="iGender"></span></div>
@@ -252,6 +377,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
           <div class="info-block"><div class="il">相關病史</div><div class="iv" id="iHist"></div></div>
           <div class="info-block"><div class="il">影像學結果</div><div class="iv" id="iImg"></div></div>
           <div class="info-block"><div class="il">就診流程</div><div class="iv" id="iFlow"></div></div>
+          <div class="info-block"><div class="il">其他膝蓋治療</div><div class="iv" id="iOtherKnee"></div></div>
         </div>
         <div class="left-compare">
           <div class="compare-title-bar">
@@ -261,42 +387,16 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
         </div>
       </div>
     </div>
-
-    <!-- RIGHT -->
-    <div class="right-panel">
-      <div class="plan-loading" id="planLoading">
-        <div class="plan-loading-text">載入計畫中…</div>
-      </div>
-      <div id="scheduleWrap" style="display:none">
-        <div class="schedule-card">
-          <div class="schedule-card-header">
-            <span class="schedule-card-title">週/日治療安排</span>
-            <div class="plan-name-group">
-              <span class="plan-name-label">治療計畫名稱</span>
-              <input type="text" class="plan-name-input" id="planNameInput" placeholder="計畫名稱">
-            </div>
-          </div>
-          <div id="planBody"></div>
-          <div class="action-row">
-            <button class="btn-cancel" onclick="cancelPlan()">取消</button>
-            <button class="btn-save" onclick="savePlan()">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              儲存修改
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
 <div class="toast" id="toast">
   <span id="toastMsg"></span>
-  <button id="toastConfirmBtn" style="display:none; margin-left:12px; padding:3px 12px; border:1px solid rgba(255,255,255,.6); border-radius:4px; background:transparent; color:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;">確定</button>
+  <button id="toastConfirmBtn" style="display:none; margin-left:12px; padding:3px 12px; border:1px solid rgba(255,255,255,.6); border-radius:4px; background:transparent; color:#fff; font-size:20px; font-weight:600; cursor:pointer; font-family:inherit;">確定</button>
 </div>
 
 <!-- Confirmation Overlay -->
-<div id="confirmOverlay" style="display:none; position:fixed; inset:0; background:var(--bg-page); z-index:300; overflow-y:auto;">
+<div id="confirmOverlay" style="display:none; position:fixed; inset:0; left:110px; background:var(--bg-page); z-index:300; overflow-y:auto;">
   <div class="confirm-page">
     <div class="confirm-header">
       <button class="confirm-back-btn" onclick="closeConfirm()">
@@ -309,7 +409,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
       </div>
       <div class="confirm-header-actions">
         <button class="confirm-submit-btn" onclick="submitPlan()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           儲存修改
         </button>
       </div>
@@ -342,7 +442,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
       </table>
     </div>
     <div class="confirm-footer-note">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       請確認所有治療內容無誤後再按「儲存修改」。送出後將更新現有計畫的治療內容。
     </div>
   </div>
@@ -383,6 +483,19 @@ async function init() {
   if (!patientId || !planId) { showToast('缺少個案 ID 或計畫 ID', true); return; }
   await Promise.all([loadExercises(), loadPatient()]);
   await loadPlan();
+  loadClinician();
+}
+
+async function loadClinician() {
+  try {
+    const clinicianId = getCookie('clinician_id');
+    if (!clinicianId) return;
+    const res = await fetch(`/clinicians/${clinicianId}`, { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const data = await res.json();
+    if (data.result && data.data.name) {
+      document.getElementById('sidebarAvatar').textContent = data.data.name.charAt(0);
+    }
+  } catch(e) {}
 }
 
 async function loadExercises() {
@@ -451,6 +564,9 @@ async function loadPatient() {
     set('iHist',   p.medical_history);
     set('iImg',    p.imaging_findings);
     set('iFlow',   p.visit_flow);
+    set('iOtherKnee', p.other_knee_treatment_comment != null
+      ? '是｜' + p.other_knee_treatment_comment
+      : '否');
     document.getElementById('patientInfoBlock').style.display = 'block';
 
     loadMeasurements();
@@ -518,7 +634,6 @@ function buildWeekDataFromPlan(plan) {
     cur.setDate(cur.getDate()+7);
   }
 
-  // Populate from existing contents
   (plan.contents || []).forEach(content => {
     const contentDateStr = tsToDateStr(content.date);
     const ex = exercises.find(e => e.id === content.exercise_id);
@@ -614,7 +729,7 @@ function buildCompareData(measurements) {
 
 function renderCompare(d) {
   const el = document.getElementById('compareContent');
-  if (!d || !d.evals.length) { el.innerHTML = '<div style="padding:12px 16px;font-size:12px;color:var(--text-muted)">尚無評量資料</div>'; return; }
+  if (!d || !d.evals.length) { el.innerHTML = '<div style="padding:16px 0;font-size:20px;color:var(--text-muted)">尚無評量資料</div>'; return; }
   const ens = d.evals;
   function thRow(hasSide, hasNote) {
     let h = hasSide ? '<th>評估側</th>' : '';
@@ -659,8 +774,8 @@ function renderTable() {
     weekBadgeCell.style.cssText = 'padding:8px 14px; border-right:1px solid var(--border-light); display:flex; align-items:center;';
     weekBadgeCell.innerHTML = `<span class="week-badge">第 ${wi+1} 週</span>`;
     const weekItemsLabel = document.createElement('div');
-    weekItemsLabel.style.cssText = 'padding:6px 12px; font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:flex; align-items:center; gap:6px;';
-    weekItemsLabel.innerHTML = `<span>週治療項目</span><span style="font-size:10px;color:var(--blue-mid);font-weight:400;">（動作名稱、組數、次數、組間休息）</span>`;
+    weekItemsLabel.style.cssText = 'padding:6px 12px; font-size:20px; font-weight:600; color:var(--text-muted); letter-spacing:.04em; text-transform:uppercase; display:flex; align-items:center; gap:6px;';
+    weekItemsLabel.innerHTML = `<span>週治療項目</span><span style="font-size:18px;color:var(--blue-mid);font-weight:400;">（動作名稱、組數、次數、組間休息）</span>`;
     weekHeader.appendChild(weekBadgeCell); weekHeader.appendChild(weekItemsLabel);
     weekBlock.appendChild(weekHeader);
 
@@ -677,9 +792,9 @@ function renderTable() {
 
     const dayLabelRow = document.createElement('div');
     dayLabelRow.style.cssText = 'display:grid; grid-template-columns:120px 150px 1fr; background:var(--bg-section); border-bottom:1px solid var(--border-light);';
-    const dlc0 = document.createElement('div'); dlc0.style.cssText = 'border-right:1px solid var(--border-light);';
-    const dlc1 = document.createElement('div'); dlc1.style.cssText = 'padding:5px 12px; font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:flex; align-items:center; border-right:1px solid var(--border-light);'; dlc1.textContent = '日安排';
-    const dlc2 = document.createElement('div'); dlc2.style.cssText = 'padding:5px 12px; font-size:10px; font-weight:600; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; display:flex; align-items:center; gap:5px;'; dlc2.innerHTML = `<span>日治療項目</span><span style="font-size:10px;color:var(--blue-mid);font-weight:400;">（顯示動作編號，從週治療項目中選取）</span>`;
+    const dlc0 = document.createElement('div'); dlc0.style.cssText = 'border-right:1px solid var(--border-light); background:var(--bg-section);';
+    const dlc1 = document.createElement('div'); dlc1.style.cssText = 'padding:8px 12px; font-size:20px; font-weight:600; color:var(--text-muted); letter-spacing:.04em; text-transform:uppercase; display:flex; align-items:center; border-right:1px solid var(--border-light);'; dlc1.textContent = '日安排';
+    const dlc2 = document.createElement('div'); dlc2.style.cssText = 'padding:8px 12px; font-size:20px; font-weight:600; color:var(--text-muted); letter-spacing:.04em; text-transform:uppercase; display:flex; align-items:center; gap:5px;'; dlc2.innerHTML = `<span>日治療項目</span><span style="font-size:18px;color:var(--blue-mid);font-weight:400;">（顯示動作編號，從週治療項目中選取）</span>`;
     dayLabelRow.appendChild(dlc0); dayLabelRow.appendChild(dlc1); dayLabelRow.appendChild(dlc2);
     weekBlock.appendChild(dayLabelRow);
 
@@ -690,7 +805,7 @@ function renderTable() {
       const dc0 = document.createElement('div'); dc0.style.cssText = 'background:var(--bg-section); border-right:1px solid var(--border-light);';
       const colors = ['#3b82c4','#5b9bd5','#7ab4e6','#9acdf7','#bad6f5','#daeaf8','#eef4fb'];
       const dc1 = document.createElement('div'); dc1.style.cssText = `padding:8px 14px; border-right:1px solid var(--border-light); border-left:3px solid ${colors[di%7]}; display:flex; align-items:center;`;
-      dc1.innerHTML = `<span style="font-size:11px;font-weight:600;color:var(--text-secondary);">${fmtWithDay(day.date)}</span>`;
+      dc1.innerHTML = `<span style="font-size:20px;font-weight:600;color:var(--text-secondary);">${fmtWithDay(day.date)}</span>`;
       const dc2 = document.createElement('div'); dc2.style.cssText = 'padding:6px 10px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;';
       dc2.appendChild(makeDayExCell(wi, di, week, day));
       dayRow.appendChild(dc0); dayRow.appendChild(dc1); dayRow.appendChild(dc2);
@@ -821,7 +936,7 @@ function makeDayExCell(wi, di, week, day) {
   function redraw() {
     wrap.innerHTML = '';
     if (week.wexItems.length===0) {
-      const hint=document.createElement('span'); hint.style.cssText='font-size:11px;color:var(--text-muted);font-style:italic;'; hint.textContent='請先設定週治療項目'; wrap.appendChild(hint); return;
+      const hint=document.createElement('span'); hint.style.cssText='font-size:20px;color:var(--text-muted);font-style:italic;'; hint.textContent='請先設定週治療項目'; wrap.appendChild(hint); return;
     }
     (day.sel||[]).forEach(idx=>{
       const chip=document.createElement('div'); chip.className='day-num-chip removable'; chip.title=`${week.wexItems[idx]?.id||''}. ${week.wexItems[idx]?.name||''} — 點擊移除`; chip.textContent=week.wexItems[idx]?.id||idx+1;
@@ -837,7 +952,7 @@ function makeDayExCell(wi, di, week, day) {
         const alreadyIn=(day.sel||[]).includes(idx);
         const opt=document.createElement('div'); opt.className='day-pick-opt'+(alreadyIn?' already':'');
         const numSpan=document.createElement('div'); numSpan.className='dp-num'; numSpan.textContent=item.id;
-        const nameSpan=document.createElement('span'); nameSpan.style.cssText='font-size:12px;'; nameSpan.textContent=item.name;
+        const nameSpan=document.createElement('span'); nameSpan.style.cssText='font-size:20px;'; nameSpan.textContent=item.name;
         opt.appendChild(numSpan); opt.appendChild(nameSpan);
         if (!alreadyIn) { opt.addEventListener('click',e=>{e.stopPropagation(); if(!day.sel)day.sel=[]; day.sel.push(idx); dropPanel.classList.remove('open'); redraw();}); }
         dropList.appendChild(opt);
@@ -855,7 +970,19 @@ function closeAll() {
   document.querySelectorAll('.day-pick-panel.open').forEach(p=>p.classList.remove('open'));
 }
 function setupClose() {
-  document.onclick = e => { if(!e.target.closest('.wex-add-btn')&&!e.target.closest('.ex-panel')&&!e.target.closest('.day-add-wrap')&&!e.target.closest('.modal-box')) closeAll(); };
+  document.onclick = e => { if(!e.target.closest('.wex-add-btn')&&!e.target.closest('.ex-panel')&&!e.target.closest('.day-add-wrap')&&!e.target.closest('.modal-box')&&!e.target.closest('.pi-panel')) closeAll(); };
+}
+
+function toggleInfo() {
+  const overlay = document.getElementById('piOverlay');
+  const btn     = document.getElementById('infoToggleBtn');
+  const isOpen  = overlay.classList.contains('open');
+  overlay.classList.toggle('open', !isOpen);
+  btn.classList.toggle('active', !isOpen);
+}
+function closePatientInfo() {
+  document.getElementById('piOverlay').classList.remove('open');
+  document.getElementById('infoToggleBtn').classList.remove('active');
 }
 
 function cancelPlan() {
@@ -982,13 +1109,13 @@ init();
     }, 10000);
 </script>
 
-  <!-- 連線失敗提示 -->
-  <div id="connectionOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:12px; padding:32px 28px; text-align:center; display:flex; flex-direction:column; gap:14px; max-width:300px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
-      <div style="font-size:16px; font-weight:600; color:#0C447C;">嘗試連線中</div>
-      <div style="font-size:13px; color:#378ADD; line-height:1.6;">請確保在網路環境下操作</div>
-      <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:14px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
-    </div>
+<div id="connectionOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:12px; padding:32px 28px; text-align:center; display:flex; flex-direction:column; gap:14px; max-width:300px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <div style="font-size:20px; font-weight:600; color:#0C447C;">嘗試連線中</div>
+    <div style="font-size:18px; color:#378ADD; line-height:1.6;">請確保在網路環境下操作</div>
+    <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:20px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
   </div>
+</div>
+
 </body>
 </html>
