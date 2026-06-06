@@ -4,23 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>新增評量</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
       background: #EBF4FC;
       min-height: 100vh;
-      padding: 32px 20px;
+      padding: 24px 28px;
+      font-size: 20px;
     }
 
     .container {
       width: 100%;
-      max-width: 640px;
-      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
     .topbar {
@@ -30,7 +30,7 @@
     }
 
     .btn-back {
-      font-size: 12px;
+      font-size: 20px;
       color: #378ADD;
       background: none;
       border: none;
@@ -41,45 +41,54 @@
     .btn-back:hover { color: #185FA5; }
 
     .page-title {
-      font-size: 20px;
-      font-weight: 500;
+      font-size: 22px;
+      font-weight: 600;
       color: #0C447C;
     }
 
-    .required { color: #E24B4A; font-size: 11px; }
-    .optional { color: #B4B2A9; font-size: 11px; font-weight: 400; }
+    .required { color: #E24B4A; font-size: 16px; }
+    .optional { color: #B4B2A9; font-size: 16px; font-weight: 400; }
 
     .card {
       background: white;
       border-radius: 12px;
       border: 0.5px solid #B5D4F4;
-      padding: 16px 20px;
+      padding: 20px 24px;
     }
 
     .sec-hd {
-      font-size: 10px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #185FA5;
-      padding-bottom: 8px;
+      padding-bottom: 10px;
       border-bottom: 0.5px solid #E6F1FB;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .sub-sec-hd {
+      font-size: 16px;
+      font-weight: 600;
+      color: #185FA5;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
     }
 
     .field-row {
       display: flex;
       align-items: center;
-      padding: 8px 0;
+      padding: 10px 0;
       border-bottom: 0.5px solid #EBF4FC;
-      gap: 10px;
+      gap: 12px;
     }
     .field-row:last-child { border-bottom: none; }
 
     .field-label {
-      font-size: 12px;
+      font-size: 20px;
       color: #378ADD;
-      width: 160px;
+      width: 260px;
       flex-shrink: 0;
     }
 
@@ -88,8 +97,8 @@
       background: #EBF4FC;
       border: 1px solid #B5D4F4;
       border-radius: 6px;
-      padding: 7px 10px;
-      font-size: 13px;
+      padding: 10px 14px;
+      font-size: 20px;
       color: #0C447C;
       outline: none;
       font-family: inherit;
@@ -99,25 +108,25 @@
 
     .side-row {
       display: flex;
-      gap: 20px;
+      gap: 28px;
       align-items: center;
-      padding: 10px 0 6px;
+      padding: 12px 0 8px;
     }
 
     .side-opt {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 20px;
       color: #0C447C;
       font-weight: 500;
     }
 
     .side-opt input[type="checkbox"] {
       accent-color: #185FA5;
-      width: 15px;
-      height: 15px;
+      width: 20px;
+      height: 20px;
       cursor: pointer;
     }
 
@@ -125,29 +134,29 @@
 
     .grid-header {
       display: grid;
-      gap: 6px;
-      padding-bottom: 4px;
+      gap: 8px;
+      padding-bottom: 6px;
       margin-bottom: 4px;
       border-bottom: 0.5px solid #EBF4FC;
     }
 
     .grid-header-cell {
-      font-size: 10px;
+      font-size: 18px;
       color: #378ADD;
       font-weight: 500;
     }
 
     .grid-row {
       display: grid;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
-      padding: 5px 0;
+      padding: 8px 0;
       border-bottom: 0.5px solid #EBF4FC;
     }
     .grid-row:last-child { border-bottom: none; }
 
     .grid-side {
-      font-size: 12px;
+      font-size: 20px;
       color: #0C447C;
       font-weight: 500;
     }
@@ -156,8 +165,8 @@
       background: #EBF4FC;
       border: 1px solid #B5D4F4;
       border-radius: 5px;
-      padding: 6px 8px;
-      font-size: 12px;
+      padding: 9px 12px;
+      font-size: 20px;
       color: #0C447C;
       outline: none;
       font-family: inherit;
@@ -166,27 +175,40 @@
     }
     .grid-input:focus { border-color: #185FA5; background: #daeaf8; }
 
-    .vas-header  { grid-template-columns: 60px 1fr 1fr; }
-    .vas-row     { grid-template-columns: 60px 1fr 1fr; }
-    .tug-header  { grid-template-columns: 60px 1fr 1fr 1fr; }
-    .tug-row     { grid-template-columns: 60px 1fr 1fr 1fr; }
-    .sls-header  { grid-template-columns: 60px 1fr 1fr; }
-    .sls-row     { grid-template-columns: 60px 1fr 1fr; }
-    .tc-header   { grid-template-columns: 60px 1fr; }
-    .tc-row      { grid-template-columns: 60px 1fr; }
-    .romf-header { grid-template-columns: 60px 1fr 1fr 1fr; }
-    .romf-row    { grid-template-columns: 60px 1fr 1fr 1fr; }
-    .mmt-header  { grid-template-columns: 110px 1fr 1fr; }
-    .mmt-row     { grid-template-columns: 110px 1fr 1fr; }
+    .device-label {
+      font-size: 18px;
+      color: #0C447C;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .device-label input[type="checkbox"] {
+      accent-color: #185FA5;
+      width: 18px;
+      height: 18px;
+    }
 
-    .mmt-item { font-size: 12px; color: #0C447C; }
+    .vas-header  { grid-template-columns: 80px 1fr 1fr; }
+    .vas-row     { grid-template-columns: 80px 1fr 1fr; }
+    .tug-header  { grid-template-columns: 80px 1fr 1fr 1fr; }
+    .tug-row     { grid-template-columns: 80px 1fr 1fr 1fr; }
+    .sls-header  { grid-template-columns: 80px 1fr 1fr; }
+    .sls-row     { grid-template-columns: 80px 1fr 1fr; }
+    .tc-header   { grid-template-columns: 80px 1fr; }
+    .tc-row      { grid-template-columns: 80px 1fr; }
+    .romf-header { grid-template-columns: 80px 1fr 1fr 1fr; }
+    .romf-row    { grid-template-columns: 80px 1fr 1fr 1fr; }
+    .mmt-header  { grid-template-columns: 180px 1fr 1fr; }
+    .mmt-row     { grid-template-columns: 180px 1fr 1fr; }
+
+    .mmt-item { font-size: 20px; color: #0C447C; }
 
     .mmt-select {
       background: #EBF4FC;
       border: 1px solid #B5D4F4;
       border-radius: 5px;
-      padding: 6px 8px;
-      font-size: 12px;
+      padding: 9px 12px;
+      font-size: 20px;
       color: #0C447C;
       outline: none;
       font-family: inherit;
@@ -196,26 +218,19 @@
     }
     .mmt-select:focus { border-color: #185FA5; background: #daeaf8; }
 
-    .sub-hd {
-      font-size: 9px;
-      color: #378ADD;
-      margin-top: 10px;
-      margin-bottom: 4px;
-    }
-
     .btn-row {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: flex-end;
     }
 
     .btn-cancel {
-      font-size: 13px;
+      font-size: 20px;
       background: white;
       color: #185FA5;
       border: 1px solid #B5D4F4;
-      border-radius: 6px;
-      padding: 10px 22px;
+      border-radius: 8px;
+      padding: 12px 28px;
       cursor: pointer;
       font-family: inherit;
       transition: background 0.2s;
@@ -223,14 +238,14 @@
     .btn-cancel:hover { background: #E6F1FB; }
 
     .btn-save {
-      font-size: 13px;
+      font-size: 20px;
       background: #185FA5;
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 10px 28px;
+      border-radius: 8px;
+      padding: 12px 32px;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
       font-family: inherit;
       transition: background 0.2s;
     }
@@ -238,7 +253,7 @@
     .btn-save:active { background: #042C53; }
 
     .required-note {
-      font-size: 10px;
+      font-size: 18px;
       color: #378ADD;
       text-align: right;
     }
@@ -252,270 +267,270 @@
     <div class="topbar">
       <button class="btn-back" onclick="location.href='/patient-detail?id=' + patientId">← 返回個案詳細</button>
       <div class="page-title">新增評量</div>
-      <div style="width:80px;"></div>
+      <div style="width:120px;"></div>
     </div>
 
-    <!-- 評量基本資料 -->
-    <div class="card">
-      <div class="sec-hd">評量基本資料</div>
-      <div class="field-row">
-        <label class="field-label">評量名稱 <span class="required">✱</span></label>
-        <input class="field-input" type="text" name="name" placeholder="例：初次評估">
-      </div>
-      <div class="field-row">
-        <label class="field-label">評估日期 <span class="required">✱</span></label>
-        <input class="field-input" type="date" name="assessment_date">
-      </div>
-    </div>
+        <!-- 評量基本資料 -->
+        <div class="card">
+          <div class="sec-hd">評量基本資料</div>
+          <div class="field-row">
+            <label class="field-label">評量名稱 <span class="required">✱</span></label>
+            <input class="field-input" type="text" name="name" placeholder="例：初次評估">
+          </div>
+          <div class="field-row">
+            <label class="field-label">評估日期 <span class="required">✱</span></label>
+            <input class="field-input" type="date" name="assessment_date">
+          </div>
+        </div>
 
-    <!-- 主觀量表 -->
-    <div class="card">
-      <div class="sec-hd">主觀量表</div>
-      <div class="field-row">
-        <label class="field-label">SF-36 總分 <span class="optional">選填</span></label>
-        <input class="field-input" type="number" name="sf_36_total" min="0" max="100">
-      </div>
-      <div class="field-row">
-        <label class="field-label">WOMAC 總分（0–96）<span class="optional">選填</span></label>
-        <input class="field-input" type="number" name="womac_total" min="0" max="96">
-      </div>
-      <div class="field-row">
-        <label class="field-label">KOOS 總分 <span class="optional">選填</span></label>
-        <input class="field-input" type="number" name="koos_total" min="0">
-      </div>
-    </div>
+        <!-- 主觀量表 -->
+        <div class="card">
+          <div class="sec-hd">主觀量表</div>
+          <div class="field-row">
+            <label class="field-label">SF-36 總分 <span class="optional">選填</span></label>
+            <input class="field-input" type="number" name="sf_36_total" min="0" max="100">
+          </div>
+          <div class="field-row">
+            <label class="field-label">WOMAC 總分（0–96）<span class="optional">選填</span></label>
+            <input class="field-input" type="number" name="womac_total" min="0" max="96">
+          </div>
+          <div class="field-row">
+            <label class="field-label">KOOS 總分 <span class="optional">選填</span></label>
+            <input class="field-input" type="number" name="koos_total" min="0">
+          </div>
+        </div>
 
-    <!-- 客觀量表 -->
-    <div class="card">
-      <div class="sec-hd">客觀量表</div>
+        <div class="card">
+          <div class="sec-hd">客觀量表</div>
 
-      <!-- 側別選擇 -->
-      <div class="side-row">
-        <label class="side-opt">
-          <input type="checkbox" id="include-right" checked>
-          右膝
-        </label>
-        <label class="side-opt">
-          <input type="checkbox" id="include-left">
-          左膝
-        </label>
-      </div>
+          <!-- 側別選擇 -->
+          <div class="side-row">
+            <label class="side-opt">
+              <input type="checkbox" id="include-right" checked>
+              右膝
+            </label>
+            <label class="side-opt">
+              <input type="checkbox" id="include-left">
+              左膝
+            </label>
+          </div>
 
-      <!-- VAS -->
-      <div class="sec-hd" style="margin-top:12px; font-size:9px;">疼痛量表（VAS）<span class="optional" style="text-transform:none;letter-spacing:0;">選填</span></div>
-      <div class="grid-table">
-        <div class="grid-header vas-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">測試前（0–10）</div>
-          <div class="grid-header-cell">測試後（0–10）</div>
-        </div>
-        <div class="grid-row vas-row" id="vas-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="vas_right_before" min="0" max="10">
-          <input class="grid-input" type="number" name="vas_right_after" min="0" max="10">
-        </div>
-        <div class="grid-row vas-row" id="vas-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="vas_left_before" min="0" max="10">
-          <input class="grid-input" type="number" name="vas_left_after" min="0" max="10">
-        </div>
-      </div>
+          <!-- VAS -->
+          <div class="sub-sec-hd">疼痛量表（VAS）<span class="optional">選填</span></div>
+          <div class="grid-table">
+            <div class="grid-header vas-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">測試前（0–10）</div>
+              <div class="grid-header-cell">測試後（0–10）</div>
+            </div>
+            <div class="grid-row vas-row" id="vas-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="vas_right_before" min="0" max="10">
+              <input class="grid-input" type="number" name="vas_right_after" min="0" max="10">
+            </div>
+            <div class="grid-row vas-row" id="vas-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="vas_left_before" min="0" max="10">
+              <input class="grid-input" type="number" name="vas_left_after" min="0" max="10">
+            </div>
+          </div>
 
-      <!-- TUG -->
-      <div class="sec-hd" style="margin-top:14px; font-size:9px;">計時起走測試（TUG）</div>
-      <div class="grid-table">
-        <div class="grid-header tug-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
-          <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
-          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
-        </div>
-        <div class="grid-row tug-row" id="tug-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="tug_right_time" min="0" step="0.1">
-          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="tug_right_device" style="accent-color:#185FA5;"> 有使用輔具</label>
-          <input class="grid-input" type="text" name="tug_right_comment">
-        </div>
-        <div class="grid-row tug-row" id="tug-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="tug_left_time" min="0" step="0.1">
-          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="tug_left_device" style="accent-color:#185FA5;"> 有使用輔具</label>
-          <input class="grid-input" type="text" name="tug_left_comment">
-        </div>
-      </div>
+          <!-- TUG -->
+          <div class="sub-sec-hd">計時起走測試（TUG）</div>
+          <div class="grid-table">
+            <div class="grid-header tug-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+              <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
+              <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+            </div>
+            <div class="grid-row tug-row" id="tug-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="tug_right_time" min="0" step="0.1">
+              <label class="device-label"><input type="checkbox" name="tug_right_device"> 有使用輔具</label>
+              <input class="grid-input" type="text" name="tug_right_comment">
+            </div>
+            <div class="grid-row tug-row" id="tug-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="tug_left_time" min="0" step="0.1">
+              <label class="device-label"><input type="checkbox" name="tug_left_device"> 有使用輔具</label>
+              <input class="grid-input" type="text" name="tug_left_comment">
+            </div>
+          </div>
 
-      <!-- FTSST -->
-      <div class="sec-hd" style="margin-top:14px; font-size:9px;">五次坐站測試（FTSST）</div>
-      <div class="grid-table">
-        <div class="grid-header tug-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
-          <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
-          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
-        </div>
-        <div class="grid-row tug-row" id="ftsst-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="ftsst_right_time" min="0" step="0.1">
-          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="ftsst_right_device" style="accent-color:#185FA5;"> 有使用輔具</label>
-          <input class="grid-input" type="text" name="ftsst_right_comment">
-        </div>
-        <div class="grid-row tug-row" id="ftsst-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="ftsst_left_time" min="0" step="0.1">
-          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="ftsst_left_device" style="accent-color:#185FA5;"> 有使用輔具</label>
-          <input class="grid-input" type="text" name="ftsst_left_comment">
-        </div>
-      </div>
+          <!-- FTSST -->
+          <div class="sub-sec-hd">五次坐站測試（FTSST）</div>
+          <div class="grid-table">
+            <div class="grid-header tug-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+              <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
+              <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+            </div>
+            <div class="grid-row tug-row" id="ftsst-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="ftsst_right_time" min="0" step="0.1">
+              <label class="device-label"><input type="checkbox" name="ftsst_right_device"> 有使用輔具</label>
+              <input class="grid-input" type="text" name="ftsst_right_comment">
+            </div>
+            <div class="grid-row tug-row" id="ftsst-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="ftsst_left_time" min="0" step="0.1">
+              <label class="device-label"><input type="checkbox" name="ftsst_left_device"> 有使用輔具</label>
+              <input class="grid-input" type="text" name="ftsst_left_comment">
+            </div>
+          </div>
 
-      <!-- 10MWT -->
-      <div class="sec-hd" style="margin-top:14px; font-size:9px;">10公尺步行測試（10MWT）</div>
-      <div class="grid-table">
-        <div class="grid-header tug-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
-          <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
-          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
-        </div>
-        <div class="grid-row tug-row" id="mwt-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="mwt_right_time" min="0" step="0.1">
-          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="mwt_right_device" style="accent-color:#185FA5;"> 有使用輔具</label>
-          <input class="grid-input" type="text" name="mwt_right_comment">
-        </div>
-        <div class="grid-row tug-row" id="mwt-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="mwt_left_time" min="0" step="0.1">
-          <label style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:4px;"><input type="checkbox" name="mwt_left_device" style="accent-color:#185FA5;"> 有使用輔具</label>
-          <input class="grid-input" type="text" name="mwt_left_comment">
-        </div>
-      </div>
+          <!-- 10MWT -->
+          <div class="sub-sec-hd">10公尺步行測試（10MWT）</div>
+          <div class="grid-table">
+            <div class="grid-header tug-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+              <div class="grid-header-cell">輔具使用 <span class="optional">選填</span></div>
+              <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+            </div>
+            <div class="grid-row tug-row" id="mwt-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="mwt_right_time" min="0" step="0.1">
+              <label class="device-label"><input type="checkbox" name="mwt_right_device"> 有使用輔具</label>
+              <input class="grid-input" type="text" name="mwt_right_comment">
+            </div>
+            <div class="grid-row tug-row" id="mwt-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="mwt_left_time" min="0" step="0.1">
+              <label class="device-label"><input type="checkbox" name="mwt_left_device"> 有使用輔具</label>
+              <input class="grid-input" type="text" name="mwt_left_comment">
+            </div>
+          </div>
 
-      <!-- SLS -->
-      <div class="sec-hd" style="margin-top:14px; font-size:9px;">單腳站立平衡測試（SLS）</div>
-      <div class="grid-table">
-        <div class="grid-header sls-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
-          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
-        </div>
-        <div class="grid-row sls-row" id="sls-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="sls_right_time" min="0" step="0.1">
-          <input class="grid-input" type="text" name="sls_right_comment">
-        </div>
-        <div class="grid-row sls-row" id="sls-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="sls_left_time" min="0" step="0.1">
-          <input class="grid-input" type="text" name="sls_left_comment">
-        </div>
-      </div>
+          <!-- SLS -->
+          <div class="sub-sec-hd">單腳站立平衡測試（SLS）</div>
+          <div class="grid-table">
+            <div class="grid-header sls-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">時間（秒）<span class="required">✱</span></div>
+              <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+            </div>
+            <div class="grid-row sls-row" id="sls-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="sls_right_time" min="0" step="0.1">
+              <input class="grid-input" type="text" name="sls_right_comment">
+            </div>
+            <div class="grid-row sls-row" id="sls-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="sls_left_time" min="0" step="0.1">
+              <input class="grid-input" type="text" name="sls_left_comment">
+            </div>
+          </div>
 
-      <!-- 大腿圍 -->
-      <div class="sec-hd" style="margin-top:14px; font-size:9px;">大腿圍 <span class="optional" style="text-transform:none;letter-spacing:0;">選填</span></div>
-      <div class="grid-table">
-        <div class="grid-header tc-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">大腿圍（cm）</div>
-        </div>
-        <div class="grid-row tc-row" id="tc-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="tc_right" min="0" step="0.1">
-        </div>
-        <div class="grid-row tc-row" id="tc-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="tc_left" min="0" step="0.1">
-        </div>
-      </div>
+          <!-- 大腿圍 -->
+          <div class="sub-sec-hd">大腿圍 <span class="optional">選填</span></div>
+          <div class="grid-table">
+            <div class="grid-header tc-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">大腿圍（cm）</div>
+            </div>
+            <div class="grid-row tc-row" id="tc-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="tc_right" min="0" step="0.1">
+            </div>
+            <div class="grid-row tc-row" id="tc-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="tc_left" min="0" step="0.1">
+            </div>
+          </div>
 
-      <!-- ROM -->
-      <div class="sec-hd" style="margin-top:14px; font-size:9px;">關節活動度（ROM）</div>
-      <div class="sub-hd">膝屈曲 <span class="required">✱</span></div>
-      <div class="grid-table">
-        <div class="grid-header romf-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">Min（°）</div>
-          <div class="grid-header-cell">Max（°）</div>
-          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
-        </div>
-        <div class="grid-row romf-row" id="romf-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="rom_right_flexion_min">
-          <input class="grid-input" type="number" name="rom_right_flexion_max">
-          <input class="grid-input" type="text" name="rom_right_flexion_comment">
-        </div>
-        <div class="grid-row romf-row" id="romf-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="rom_left_flexion_min">
-          <input class="grid-input" type="number" name="rom_left_flexion_max">
-          <input class="grid-input" type="text" name="rom_left_flexion_comment">
-        </div>
-      </div>
-      <div class="sub-hd">膝伸直 <span class="optional">選填</span></div>
-      <div class="grid-table">
-        <div class="grid-header romf-header">
-          <div class="grid-header-cell"></div>
-          <div class="grid-header-cell">Min（°）</div>
-          <div class="grid-header-cell">Max（°）</div>
-          <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
-        </div>
-        <div class="grid-row romf-row" id="rome-right-row">
-          <div class="grid-side">右膝</div>
-          <input class="grid-input" type="number" name="rom_right_extension_min">
-          <input class="grid-input" type="number" name="rom_right_extension_max">
-          <input class="grid-input" type="text" name="rom_right_extension_comment">
-        </div>
-        <div class="grid-row romf-row" id="rome-left-row" style="display:none;">
-          <div class="grid-side">左膝</div>
-          <input class="grid-input" type="number" name="rom_left_extension_min">
-          <input class="grid-input" type="number" name="rom_left_extension_max">
-          <input class="grid-input" type="text" name="rom_left_extension_comment">
-        </div>
-      </div>
+          <!-- ROM -->
+          <div class="sub-sec-hd">關節活動度（ROM）</div>
+          <div style="font-size:18px; color:#378ADD; margin-bottom:6px;">膝屈曲 <span class="required">✱</span></div>
+          <div class="grid-table">
+            <div class="grid-header romf-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">Min（°）</div>
+              <div class="grid-header-cell">Max（°）</div>
+              <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+            </div>
+            <div class="grid-row romf-row" id="romf-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="rom_right_flexion_min">
+              <input class="grid-input" type="number" name="rom_right_flexion_max">
+              <input class="grid-input" type="text" name="rom_right_flexion_comment">
+            </div>
+            <div class="grid-row romf-row" id="romf-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="rom_left_flexion_min">
+              <input class="grid-input" type="number" name="rom_left_flexion_max">
+              <input class="grid-input" type="text" name="rom_left_flexion_comment">
+            </div>
+          </div>
+          <div style="font-size:18px; color:#378ADD; margin-top:12px; margin-bottom:6px;">膝伸直 <span class="optional">選填</span></div>
+          <div class="grid-table">
+            <div class="grid-header romf-header">
+              <div class="grid-header-cell"></div>
+              <div class="grid-header-cell">Min（°）</div>
+              <div class="grid-header-cell">Max（°）</div>
+              <div class="grid-header-cell">備註 <span class="optional">選填</span></div>
+            </div>
+            <div class="grid-row romf-row" id="rome-right-row">
+              <div class="grid-side">右膝</div>
+              <input class="grid-input" type="number" name="rom_right_extension_min">
+              <input class="grid-input" type="number" name="rom_right_extension_max">
+              <input class="grid-input" type="text" name="rom_right_extension_comment">
+            </div>
+            <div class="grid-row romf-row" id="rome-left-row" style="display:none;">
+              <div class="grid-side">左膝</div>
+              <input class="grid-input" type="number" name="rom_left_extension_min">
+              <input class="grid-input" type="number" name="rom_left_extension_max">
+              <input class="grid-input" type="text" name="rom_left_extension_comment">
+            </div>
+          </div>
 
-      <!-- MMT -->
-      <div class="sec-hd" style="margin-top:14px; font-size:9px;">徒手肌力測試（MMT）</div>
-      <div class="grid-table">
-        <div class="grid-header mmt-header">
-          <div class="grid-header-cell">項目</div>
-          <div class="grid-header-cell" id="mmt-hd-right">右膝</div>
-          <div class="grid-header-cell" id="mmt-hd-left" style="display:none;">左膝</div>
-        </div>
-        <div class="grid-row mmt-row">
-          <div class="mmt-item">膝屈曲 <span class="required">✱</span></div>
-          <select class="mmt-select" name="mmt_right_knee_flexion" id="mmt-right-knee-flexion">
-            <option value="">—</option>
-            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
-            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
-            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
-          </select>
-          <select class="mmt-select" name="mmt_left_knee_flexion" id="mmt-left-knee-flexion" style="display:none;">
-            <option value="">—</option>
-            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
-            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
-            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
-          </select>
-        </div>
-        <div class="grid-row mmt-row">
-          <div class="mmt-item">膝伸直 <span class="required">✱</span></div>
-          <select class="mmt-select" name="mmt_right_knee_extension" id="mmt-right-knee-extension">
-            <option value="">—</option>
-            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
-            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
-            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
-          </select>
-          <select class="mmt-select" name="mmt_left_knee_extension" id="mmt-left-knee-extension" style="display:none;">
-            <option value="">—</option>
-            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-            <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
-            <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
-            <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
-          </select>
-        </div>
-      </div>
-    </div>
+          <!-- MMT -->
+          <div class="sub-sec-hd">徒手肌力測試（MMT）</div>
+          <div class="grid-table">
+            <div class="grid-header mmt-header">
+              <div class="grid-header-cell">項目</div>
+              <div class="grid-header-cell" id="mmt-hd-right">右膝</div>
+              <div class="grid-header-cell" id="mmt-hd-left" style="display:none;">左膝</div>
+            </div>
+            <div class="grid-row mmt-row">
+              <div class="mmt-item">膝屈曲 <span class="required">✱</span></div>
+              <select class="mmt-select" name="mmt_right_knee_flexion" id="mmt-right-knee-flexion">
+                <option value="">—</option>
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+                <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+                <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+              </select>
+              <select class="mmt-select" name="mmt_left_knee_flexion" id="mmt-left-knee-flexion" style="display:none;">
+                <option value="">—</option>
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+                <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+                <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+              </select>
+            </div>
+            <div class="grid-row mmt-row">
+              <div class="mmt-item">膝伸直 <span class="required">✱</span></div>
+              <select class="mmt-select" name="mmt_right_knee_extension" id="mmt-right-knee-extension">
+                <option value="">—</option>
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+                <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+                <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+              </select>
+              <select class="mmt-select" name="mmt_left_knee_extension" id="mmt-left-knee-extension" style="display:none;">
+                <option value="">—</option>
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+                <option value="3">2+</option><option value="4">3-</option><option value="5">3</option>
+                <option value="6">3+</option><option value="7">4-</option><option value="8">4</option>
+                <option value="9">4+</option><option value="10">5-</option><option value="11">5</option>
+              </select>
+            </div>
+          </div>
+
+        </div><!-- /.card 客觀量表 -->
 
     <div class="required-note"><span>✱</span> 為必填欄位</div>
 
@@ -524,7 +539,7 @@
       <button class="btn-save" onclick="submitAssessment()">儲存評量</button>
     </div>
 
-  </div>
+  </div><!-- /.container -->
 
   <script>
     function getCookie(name) {
@@ -660,8 +675,6 @@
       }
     }
 
-    // keep-alive: ping /health every 10s to prevent Railway sleeping
-        // keep-alive: ping /health every 10s to prevent Railway sleeping
     setInterval(async () => {
       try {
         const res = await fetch(`/health`);
@@ -676,12 +689,11 @@
     }, 10000);
   </script>
 
-  <!-- 連線失敗提示 -->
   <div id="connectionOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:12px; padding:32px 28px; text-align:center; display:flex; flex-direction:column; gap:14px; max-width:300px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
-      <div style="font-size:16px; font-weight:600; color:#0C447C;">嘗試連線中</div>
-      <div style="font-size:13px; color:#378ADD; line-height:1.6;">請確保在網路環境下操作</div>
-      <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:14px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
+      <div style="font-size:20px; font-weight:600; color:#0C447C;">嘗試連線中</div>
+      <div style="font-size:18px; color:#378ADD; line-height:1.6;">請確保在網路環境下操作</div>
+      <button onclick="document.getElementById('connectionOverlay').style.display='none'" style="background:#185FA5; color:white; border:none; border-radius:6px; padding:10px 24px; font-size:20px; cursor:pointer; font-family:inherit; font-weight:500; margin-top:4px;">確定</button>
     </div>
   </div>
 </body>
