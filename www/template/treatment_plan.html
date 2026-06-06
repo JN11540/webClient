@@ -56,44 +56,59 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 .generate-btn:hover { background:var(--blue-dark); }
 .generate-btn:active { transform:scale(.98); }
 
-/* Content 1:1 */
-.content-row { flex:1; display:grid; grid-template-columns:1fr 1fr; min-height:0; overflow:hidden; }
+/* Toggle button */
+.info-toggle-btn { display:flex; align-items:center; gap:5px; padding:5px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-white); color:var(--blue-mid); font-family:inherit; font-size:13px; cursor:pointer; transition:background .15s; white-space:nowrap; }
+.info-toggle-btn:hover { background:var(--blue-light); }
+.info-toggle-btn.active { background:var(--blue-light); border-color:var(--blue-mid); font-weight:600; }
 
-/* Left panel */
-.left-panel { background:var(--bg-white); border-right:1px solid var(--border-light); overflow-y:auto; display:flex; flex-direction:column; }
+/* Content row */
+.content-row { flex:1; display:flex; min-height:0; overflow:hidden; }
+
+/* Left panel - hidden, no layout space */
+.left-panel { display:none; }
+
+/* Patient info modal */
+.pi-overlay { display:none; position:fixed; inset:0; background:rgba(20,40,80,.45); z-index:600; align-items:center; justify-content:center; padding:20px; }
+.pi-overlay.open { display:flex; }
+.pi-panel { background:var(--bg-white); border-radius:var(--radius-lg); width:90vw; max-width:1100px; max-height:92vh; overflow-y:auto; box-shadow:0 8px 40px rgba(26,61,107,.22); display:flex; flex-direction:column; }
+.pi-header { padding:18px 28px; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:var(--bg-white); z-index:1; }
+.pi-title { font-size:20px; font-weight:700; color:var(--text-primary); }
+.pi-close { cursor:pointer; color:var(--text-muted); font-size:28px; line-height:1; }
+.pi-close:hover { color:var(--text-primary); }
+.pi-body { padding:24px 28px; display:flex; flex-direction:column; gap:0; }
 
 /* Left top: basic info */
-.left-basic { padding:18px 16px; flex-shrink:0; }
-.panel-title { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; padding-bottom:7px; border-bottom:1px solid var(--border-light); }
-.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 8px; margin-bottom:12px; }
-.info-item { display:flex; flex-direction:column; gap:1px; }
-.il { font-size:11px; color:var(--text-muted); font-weight:500; }
-.iv { font-size:13px; color:var(--text-primary); font-weight:500; }
-.info-block { margin-bottom:8px; }
-.info-block .il { font-size:11px; color:var(--blue-mid); font-weight:600; margin-bottom:1px; }
-.info-block .iv { font-size:12px; font-weight:400; line-height:1.5; }
-.divider { border:none; border-top:1px solid var(--border-light); margin:12px 0; }
+.left-basic { padding:0; flex-shrink:0; }
+.panel-title { font-size:16px; font-weight:700; letter-spacing:.03em; color:var(--text-muted); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border-light); }
+.info-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:20px 16px; margin-bottom:20px; }
+.info-item { display:flex; flex-direction:column; gap:4px; }
+.il { font-size:15px; color:var(--text-muted); font-weight:500; }
+.iv { font-size:20px; color:var(--text-primary); font-weight:600; }
+.info-block { margin-bottom:14px; }
+.info-block .il { font-size:16px; color:var(--blue-mid); font-weight:600; margin-bottom:4px; }
+.info-block .iv { font-size:18px; font-weight:400; line-height:1.6; }
+.divider { border:none; border-top:1px solid var(--border-light); margin:18px 0; }
 
 /* Left empty */
 .left-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:8px; color:var(--text-muted); padding:40px 16px; }
 
 /* Left compare */
-.left-compare { border-top:1px solid var(--border-light); }
-.compare-title-bar { padding:10px 16px 8px; }
-.compare-section-title { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+.left-compare { border-top:1px solid var(--border-light); margin-top:6px; }
+.compare-title-bar { padding:18px 0 10px; }
+.compare-section-title { font-size:16px; font-weight:700; letter-spacing:.03em; color:var(--text-muted); }
 
 /* Compare tables */
-.ctbl-section { padding:0 12px 12px; }
-.ctbl-section-label { font-size:11px; font-weight:600; color:var(--blue-mid); margin:10px 0 5px; padding-left:6px; border-left:3px solid var(--blue-mid); }
-.ctbl { width:100%; border-collapse:collapse; font-size:11px; border:1px solid var(--border-light); border-radius:var(--radius-sm); overflow:hidden; }
-.ctbl th { padding:6px 8px; background:var(--bg-section); color:var(--text-muted); font-weight:600; text-align:left; border-bottom:1px solid var(--border-light); white-space:nowrap; font-size:10px; letter-spacing:.03em; }
-.ctbl td { padding:6px 8px; border-bottom:1px solid var(--border-light); color:var(--text-primary); vertical-align:middle; }
+.ctbl-section { padding:0 0 16px; }
+.ctbl-section-label { font-size:16px; font-weight:600; color:var(--blue-mid); margin:14px 0 8px; padding-left:8px; border-left:3px solid var(--blue-mid); }
+.ctbl { width:100%; border-collapse:collapse; font-size:16px; border:1px solid var(--border-light); border-radius:var(--radius-sm); overflow:hidden; }
+.ctbl th { padding:10px 12px; background:var(--bg-section); color:var(--text-muted); font-weight:600; text-align:left; border-bottom:1px solid var(--border-light); white-space:nowrap; font-size:15px; letter-spacing:.03em; }
+.ctbl td { padding:10px 12px; border-bottom:1px solid var(--border-light); color:var(--text-primary); vertical-align:middle; }
 .ctbl tr:last-child td { border-bottom:none; }
 .ctbl tr:hover td { background:var(--bg-section); }
 .ctbl .muted { color:var(--text-muted); }
 
 /* Right panel */
-.right-panel { overflow-y:auto; padding:20px 20px 32px; display:flex; flex-direction:column; gap:14px; }
+.right-panel { flex:1; overflow-y:auto; padding:20px 20px 32px; display:flex; flex-direction:column; gap:14px; }
 .plan-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; color:var(--text-muted); gap:10px; }
 .plan-empty-icon { font-size:38px; opacity:.25; }
 .plan-empty-text { font-size:13px; text-align:center; line-height:1.7; }
@@ -270,7 +285,10 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg> 返回首頁
     </a>
     <div class="page-title">治療計畫</div>
-    <div style="width:72px"></div>
+    <button class="info-toggle-btn" id="infoToggleBtn" onclick="toggleInfo()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 7H4M20 12H4M20 17H4"/></svg>
+      個案基本資料
+    </button>
   </div>
 
   <div class="top-controls">
@@ -292,44 +310,51 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
     <button class="generate-btn" onclick="generateSchedule()">產生計畫表格</button>
   </div>
 
-  <div class="content-row">
-    <!-- LEFT -->
-    <div class="left-panel" id="leftPanel">
-      <div class="left-empty" id="leftEmpty">
-        <div style="font-size:32px;opacity:.3">👤</div>
-        <div style="font-size:13px">請先選擇個案</div>
+  <!-- 個案基本資料彈出視窗 -->
+  <div class="pi-overlay" id="piOverlay" onclick="closePatientInfo()">
+    <div class="pi-panel" onclick="event.stopPropagation()">
+      <div class="pi-header">
+        <div class="pi-title">個案基本資料</div>
+        <span class="pi-close" onclick="closePatientInfo()">×</span>
       </div>
-      <div id="patientInfo" style="display:none">
-        <div class="left-basic">
-          <div class="panel-title">個案基本資料</div>
-          <div class="info-grid">
-            <div class="info-item"><span class="il">姓名</span><span class="iv" id="iName"></span></div>
-            <div class="info-item"><span class="il">性別</span><span class="iv" id="iGender"></span></div>
-            <div class="info-item"><span class="il">出生日期</span><span class="iv" id="iBirth"></span></div>
-            <div class="info-item"><span class="il">職業</span><span class="iv" id="iJob"></span></div>
-            <div class="info-item"><span class="il">身高</span><span class="iv" id="iHeight"></span></div>
-            <div class="info-item"><span class="il">體重</span><span class="iv" id="iWeight"></span></div>
-            <div class="info-item"><span class="il">KL Grade</span><span class="iv" id="iKL"></span></div>
-            <div class="info-item"><span class="il">病程</span><span class="iv" id="iDur"></span></div>
-          </div>
-          <hr class="divider">
-          <div class="info-block"><div class="il">診斷</div><div class="iv" id="iDiag"></div></div>
-          <div class="info-block"><div class="il">主訴</div><div class="iv" id="iChief"></div></div>
-          <div class="info-block"><div class="il">加重因素</div><div class="iv" id="iAgg"></div></div>
-          <div class="info-block"><div class="il">相關病史</div><div class="iv" id="iHist"></div></div>
-          <div class="info-block"><div class="il">影像學結果</div><div class="iv" id="iImg"></div></div>
-          <div class="info-block"><div class="il">就診流程</div><div class="iv" id="iFlow"></div></div>
+      <div class="pi-body">
+        <div class="left-empty" id="leftEmpty">
+          <div style="font-size:32px;opacity:.3">👤</div>
+          <div style="font-size:13px">請先選擇個案</div>
         </div>
-        <div class="left-compare" id="compareSection">
-          <div class="compare-title-bar">
-            <div class="compare-section-title">治療前後比較</div>
+        <div id="patientInfo" style="display:none">
+          <div class="left-basic">
+            <div class="info-grid">
+              <div class="info-item"><span class="il">姓名</span><span class="iv" id="iName"></span></div>
+              <div class="info-item"><span class="il">性別</span><span class="iv" id="iGender"></span></div>
+              <div class="info-item"><span class="il">出生日期</span><span class="iv" id="iBirth"></span></div>
+              <div class="info-item"><span class="il">職業</span><span class="iv" id="iJob"></span></div>
+              <div class="info-item"><span class="il">身高</span><span class="iv" id="iHeight"></span></div>
+              <div class="info-item"><span class="il">體重</span><span class="iv" id="iWeight"></span></div>
+              <div class="info-item"><span class="il">KL Grade</span><span class="iv" id="iKL"></span></div>
+              <div class="info-item"><span class="il">病程</span><span class="iv" id="iDur"></span></div>
+            </div>
+            <hr class="divider">
+            <div class="info-block"><div class="il">診斷</div><div class="iv" id="iDiag"></div></div>
+            <div class="info-block"><div class="il">主訴</div><div class="iv" id="iChief"></div></div>
+            <div class="info-block"><div class="il">加重因素</div><div class="iv" id="iAgg"></div></div>
+            <div class="info-block"><div class="il">相關病史</div><div class="iv" id="iHist"></div></div>
+            <div class="info-block"><div class="il">影像學結果</div><div class="iv" id="iImg"></div></div>
+            <div class="info-block"><div class="il">就診流程</div><div class="iv" id="iFlow"></div></div>
           </div>
-          <div id="compareContent"></div>
+          <div class="left-compare" id="compareSection">
+            <div class="compare-title-bar">
+              <div class="compare-section-title">治療前後比較</div>
+            </div>
+            <div id="compareContent"></div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- RIGHT -->
+  <div class="content-row">
+    <!-- RIGHT (always full width) -->
     <div class="right-panel">
       <div class="plan-empty" id="planEmpty">
         <div class="plan-empty-icon">📋</div>
@@ -587,7 +612,7 @@ function buildCompareData(measurements) {
 function renderCompare(d) {
   const el = document.getElementById('compareContent');
   if (!d || !d.evals.length) {
-    el.innerHTML = '<div style="padding:12px 16px;font-size:12px;color:var(--text-muted)">尚無評量資料</div>';
+    el.innerHTML = '<div style="padding:16px 0;font-size:16px;color:var(--text-muted)">尚無評量資料</div>';
     return;
   }
   const ens = d.evals;
@@ -977,6 +1002,19 @@ function showToast(msg, err) {
   btn.style.display = err ? 'none' : 'inline-block';
   t.classList.add('show');
   if (err) setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function toggleInfo() {
+  const overlay = document.getElementById('piOverlay');
+  const btn     = document.getElementById('infoToggleBtn');
+  const isOpen  = overlay.classList.contains('open');
+  overlay.classList.toggle('open', !isOpen);
+  btn.classList.toggle('active', !isOpen);
+}
+
+function closePatientInfo() {
+  document.getElementById('piOverlay').classList.remove('open');
+  document.getElementById('infoToggleBtn').classList.remove('active');
 }
 
 init();
