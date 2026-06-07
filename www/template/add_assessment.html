@@ -590,8 +590,18 @@
       const kneeFlexion = f(`mmt_${p}_knee_flexion`).value;
       const kneeExt     = f(`mmt_${p}_knee_extension`).value;
 
-      if (!tugTime || !ftsstTime || !mwtTime || !slsTime || !flexMin || !flexMax || kneeFlexion === '' || kneeExt === '') {
-        alert(`${label}：TUG 時間、FTSST 時間、10MWT 時間、SLS 時間、膝屈曲 ROM Min/Max（必填）、MMT 膝屈曲/膝伸直（必填）`);
+      const missing = [];
+      if (tugTime   === '') missing.push(`${label} TUG 時間`);
+      if (ftsstTime === '') missing.push(`${label} FTSST 時間`);
+      if (mwtTime   === '') missing.push(`${label} 10MWT 時間`);
+      if (slsTime   === '') missing.push(`${label} SLS 時間`);
+      if (flexMin   === '') missing.push(`${label} 膝屈曲 Min`);
+      if (flexMax   === '') missing.push(`${label} 膝屈曲 Max`);
+      if (kneeFlexion === '' || kneeFlexion === '—') missing.push(`${label} MMT 膝屈曲`);
+      if (kneeExt     === '' || kneeExt     === '—') missing.push(`${label} MMT 膝伸直`);
+
+      if (missing.length > 0) {
+        alert('請填寫以下必填欄位：\n' + missing.join('\n'));
         return null;
       }
 
