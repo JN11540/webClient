@@ -447,12 +447,9 @@
     }
 
     async function loadContraindications(selectedIds = []) {
-      const sessionId = getCookie('session_id');
       const list = document.getElementById('contraindication-list');
       try {
-        const res = await fetch('/contraindications', {
-          headers: { 'Authorization': `Bearer ${sessionId}` },
-        });
+        const res = await fetch(`${API_URL}/contraindications`);
         const data = await res.json();
         list.innerHTML = '';
         if (!data.result || !data.data || data.data.length === 0) {

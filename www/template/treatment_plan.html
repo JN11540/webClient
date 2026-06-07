@@ -521,7 +521,7 @@ async function init() {
 
 async function loadContraindications() {
   try {
-    const res = await fetch('/contraindications', { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const res = await fetch(`${API_URL}/contraindications`);
     const data = await res.json();
     if (data.result) allContraindications = data.data;
   } catch(e) {}
