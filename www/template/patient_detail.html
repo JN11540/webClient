@@ -532,7 +532,7 @@
         const cis  = p.contraindications;
         if (cis && cis.length > 0) {
           try {
-            const ciRes  = await fetch('/contraindications', { headers: { 'Authorization': `Bearer ${sessionId}` } });
+            const ciRes  = await fetch(`${API_URL}/contraindications`);
             const ciData = await ciRes.json();
             const ciMap  = {};
             (ciData.data || []).forEach(c => { ciMap[c.id] = c.name; });
