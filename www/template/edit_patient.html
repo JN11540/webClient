@@ -434,7 +434,9 @@
         if (genderRadio) genderRadio.checked = true;
 
         const existingIds = (p.contraindications || []).map(c => typeof c === 'object' ? c.id : c);
-        await loadContraindications(existingIds);
+        document.querySelectorAll('[name="contraindication"]').forEach(cb => {
+          cb.checked = existingIds.includes(parseInt(cb.value));
+        });
       } catch (e) {
         if ((_retry.loadPatient || 0) < MAX_RETRIES) {
           _retry.loadPatient = (_retry.loadPatient || 0) + 1;
@@ -528,6 +530,7 @@
       }
     }
 
+    loadContraindications();
     loadPatient();
 
     document.getElementById('otherTx-yes').addEventListener('change', function () {
