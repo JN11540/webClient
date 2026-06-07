@@ -533,9 +533,10 @@
             const ciData = await ciRes.json();
             const ciMap  = {};
             (ciData.data || []).forEach(c => { ciMap[c.id] = c.name; });
-            ciEl.textContent = cis.map(c => ciMap[typeof c === 'object' ? c.id : c] || String(c)).join('、');
+            const names = cis.map(c => ciMap[typeof c === 'object' ? c.id : c] || String(c));
+            ciEl.innerHTML = names.map(n => `<div>• ${n}</div>`).join('');
           } catch (_) {
-            ciEl.textContent = cis.join('、');
+            ciEl.innerHTML = cis.map(n => `<div>• ${n}</div>`).join('');
           }
           ciEl.classList.remove('empty');
         } else {
