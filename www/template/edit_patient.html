@@ -143,6 +143,30 @@
       cursor: not-allowed;
     }
 
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 6px 0;
+    }
+
+    .checkbox-list label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #1a1a1a;
+    }
+
+    .checkbox-list input[type=checkbox] {
+      width: 20px;
+      height: 20px;
+      accent-color: #378add;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
     .row2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -326,6 +350,13 @@
           <textarea name="other_knee_treatment_comment" id="otherTx-textarea" placeholder="請簡要描述治療內容…" rows="4"></textarea>
         </div>
       </div>
+
+      <div class="field">
+        <div class="label">禁忌症 <span class="opt">選填</span></div>
+        <div class="checkbox-list" id="contraindication-list">
+          <span style="font-size:18px; color:#888;">載入中...</span>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -396,13 +427,45 @@
         document.getElementById('otherTx-yes').checked = hasTx;
         document.getElementById('otherTx-no').checked  = !hasTx;
         const txArea = document.getElementById('otherTx-textarea');
-        txArea.value         = p.other_knee_treatment_comment || '';
-        txArea.style.display = hasTx ? 'block' : 'none';
+        txArea.value = p.other_knee_treatment_comment || '';
+        document.getElementById('knee-detail').style.display = hasTx ? 'block' : 'none';
 
         const genderRadio = document.querySelector(`[name="gender"][value="${p.gender}"]`);
         if (genderRadio) genderRadio.checked = true;
+
+        const existingIds = (p.contraindications || []).map(c => typeof c === 'object' ? c.id : c);
+        await loadContraindications(existingIds);
       } catch (e) {
         alert('伺服器資料庫啟動中...');
+      }
+    }
+
+    async function loadContraindications(selectedIds = []) {
+      const sessionId = getCookie('session_id');
+      const list = document.getElementById('contraindication-list');
+      try {
+        const res = await fetch('/contraindications', {
+          headers: { 'Authorization': `Bearer ${sessionId}` },
+        });
+        const data = await res.json();
+        list.innerHTML = '';
+        if (!data.result || !data.data || data.data.length === 0) {
+          list.innerHTML = '<span style="font-size:18px; color:#888;">無禁忌症項目</span>';
+          return;
+        }
+        data.data.forEach(c => {
+          const label = document.createElement('label');
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.value = c.id;
+          cb.name = 'contraindication';
+          if (selectedIds.includes(c.id)) cb.checked = true;
+          label.appendChild(cb);
+          label.appendChild(document.createTextNode(c.name));
+          list.appendChild(label);
+        });
+      } catch (e) {
+        list.innerHTML = '<span style="font-size:18px; color:#888;">無法載入禁忌症</span>';
       }
     }
 
@@ -432,6 +495,10 @@
         other_knee_treatment_comment: document.getElementById('otherTx-yes').checked
           ? (document.getElementById('otherTx-textarea').value.trim() || null)
           : null,
+        contraindications: (() => {
+          const checked = [...document.querySelectorAll('[name="contraindication"]:checked')].map(cb => parseInt(cb.value));
+          return checked.length > 0 ? checked : null;
+        })(),
       };
 
       try {
