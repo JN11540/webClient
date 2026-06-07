@@ -523,8 +523,7 @@
       }
     }
 
-    loadContraindications();
-    loadPatient();
+    loadContraindications().then(() => loadPatient());
 
     document.getElementById('otherTx-yes').addEventListener('change', function () {
       document.getElementById('knee-detail').style.display = 'block';
