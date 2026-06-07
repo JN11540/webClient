@@ -59,6 +59,10 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 .generate-btn { padding:10px 22px; background:var(--blue-mid); color:#fff; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:20px; font-weight:600; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; align-self:flex-end; }
 .generate-btn:hover { background:var(--blue-dark); }
 .generate-btn:active { transform:scale(.98); }
+.es-toggle-btn { padding:10px 18px; background:var(--bg-white); color:var(--text-muted); border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:20px; font-weight:600; cursor:pointer; transition:background .15s,color .15s,border-color .15s; white-space:nowrap; align-self:flex-end; }
+.es-toggle-btn.on { background:#fef0ef; color:#c0392b; border-color:#e07070; }
+.wex-chip.es-chip { background:#fef0ef; border-color:#e8b4b0; color:#c0392b; }
+.wex-chip.es-chip b { color:#c0392b; }
 
 /* Toggle button */
 .info-toggle-btn { display:flex; align-items:center; gap:6px; padding:9px 18px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-white); color:var(--blue-mid); font-family:inherit; font-size:20px; cursor:pointer; transition:background .15s; white-space:nowrap; }
@@ -156,7 +160,9 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
 
 /* Week exercise list */
 .wex-list { display:flex; flex-direction:column; gap:8px; padding:8px 0 4px; }
-.wex-item { border:1px solid var(--border-light); border-radius:var(--radius-sm); background:var(--bg-white); display:flex; align-items:center; gap:10px; padding:9px 13px; overflow:hidden; }
+.wex-item { border:1px solid var(--border-light); border-radius:var(--radius-sm); background:var(--bg-white); display:flex; flex-direction:column; gap:6px; padding:9px 13px; overflow:hidden; }
+.wex-item-row1 { display:flex; align-items:center; gap:10px; width:100%; }
+.wex-item-row2 { display:flex; align-items:center; gap:6px; flex-wrap:wrap; width:100%; }
 .wex-num-badge { width:36px; height:36px; border-radius:50%; background:var(--blue-mid); color:#fff; font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .wex-item-name { font-size:20px; font-weight:500; color:var(--text-primary); max-width:200px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; }
 .wex-item-chips { display:flex; gap:6px; align-items:center; flex-shrink:0; }
@@ -314,6 +320,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
       </div>
     </div>
     <button class="generate-btn" onclick="generateSchedule()">產生計畫表格</button>
+    <button class="es-toggle-btn" id="esToggleBtn" onclick="toggleES()">電刺激：關閉</button>
   </div>
 
   <!-- 個案基本資料彈出視窗 -->
@@ -348,6 +355,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg-page); colo
             <div class="info-block"><div class="il">影像學結果</div><div class="iv" id="iImg"></div></div>
             <div class="info-block"><div class="il">就診流程</div><div class="iv" id="iFlow"></div></div>
             <div class="info-block"><div class="il">其他膝蓋治療</div><div class="iv" id="iOtherKnee"></div></div>
+            <div class="info-block"><div class="il">禁忌症</div><div class="iv" id="iContraindications"></div></div>
           </div>
           <div class="left-compare" id="compareSection">
             <div class="compare-title-bar">
@@ -473,10 +481,34 @@ let exercises = [];        // [{id, name}]
 let weekData  = [];
 let currentPatientId  = null;
 let currentPatientName = '';
+let esEnabled = false;
+let allContraindications = [];  // [{id, name}]
+
+const ES_PARAM_DEFS = [
+  { key: 'es_intensity',   label: '電刺激強度', placeholder: '0',   unit: 'mA', min: 0,   max: 10,  step: 1, default: '0'   },
+  { key: 'es_frequency',   label: '電刺激頻率', placeholder: '35',  unit: 'Hz', min: 20,  max: 60,  step: 1, default: '35'  },
+  { key: 'es_pulse_width', label: '電刺激脈寬', placeholder: '200', unit: 'μs', min: 200, max: 400, step: 1, default: '200' },
+];
+
+function toggleES() {
+  esEnabled = !esEnabled;
+  const btn = document.getElementById('esToggleBtn');
+  btn.textContent = esEnabled ? '電刺激：開啟' : '電刺激：關閉';
+  btn.classList.toggle('on', esEnabled);
+  if (weekData.length) renderTable();
+}
 
 /* ── Init ── */
 async function init() {
-  await Promise.all([loadExercises(), loadPatients(), loadClinicianAvatar()]);
+  await Promise.all([loadExercises(), loadPatients(), loadClinicianAvatar(), loadContraindications()]);
+}
+
+async function loadContraindications() {
+  try {
+    const res = await fetch('/contraindications', { headers: { 'Authorization': `Bearer ${sessionId}` } });
+    const data = await res.json();
+    if (data.result) allContraindications = data.data;
+  } catch(e) {}
 }
 
 async function loadClinicianAvatar() {
@@ -552,6 +584,15 @@ async function onPatientChange() {
     set('iOtherKnee', p.other_knee_treatment_comment != null
       ? '是｜' + p.other_knee_treatment_comment
       : '否');
+    const contraEl = document.getElementById('iContraindications');
+    if (p.contraindications && p.contraindications.length > 0) {
+      contraEl.innerHTML = p.contraindications.map(id => {
+        const found = allContraindications.find(c => c.id === id);
+        return `<div>• ${found ? found.name : 'ID ' + id}</div>`;
+      }).join('');
+    } else {
+      contraEl.textContent = '無';
+    }
     loadMeasurements(v);
   } catch(e) { alert('伺服器資料庫啟動中...'); }
 }
@@ -701,7 +742,7 @@ function renderTable() {
     weekBadgeCell.innerHTML = `<span class="week-badge">第 ${wi+1} 週</span>`;
     const weekItemsLabel = document.createElement('div');
     weekItemsLabel.style.cssText = 'padding:6px 12px; font-size:20px; font-weight:600; color:var(--text-muted); letter-spacing:.04em; text-transform:uppercase; display:flex; align-items:center; gap:6px;';
-    weekItemsLabel.innerHTML = `<span>週治療項目</span><span style="font-size:18px;color:var(--blue-mid);font-weight:400;">（動作名稱、組數、次數、組間休息）</span>`;
+    weekItemsLabel.innerHTML = `<span>週治療項目</span>`;
     weekHeader.appendChild(weekBadgeCell); weekHeader.appendChild(weekItemsLabel);
     weekBlock.appendChild(weekHeader);
 
@@ -758,11 +799,11 @@ function makeWeekExCell(wi, week) {
       const row = document.createElement('div'); row.className = 'wex-item';
       const numBadge = document.createElement('div'); numBadge.className = 'wex-num-badge'; numBadge.textContent = item.id;
       const nameSpan = document.createElement('span'); nameSpan.className = 'wex-item-name'; nameSpan.title = item.name; nameSpan.textContent = item.name;
-      const chips = document.createElement('div'); chips.className = 'wex-item-chips';
+      const basicChips = document.createElement('div'); basicChips.className = 'wex-item-chips';
       PARAM_DEFS.forEach(p => {
         const chip = document.createElement('span'); chip.className = 'wex-chip';
         const dv = (item[p.key]!==undefined&&item[p.key]!=='') ? (p.key==='rest'?item[p.key]+'秒':item[p.key]) : '—';
-        chip.innerHTML = `${p.label}：<b>${dv}</b>`; chips.appendChild(chip);
+        chip.innerHTML = `${p.label}：<b>${dv}</b>`; basicChips.appendChild(chip);
       });
       const actions = document.createElement('div'); actions.className = 'wex-item-actions';
       const editBtn = document.createElement('button'); editBtn.className = 'wex-action-btn'; editBtn.textContent = '編輯';
@@ -770,7 +811,24 @@ function makeWeekExCell(wi, week) {
       const rmBtn = document.createElement('button'); rmBtn.className = 'wex-action-btn rm'; rmBtn.textContent = '✕'; rmBtn.title='移除';
       rmBtn.addEventListener('click', e => { e.stopPropagation(); week.wexItems.splice(idx,1); week.days.forEach(d=>{d.sel=[];}); redraw(); renderTable(); });
       actions.appendChild(editBtn); actions.appendChild(rmBtn);
-      row.appendChild(numBadge); row.appendChild(nameSpan); row.appendChild(chips); row.appendChild(actions);
+      if (esEnabled) {
+        // Two rows: row1 = name+chips, row2 = ES chips+actions
+        const row1 = document.createElement('div'); row1.className = 'wex-item-row1';
+        row1.appendChild(numBadge); row1.appendChild(nameSpan); row1.appendChild(basicChips);
+        const row2 = document.createElement('div'); row2.className = 'wex-item-row2';
+        ES_PARAM_DEFS.forEach(p => {
+          const chip = document.createElement('span'); chip.className = 'wex-chip es-chip';
+          const val = (item[p.key]!==undefined&&item[p.key]!=='') ? item[p.key]+p.unit : '—';
+          chip.innerHTML = `${p.label}：<b>${val}</b>`; row2.appendChild(chip);
+        });
+        row2.appendChild(actions);
+        row.appendChild(row1); row.appendChild(row2);
+      } else {
+        // Single row: name+chips+actions
+        const row1 = document.createElement('div'); row1.className = 'wex-item-row1';
+        row1.appendChild(numBadge); row1.appendChild(nameSpan); row1.appendChild(basicChips); row1.appendChild(actions);
+        row.appendChild(row1);
+      }
       list.appendChild(row);
     });
     wrap.appendChild(list);
@@ -790,7 +848,7 @@ function makeWeekExCell(wi, week) {
         const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=inUse; cb.style.marginTop='3px';
         cb.addEventListener('change', e => {
           e.stopPropagation();
-          if (cb.checked) { if (!week.wsel.includes(ex.name)) week.wexItems.push({id:ex.id, name:ex.name, sets:'3', reps:'10', rest:'15'}); }
+          if (cb.checked) { if (!week.wsel.includes(ex.name)) week.wexItems.push({id:ex.id, name:ex.name, sets:'3', reps:'10', rest:'15', es_intensity:'0', es_frequency:'35', es_pulse_width:'200'}); }
           else { week.wexItems = week.wexItems.filter(i=>i.name!==ex.name); week.days.forEach(d=>{d.sel=[];}); }
           lbl.className = 'ex-opt'+(week.wsel.includes(ex.name)?' checked':'');
           cnt.textContent = week.wexItems.length>0 ? `已選 ${week.wexItems.length} 項` : '';
@@ -838,15 +896,39 @@ function openEditModal(item, onConfirm) {
   const closeBtn = document.createElement('span'); closeBtn.className='modal-close'; closeBtn.textContent='×'; closeBtn.addEventListener('click',()=>overlay.remove());
   hdr.appendChild(title); hdr.appendChild(closeBtn);
   const body = document.createElement('div'); body.className='modal-body';
-  const tmpVals = {sets:item.sets||'', reps:item.reps||'', rest:item.rest||''};
-  PARAM_DEFS.forEach(p => {
-    const field=document.createElement('div'); field.className='modal-field';
-    const lbl=document.createElement('div'); lbl.className='modal-field-label'; lbl.textContent=p.label;
-    const inp=document.createElement('input'); inp.className='modal-field-input'; inp.type='number'; inp.placeholder=p.placeholder; inp.min='0'; inp.step='1'; inp.value=tmpVals[p.key];
-    inp.addEventListener('input',()=>{tmpVals[p.key]=inp.value;});
-    inp.addEventListener('keypress',e=>{if(!/[0-9]/.test(e.key))e.preventDefault();});
-    field.appendChild(lbl); field.appendChild(inp); body.appendChild(field);
-  });
+  const tmpVals = {sets:item.sets||'', reps:item.reps||'', rest:item.rest||'',
+    es_intensity:item.es_intensity??'0', es_frequency:item.es_frequency??'35', es_pulse_width:item.es_pulse_width??'200'};
+  if (esEnabled) {
+    box.style.width = '680px';
+    body.style.cssText = 'padding:20px 22px; display:flex; gap:24px; align-items:flex-start;';
+    const leftCol = document.createElement('div'); leftCol.style.cssText = 'flex:1; display:flex; flex-direction:column; gap:14px;';
+    const rightCol = document.createElement('div'); rightCol.style.cssText = 'flex:1; display:flex; flex-direction:column; gap:14px;';
+    PARAM_DEFS.forEach(p => {
+      const field=document.createElement('div'); field.className='modal-field';
+      const lbl=document.createElement('div'); lbl.className='modal-field-label'; lbl.textContent=p.label;
+      const inp=document.createElement('input'); inp.className='modal-field-input'; inp.type='number'; inp.placeholder=p.placeholder; inp.min='0'; inp.step='1'; inp.value=tmpVals[p.key];
+      inp.addEventListener('input',()=>{tmpVals[p.key]=inp.value;});
+      inp.addEventListener('keypress',e=>{if(!/[0-9]/.test(e.key))e.preventDefault();});
+      field.appendChild(lbl); field.appendChild(inp); leftCol.appendChild(field);
+    });
+    ES_PARAM_DEFS.forEach(p => {
+      const field=document.createElement('div'); field.className='modal-field';
+      const lbl=document.createElement('div'); lbl.className='modal-field-label'; lbl.textContent=`${p.label}（${p.min}–${p.max} ${p.unit}）`;
+      const inp=document.createElement('input'); inp.className='modal-field-input'; inp.type='number'; inp.placeholder=p.placeholder; inp.min=p.min; inp.max=p.max; inp.step=p.step; inp.value=tmpVals[p.key];
+      inp.addEventListener('input',()=>{tmpVals[p.key]=inp.value;});
+      field.appendChild(lbl); field.appendChild(inp); rightCol.appendChild(field);
+    });
+    body.appendChild(leftCol); body.appendChild(rightCol);
+  } else {
+    PARAM_DEFS.forEach(p => {
+      const field=document.createElement('div'); field.className='modal-field';
+      const lbl=document.createElement('div'); lbl.className='modal-field-label'; lbl.textContent=p.label;
+      const inp=document.createElement('input'); inp.className='modal-field-input'; inp.type='number'; inp.placeholder=p.placeholder; inp.min='0'; inp.step='1'; inp.value=tmpVals[p.key];
+      inp.addEventListener('input',()=>{tmpVals[p.key]=inp.value;});
+      inp.addEventListener('keypress',e=>{if(!/[0-9]/.test(e.key))e.preventDefault();});
+      field.appendChild(lbl); field.appendChild(inp); body.appendChild(field);
+    });
+  }
   const footer=document.createElement('div'); footer.className='modal-footer';
   const cancelBtn=document.createElement('button'); cancelBtn.className='modal-btn-cancel'; cancelBtn.textContent='取消'; cancelBtn.addEventListener('click',()=>overlay.remove());
   const confirmBtn=document.createElement('button'); confirmBtn.className='modal-btn-confirm'; confirmBtn.textContent='確定';
@@ -939,6 +1021,7 @@ function savePlan() {
         const assignedDates=week.days.filter(d=>(d.sel||[]).includes(idx)).map(d=>{const pts=d.date.split('/'); return pts[1].replace(/^0/,'')+'/'+pts[2].replace(/^0/,'');});
         const li=document.createElement('li'); li.className='confirm-ex-item';
         const params=[]; if(item.sets)params.push('組數：'+item.sets); if(item.reps)params.push('次數：'+item.reps); if(item.rest)params.push('組間休息：'+item.rest+'秒');
+        if(esEnabled){params.push('電刺激強度：'+(item.es_intensity??'0')+' mA'); params.push('電刺激頻率：'+(item.es_frequency??'35')+' Hz'); params.push('電刺激脈寬：'+(item.es_pulse_width??'200')+' μs');}
         let dayTagsHtml='';
         if(assignedDates.length) dayTagsHtml='<div class="confirm-day-tags">'+assignedDates.map(d=>`<span class="confirm-day-tag">${d}</span>`).join('')+'</div>';
         li.innerHTML=`<span class="confirm-ex-bullet"></span><span><span class="confirm-ex-name">${item.name}</span>`+(params.length?`<span class="confirm-ex-params">：${params.join('，')}</span>`:'')+dayTagsHtml+'</span>';
@@ -970,6 +1053,9 @@ async function submitPlan() {
           reps:          parseInt(item.reps) || 1,
           set_rest_time: parseInt(item.rest) || 0,
           date:          dateToTs(day.date.replace(/\//g, '-')),
+          es_intensity:   esEnabled ? (parseFloat(item.es_intensity)   ?? 0)   : null,
+          es_frequency:   esEnabled ? (parseFloat(item.es_frequency)   ?? 35)  : null,
+          es_pulse_width: esEnabled ? (parseFloat(item.es_pulse_width) ?? 200) : null,
         });
       });
     });
