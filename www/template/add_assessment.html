@@ -543,8 +543,6 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
-    const MAX_RETRIES = 3;
-    const _retry = {};
 
     function f(name) { return document.querySelector(`[name="${name}"]`); }
     function intOrNull(name) { const v = f(name).value; return v !== '' ? parseInt(v) : null; }

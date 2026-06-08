@@ -424,8 +424,6 @@
 
 <script>
   const API_URL = 'https://therapistclinical-production.up.railway.app';
-  const MAX_RETRIES = 3;
-  const _retry = {};
   const clinicianId = localStorage.getItem('clinician_id');
 
   async function loadProfile() {
@@ -434,7 +432,6 @@
       const data = await res.json();
       if (!res.ok) {
         alert(data.message || '操作失敗'); return;
-        return;
       }
       if (!data.result) { alert(data.message); return; }
       const c = data.data;
@@ -446,8 +443,7 @@
       document.getElementById('pf-specialty').textContent   = c.specialty || '—';
       document.getElementById('pf-years').textContent       = c.years_of_experience != null ? `${c.years_of_experience} 年` : '—';
       document.getElementById('pf-clinic').textContent      = c.clinic_location || '—';
-    } catch (e) {} else { }
-    }
+    } catch (e) {}
   }
 
   async function loadPatients() {
@@ -456,7 +452,6 @@
       const data = await res.json();
       if (!res.ok) {
         alert(data.message || '操作失敗'); return;
-        return;
       }
       if (!data.result) { alert(data.message); return; }
 
@@ -487,13 +482,13 @@
               <span class="card-label">診斷</span>
               <span class="card-value">${p.diagnosis || '—'}</span>
             </div>
+
             <div class="card-footer">
               <button class="delete-btn" onclick="event.stopPropagation(); deletePatient(${p.patient_id})">刪除</button>
             </div>
           </div>`;
       }).join('');
-    } catch (e) {} else { }
-    }
+    } catch (e) {}
   }
 
   async function deletePatient(patientId) {
@@ -503,11 +498,9 @@
       const data = await res.json();
       if (!res.ok) {
         alert(data.message || '操作失敗'); return;
-        return;
       }
       if (data.result) { loadPatients(); } else { alert(data.message); }
-    } catch (e) {} else { }
-    }
+    } catch (e) {}
   }
 
   loadProfile();

@@ -371,8 +371,6 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
-    const MAX_RETRIES = 3;
-    const _retry = {};
 
     function field(name) {
       return document.querySelector(`[name="${name}"]`);
@@ -396,14 +394,8 @@
         });
         const data = await res.json();
         if (!res.ok) {
-          if (res.status === 500 && (_retry.loadPatient || 0) < MAX_RETRIES) {
-            _retry.loadPatient = (_retry.loadPatient || 0) + 1;
-            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
-            setTimeout(loadPatient, 3000);
-          } else { _retry.loadPatient = 0; alert(data.message || '載入失敗'); }
-          return;
+          alert(data.message || '載入失敗'); return;
         }
-        _retry.loadPatient = 0;
         if (!data.result) { alert(data.message); return; }
 
         const p = data.data;

@@ -362,8 +362,6 @@
 
   <script>
     const API_URL = 'https://therapistclinical-production.up.railway.app';
-    const MAX_RETRIES = 3;
-    const _retry = {};
     const clinicianId = localStorage.getItem('clinician_id');
 
     function field(name) {
@@ -421,12 +419,7 @@
         });
         const data = await res.json();
         if (!res.ok) {
-          if (res.status === 500 && (_retry.submitPatient || 0) < MAX_RETRIES) {
-            _retry.submitPatient = (_retry.submitPatient || 0) + 1;
-            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitPatient}/${MAX_RETRIES})`);
-            setTimeout(submitPatient, 3000);
-          } else { _retry.submitPatient = 0; alert(data.message || '送出失敗'); }
-          return;
+          alert(data.message || '送出失敗'); return;
         }
       } catch (e) {}
     }
