@@ -437,13 +437,7 @@
         document.querySelectorAll('[name="contraindication"]').forEach(cb => {
           cb.checked = existingIds.includes(parseInt(cb.value));
         });
-      } catch (e) {
-        if ((_retry.loadPatient || 0) < MAX_RETRIES) {
-          _retry.loadPatient = (_retry.loadPatient || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
-          setTimeout(loadPatient, 3000);
-        } else { _retry.loadPatient = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     async function loadContraindications(selectedIds = []) {
@@ -508,23 +502,12 @@
           body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (!res.ok) {
-          if (res.status === 500 && (_retry.submitEdit || 0) < MAX_RETRIES) {
-            _retry.submitEdit = (_retry.submitEdit || 0) + 1;
-            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
-            setTimeout(submitEdit, 3000);
-          } else { _retry.submitEdit = 0; alert(data.message || '送出失敗'); }
-          return;
+        if (data.result) {
+          location.href = `/patient-detail?id=${patientId}`;
+        } else {
+          alert(data.message);
         }
-        _retry.submitEdit = 0;
-        if (data.result) { location.href = `patient_detail.html?id=${patientId}`; } else { alert(data.message); }
-      } catch (e) {
-        if ((_retry.submitEdit || 0) < MAX_RETRIES) {
-          _retry.submitEdit = (_retry.submitEdit || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitEdit}/${MAX_RETRIES})`);
-          setTimeout(submitEdit, 3000);
-        } else { _retry.submitEdit = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     loadContraindications().then(() => loadPatient());

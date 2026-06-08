@@ -483,13 +483,7 @@ async function loadExercises() {
     }
     _retry.loadExercises = 0;
     if (data.result) exercises = data.data;
-  } catch(e) {
-    if ((_retry.loadExercises || 0) < MAX_RETRIES) {
-      _retry.loadExercises = (_retry.loadExercises || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadExercises}/${MAX_RETRIES})`);
-      setTimeout(loadExercises, 3000);
-    } else { _retry.loadExercises = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 async function loadPatient() {
@@ -550,13 +544,7 @@ async function loadPatient() {
     document.getElementById('patientInfoBlock').style.display = 'block';
 
     loadMeasurements();
-  } catch(e) {
-    if ((_retry.loadPatient || 0) < MAX_RETRIES) {
-      _retry.loadPatient = (_retry.loadPatient || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
-      setTimeout(loadPatient, 3000);
-    } else { _retry.loadPatient = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 /* ── Load existing plan ── */
@@ -588,13 +576,7 @@ async function loadPlan() {
     renderTable();
     document.getElementById('planLoading').style.display = 'none';
     document.getElementById('scheduleWrap').style.display = 'block';
-  } catch(e) {
-    if ((_retry.loadPlan || 0) < MAX_RETRIES) {
-      _retry.loadPlan = (_retry.loadPlan || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPlan}/${MAX_RETRIES})`);
-      setTimeout(loadPlan, 3000);
-    } else { _retry.loadPlan = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 function buildWeekDataFromPlan(plan) {
@@ -676,13 +658,7 @@ async function loadMeasurements() {
     _retry.loadMeasurements = 0;
     if (!data.result) return;
     renderCompare(buildCompareData(data.data));
-  } catch(e) {
-    if ((_retry.loadMeasurements || 0) < MAX_RETRIES) {
-      _retry.loadMeasurements = (_retry.loadMeasurements || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadMeasurements}/${MAX_RETRIES})`);
-      setTimeout(loadMeasurements, 3000);
-    } else { _retry.loadMeasurements = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 function buildCompareData(measurements) {
@@ -1104,13 +1080,7 @@ async function submitPlan() {
     } else {
       showToast(data.message, true);
     }
-  } catch(e) {
-    if ((_retry.submitPlan || 0) < MAX_RETRIES) {
-      _retry.submitPlan = (_retry.submitPlan || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitPlan}/${MAX_RETRIES})`);
-      setTimeout(submitPlan, 3000);
-    } else { _retry.submitPlan = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 function showToast(msg, err) {

@@ -668,23 +668,12 @@
           body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (!res.ok) {
-          if (res.status === 500 && (_retry.submitAssessment || 0) < MAX_RETRIES) {
-            _retry.submitAssessment = (_retry.submitAssessment || 0) + 1;
-            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitAssessment}/${MAX_RETRIES})`);
-            setTimeout(submitAssessment, 3000);
-          } else { _retry.submitAssessment = 0; alert(data.message || '送出失敗'); }
-          return;
+        if (data.result) {
+          location.href = `/patient-detail?id=${patientId}`;
+        } else {
+          alert(data.message);
         }
-        _retry.submitAssessment = 0;
-        if (data.result) { location.href = `patient_detail.html?id=${patientId}`; } else { alert(data.message); }
-      } catch (e) {
-        if ((_retry.submitAssessment || 0) < MAX_RETRIES) {
-          _retry.submitAssessment = (_retry.submitAssessment || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitAssessment}/${MAX_RETRIES})`);
-          setTimeout(submitAssessment, 3000);
-        } else { _retry.submitAssessment = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     setInterval(async () => {

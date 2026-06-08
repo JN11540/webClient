@@ -546,13 +546,7 @@
           ciEl.textContent = '無';
           ciEl.classList.add('empty');
         }
-      } catch (e) {
-        if ((_retry.loadPatient || 0) < MAX_RETRIES) {
-          _retry.loadPatient = (_retry.loadPatient || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatient}/${MAX_RETRIES})`);
-          setTimeout(loadPatient, 3000);
-        } else { _retry.loadPatient = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     const SIDE_LABEL = { 0: '左膝', 1: '右膝' };
@@ -615,13 +609,7 @@
         } else {
           alert(data.message);
         }
-      } catch (e) {
-        if ((_retry.deleteAssessment || 0) < MAX_RETRIES) {
-          _retry.deleteAssessment = (_retry.deleteAssessment || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deleteAssessment}/${MAX_RETRIES})`);
-          setTimeout(() => deleteAssessment(measurementId), 3000);
-        } else { _retry.deleteAssessment = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     function renderSubjective(measurements) {
@@ -815,13 +803,7 @@
           renderThighCircumference(measurements, sides) +
           renderRom(measurements, sides) +
           renderMmt(measurements, sides);
-      } catch (e) {
-        if ((_retry.loadMeasurements || 0) < MAX_RETRIES) {
-          _retry.loadMeasurements = (_retry.loadMeasurements || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadMeasurements}/${MAX_RETRIES})`);
-          setTimeout(loadMeasurements, 3000);
-        } else { _retry.loadMeasurements = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     /* ════ 治療計畫 JS ════ */
@@ -990,13 +972,7 @@
         _retry.deletePlan = 0;
         if (!data.result) { alert(data.message); return; }
         loadPlans();
-      } catch(e) {
-        if ((_retry.deletePlan || 0) < MAX_RETRIES) {
-          _retry.deletePlan = (_retry.deletePlan || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePlan}/${MAX_RETRIES})`);
-          setTimeout(() => deletePlan(id), 3000);
-        } else { _retry.deletePlan = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     async function loadPlans() {
@@ -1026,14 +1002,9 @@
         }));
 
         renderPlans(fullPlans, exerciseMap);
-      } catch(e) {
-        if ((_retry.loadPlans || 0) < MAX_RETRIES) {
-          _retry.loadPlans = (_retry.loadPlans || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPlans}/${MAX_RETRIES})`);
-          setTimeout(loadPlans, 3000);
-        } else { _retry.loadPlans = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
+
 
     loadPatient();
     loadMeasurements();

@@ -545,13 +545,7 @@ async function loadClinicianAvatar() {
     if (data.result && data.data.name) {
       document.getElementById('sidebarAvatar').textContent = data.data.name.charAt(0);
     }
-  } catch(e) {
-    if ((_retry.loadClinicianAvatar || 0) < MAX_RETRIES) {
-      _retry.loadClinicianAvatar = (_retry.loadClinicianAvatar || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadClinicianAvatar}/${MAX_RETRIES})`);
-      setTimeout(loadClinicianAvatar, 3000);
-    } else { _retry.loadClinicianAvatar = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 async function loadExercises() {
@@ -568,13 +562,7 @@ async function loadExercises() {
     }
     _retry.loadExercises = 0;
     if (data.result) exercises = data.data;
-  } catch(e) {
-    if ((_retry.loadExercises || 0) < MAX_RETRIES) {
-      _retry.loadExercises = (_retry.loadExercises || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadExercises}/${MAX_RETRIES})`);
-      setTimeout(loadExercises, 3000);
-    } else { _retry.loadExercises = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 async function loadPatients() {
@@ -600,13 +588,7 @@ async function loadPatients() {
       opt.textContent = `${p.name}　｜　${p.gender === 1 ? '男' : '女'}　${age} 歲　｜　${p.diagnosis || '—'}`;
       sel.appendChild(opt);
     });
-  } catch(e) {
-    if ((_retry.loadPatients || 0) < MAX_RETRIES) {
-      _retry.loadPatients = (_retry.loadPatients || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
-      setTimeout(loadPatients, 3000);
-    } else { _retry.loadPatients = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 /* ── Patient change ── */
@@ -665,13 +647,7 @@ async function onPatientChange() {
       contraEl.textContent = '無';
     }
     loadMeasurements(v);
-  } catch(e) {
-    if ((_retry.onPatientChange || 0) < MAX_RETRIES) {
-      _retry.onPatientChange = (_retry.onPatientChange || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.onPatientChange}/${MAX_RETRIES})`);
-      setTimeout(onPatientChange, 3000);
-    } else { _retry.onPatientChange = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 /* ── Measurements / Compare ── */
@@ -693,13 +669,7 @@ async function loadMeasurements(patientId) {
     _retry.loadMeasurements = 0;
     if (!data.result) return;
     renderCompare(buildCompareData(data.data));
-  } catch(e) {
-    if ((_retry.loadMeasurements || 0) < MAX_RETRIES) {
-      _retry.loadMeasurements = (_retry.loadMeasurements || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadMeasurements}/${MAX_RETRIES})`);
-      setTimeout(() => loadMeasurements(patientId), 3000);
-    } else { _retry.loadMeasurements = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 function buildCompareData(measurements) {
@@ -1181,13 +1151,7 @@ async function submitPlan() {
     } else {
       showToast(data.message, true);
     }
-  } catch(e) {
-    if ((_retry.submitPlan || 0) < MAX_RETRIES) {
-      _retry.submitPlan = (_retry.submitPlan || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitPlan}/${MAX_RETRIES})`);
-      setTimeout(submitPlan, 3000);
-    } else { _retry.submitPlan = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 function showToast(msg, err) {

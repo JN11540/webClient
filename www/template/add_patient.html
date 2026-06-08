@@ -428,15 +428,7 @@
           } else { _retry.submitPatient = 0; alert(data.message || '送出失敗'); }
           return;
         }
-        _retry.submitPatient = 0;
-        if (data.result) { location.href = 'home.html'; } else { alert(data.message); }
-      } catch (e) {
-        if ((_retry.submitPatient || 0) < MAX_RETRIES) {
-          _retry.submitPatient = (_retry.submitPatient || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitPatient}/${MAX_RETRIES})`);
-          setTimeout(submitPatient, 3000);
-        } else { _retry.submitPatient = 0; alert('伺服器資料庫啟動中...'); }
-      }
+      } catch (e) {}
     }
 
     document.getElementById('otherTx-yes').addEventListener('change', function () {

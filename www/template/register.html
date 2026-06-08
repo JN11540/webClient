@@ -215,6 +215,7 @@
     const API_URL = 'https://therapistclinical-production.up.railway.app';
     const MAX_RETRIES = 3;
     const _retry = {};
+
     async function submitRegister() {
       const get = name => document.querySelector(`[name="${name}"]`).value.trim();
 
@@ -256,34 +257,15 @@
 
         const data = await res.json();
         if (!res.ok) {
-          if (res.status === 500 && (_retry.submitRegister || 0) < MAX_RETRIES) {
-            _retry.submitRegister = (_retry.submitRegister || 0) + 1;
-            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitRegister}/${MAX_RETRIES})`);
-            setTimeout(submitRegister, 3000);
-          } else {
-            _retry.submitRegister = 0;
-            alert(data.message || '註冊失敗');
-          }
+          alert(data.message || '操作失敗'); return;
           return;
         }
-        _retry.submitRegister = 0;
-        if (!res.ok) {
-          if (res.status === 500 && (_retry.submitRegister || 0) < MAX_RETRIES) {
-            _retry.submitRegister = (_retry.submitRegister || 0) + 1;
-            alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.submitRegister}/${MAX_RETRIES})`);
-            setTimeout(submitRegister, 3000);
-          } else {
-            _retry.submitRegister = 0;
-            alert(data.message || '註冊失敗');
-          }
-          return;
-        }
-        _retry.submitRegister = 0;
         if (data.result) {
           location.href = 'login.html';
         } else {
           alert(data.message || '註冊失敗');
         }
+
       } catch (e) {
         if ((_retry.submitRegister || 0) < MAX_RETRIES) {
           _retry.submitRegister = (_retry.submitRegister || 0) + 1;
@@ -301,8 +283,9 @@
           _retry.submitRegister = 0;
           alert('伺服器資料庫啟動中...');
         }
-      }
+      } 
     }
+
 
     // keep-alive
     setInterval(async () => {

@@ -366,13 +366,7 @@ async function init() {
         sel.appendChild(opt);
       });
     }
-  } catch (e) {
-    if ((_retry.init || 0) < MAX_RETRIES) {
-      _retry.init = (_retry.init || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.init}/${MAX_RETRIES})`);
-      setTimeout(init, 3000);
-    } else { _retry.init = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 /* ── Patient Change ── */
@@ -407,13 +401,7 @@ async function onPatientChange() {
       });
       planSel.disabled = false;
     }
-  } catch (e) {
-    if ((_retry.onPatientChange || 0) < MAX_RETRIES) {
-      _retry.onPatientChange = (_retry.onPatientChange || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.onPatientChange}/${MAX_RETRIES})`);
-      setTimeout(onPatientChange, 3000);
-    } else { _retry.onPatientChange = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 /* ── Plan Change ── */
@@ -551,13 +539,7 @@ async function doQuery() {
 
     renderTable(rows);
     showToast(`已載入 ${rows.length} 筆結果`);
-  } catch (e) {
-    if ((_retry.doQuery || 0) < MAX_RETRIES) {
-      _retry.doQuery = (_retry.doQuery || 0) + 1;
-      alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.doQuery}/${MAX_RETRIES})`);
-      setTimeout(doQuery, 3000);
-    } else { _retry.doQuery = 0; alert('伺服器資料庫啟動中...'); }
-  }
+  } catch (e) {}
 }
 
 /* ── Table Render ── */

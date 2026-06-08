@@ -433,14 +433,9 @@
       const res = await fetch(`${API_URL}/clinicians/${clinicianId}`, { headers: {} });
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 500 && (_retry.loadProfile || 0) < MAX_RETRIES) {
-          _retry.loadProfile = (_retry.loadProfile || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
-          setTimeout(loadProfile, 3000);
-        } else { _retry.loadProfile = 0; alert(data.message || '載入失敗'); }
+        alert(data.message || '操作失敗'); return;
         return;
       }
-      _retry.loadProfile = 0;
       if (!data.result) { alert(data.message); return; }
       const c = data.data;
       if (c.name) document.getElementById('sidebarAvatar').textContent = c.name.charAt(0);
@@ -451,12 +446,7 @@
       document.getElementById('pf-specialty').textContent   = c.specialty || '—';
       document.getElementById('pf-years').textContent       = c.years_of_experience != null ? `${c.years_of_experience} 年` : '—';
       document.getElementById('pf-clinic').textContent      = c.clinic_location || '—';
-    } catch (e) {
-      if ((_retry.loadProfile || 0) < MAX_RETRIES) {
-        _retry.loadProfile = (_retry.loadProfile || 0) + 1;
-        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadProfile}/${MAX_RETRIES})`);
-        setTimeout(loadProfile, 3000);
-      } else { _retry.loadProfile = 0; alert('伺服器資料庫啟動中...'); }
+    } catch (e) {} else { }
     }
   }
 
@@ -465,14 +455,9 @@
       const res = await fetch(`${API_URL}/clinicians/${clinicianId}/patients`, { headers: {} });
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 500 && (_retry.loadPatients || 0) < MAX_RETRIES) {
-          _retry.loadPatients = (_retry.loadPatients || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
-          setTimeout(loadPatients, 3000);
-        } else { _retry.loadPatients = 0; alert(data.message || '載入失敗'); }
+        alert(data.message || '操作失敗'); return;
         return;
       }
-      _retry.loadPatients = 0;
       if (!data.result) { alert(data.message); return; }
 
       const patients = data.data;
@@ -507,12 +492,7 @@
             </div>
           </div>`;
       }).join('');
-    } catch (e) {
-      if ((_retry.loadPatients || 0) < MAX_RETRIES) {
-        _retry.loadPatients = (_retry.loadPatients || 0) + 1;
-        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.loadPatients}/${MAX_RETRIES})`);
-        setTimeout(loadPatients, 3000);
-      } else { _retry.loadPatients = 0; alert('伺服器資料庫啟動中...'); }
+    } catch (e) {} else { }
     }
   }
 
@@ -522,21 +502,11 @@
       const res  = await fetch(`${API_URL}/patients/${patientId}`, { method: 'DELETE', headers: {} });
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 500 && (_retry.deletePatient || 0) < MAX_RETRIES) {
-          _retry.deletePatient = (_retry.deletePatient || 0) + 1;
-          alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePatient}/${MAX_RETRIES})`);
-          setTimeout(() => deletePatient(patientId), 3000);
-        } else { _retry.deletePatient = 0; alert(data.message || '刪除失敗'); }
+        alert(data.message || '操作失敗'); return;
         return;
       }
-      _retry.deletePatient = 0;
       if (data.result) { loadPatients(); } else { alert(data.message); }
-    } catch (e) {
-      if ((_retry.deletePatient || 0) < MAX_RETRIES) {
-        _retry.deletePatient = (_retry.deletePatient || 0) + 1;
-        alert(`伺服器資料庫啟動中，請稍後再試 (${_retry.deletePatient}/${MAX_RETRIES})`);
-        setTimeout(() => deletePatient(patientId), 3000);
-      } else { _retry.deletePatient = 0; alert('伺服器資料庫啟動中...'); }
+    } catch (e) {} else { }
     }
   }
 
