@@ -255,16 +255,13 @@
         const data = await res.json();
         if (!res.ok) {
           alert(data.message || '操作失敗'); return;
-          return;
         }
         if (data.result) {
           location.href = '/';
         } else {
           alert(data.message || '註冊失敗');
         }
-      } catch (e) {} else {
-          }
-      }
+      } catch (e) {}
     }
 
     // keep-alive

@@ -234,14 +234,11 @@
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           alert(data.message || '操作失敗'); return;
-          return;
         }
         // 200 OK with JSON
         if (data.clinician_id) localStorage.setItem('clinician_id', String(data.clinician_id));
         location.href = '/home';
-      } catch (e) {} else {
-          }
-      }
+      } catch (e) {}
     }
 
     // keep-alive: ping /health every 10s to prevent Railway sleeping
