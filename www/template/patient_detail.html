@@ -989,12 +989,11 @@
         }
         const blob = await res.blob();
         document.getElementById(`planQrImg-${planId}`).src = URL.createObjectURL(blob);
-      } catch (e) {
-      area.style.display = 'flex';
+        area.style.display = 'flex';
+      } catch (e) {}
     }
 
-    // keep-alive: ping /health every 10s to prevent Railway sleeping
-        // keep-alive: ping /health every 10s to prevent Railway sleeping
+    // keep-alive
     setInterval(async () => {
       try {
         const res = await fetch(`${API_URL}/health`);
