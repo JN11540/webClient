@@ -509,7 +509,7 @@
   // keep-alive
   setInterval(async () => {
     try {
-      const res = await fetch('/health');
+      const res = await fetch(`${API_URL}/health`);
       document.getElementById('connectionOverlay').style.display = res.ok ? 'none' : 'flex';
     } catch (e) {
       document.getElementById('connectionOverlay').style.display = 'flex';
