@@ -543,9 +543,7 @@
           ciEl.textContent = '無';
           ciEl.classList.add('empty');
         }
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
-      }
+      } catch (e) {}
     }
 
     const SIDE_LABEL = { 0: '左膝', 1: '右膝' };
@@ -600,9 +598,7 @@
         } else {
           alert(data.message);
         }
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
-      }
+      } catch (e) {}
     }
 
     function renderSubjective(measurements) {
@@ -789,9 +785,7 @@
           renderThighCircumference(measurements, sides) +
           renderRom(measurements, sides) +
           renderMmt(measurements, sides);
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
-      }
+      } catch (e) {}
     }
 
     /* ════ 治療計畫 JS ════ */
@@ -950,7 +944,7 @@
       try {
         await fetch(`/treatments/${id}/full`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${sessionId}` } });
         loadPlans();
-      } catch(e) { alert('伺服器資料庫啟動中...'); }
+      } catch (e) {}
     }
 
     async function loadPlans() {
@@ -973,7 +967,7 @@
         }));
 
         renderPlans(fullPlans, exerciseMap);
-      } catch(e) { alert('伺服器資料庫啟動中...'); }
+      } catch (e) {}
     }
 
 

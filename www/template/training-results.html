@@ -373,9 +373,7 @@ async function init() {
         sel.appendChild(opt);
       });
     }
-  } catch (e) {
-    alert('伺服器資料庫啟動中...');
-  }
+  } catch (e) {}
 }
 
 /* ── Patient Change ── */
@@ -410,9 +408,7 @@ async function onPatientChange() {
       });
       planSel.disabled = false;
     }
-  } catch (e) {
-    alert('伺服器資料庫啟動中...');
-  }
+  } catch (e) {}
 }
 
 /* ── Plan Change ── */
@@ -550,9 +546,7 @@ async function doQuery() {
 
     renderTable(rows);
     showToast(`已載入 ${rows.length} 筆結果`);
-  } catch (e) {
-    alert('伺服器資料庫啟動中...');
-  }
+  } catch (e) {}
 }
 
 /* ── Table Render ── */

@@ -646,9 +646,7 @@
         f('koos_total').value  = m.koos_total  ?? '';
 
         (m.objective || []).forEach(obj => fillSide(obj));
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
-      }
+      } catch (e) {}
     }
 
     function buildSide(side) {
@@ -754,9 +752,7 @@
         } else {
           alert(data.message);
         }
-      } catch (e) {
-        alert('伺服器資料庫啟動中...');
-      }
+      } catch (e) {}
     }
 
     loadAssessment();
