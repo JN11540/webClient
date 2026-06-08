@@ -740,7 +740,7 @@
         });
         const data = await res.json();
         if (data.result) {
-          location.href = `/patient-detail?id=${patientId}`;
+          location.href = `patient_detail.html?id=${patientId}`;
         } else {
           alert(data.message);
         }
