@@ -851,6 +851,7 @@
             ${planHasEs ? '<span class="es-badge">電刺激</span>' : ''}
           </div>
           <div class="plan-card-actions">
+            <button class="plan-card-btn plan-card-btn-edit" onclick="sendEmail(${plan.id})">📧 寄送 Email</button>
             <button class="plan-card-btn plan-card-btn-edit" onclick="location.href='edit_patient-treatment-plan.html?id=${patientId}&planId=${plan.id}'">編輯</button>
             <button class="plan-card-btn plan-card-btn-del" onclick="deletePlan(${plan.id})">刪除</button>
           </div>`;
@@ -1006,8 +1007,70 @@
         document.getElementById('connectionOverlay').style.display = 'flex';
       }
     }, 10000);
+
+    // ── Email 寄送 ──
+    let _emailTimer = null;
+
+    function closeEmailModal() {
+      clearInterval(_emailTimer);
+      document.getElementById('emailModal').style.display = 'none';
+    }
+
+    async function sendEmail(planId) {
+      const modal      = document.getElementById('emailModal');
+      const countdown  = document.getElementById('emailCountdown');
+      const msg        = document.getElementById('emailModalMsg');
+      const closeBtn   = document.getElementById('emailModalClose');
+
+      countdown.textContent = '5';
+      countdown.style.color = '#185FA5';
+      msg.textContent = '傳送中，請稍候...';
+      closeBtn.style.display = 'none';
+      modal.style.display = 'flex';
+
+      let secs = 5;
+      _emailTimer = setInterval(() => {
+        secs--;
+        countdown.textContent = secs;
+        if (secs <= 0) clearInterval(_emailTimer);
+      }, 1000);
+
+      try {
+        const res  = await fetch(`/treatments/${planId}/send-email`, {
+          method: 'POST',
+          headers: {},
+        });
+        const data = await res.json();
+        clearInterval(_emailTimer);
+        if (data.result) {
+          countdown.textContent = '✓';
+          countdown.style.color = '#27ae60';
+          msg.textContent = 'Email 已成功寄出';
+        } else {
+          countdown.textContent = '✗';
+          countdown.style.color = '#e74c3c';
+          msg.textContent = data.message || '寄送失敗';
+        }
+      } catch (e) {
+        clearInterval(_emailTimer);
+        countdown.textContent = '✗';
+        countdown.style.color = '#e74c3c';
+        msg.textContent = '網路錯誤，無法寄送';
+      }
+      closeBtn.style.display = 'block';
+    }
   </script>
 
+
+  <!-- Email 傳送視窗 -->
+  <div id="emailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9998; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:16px; padding:36px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; min-width:280px; box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+      <div style="font-size:20px; font-weight:600; color:#0C447C;">寄送治療計畫 Email</div>
+      <div id="emailCountdown" style="font-size:56px; font-weight:700; color:#185FA5; line-height:1;">5</div>
+      <div id="emailModalMsg" style="font-size:16px; color:#378ADD;">傳送中，請稍候...</div>
+      <button id="emailModalClose" onclick="closeEmailModal()" style="display:none; background:#185FA5; color:white; border:none; border-radius:8px; padding:10px 28px; font-size:16px; cursor:pointer; font-family:inherit; font-weight:600;">確定</button>
+    </div>
+  </div>
 
   <!-- 連線失敗提示 -->
   <div id="connectionOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
