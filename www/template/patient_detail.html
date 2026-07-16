@@ -1036,7 +1036,7 @@
       }, 1000);
 
       try {
-        const res  = await fetch(`/treatments/${planId}/send-email`, {
+        const res  = await fetch(`${API_URL}/treatments/${planId}/send-email`, {
           method: 'POST',
           headers: {},
         });
