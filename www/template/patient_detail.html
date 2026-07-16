@@ -943,36 +943,10 @@
     async function exportPlan(planId) {
       const data = planDataMap[planId];
       if (!data) return;
-      const { plan, weekData } = data;
-      const patientName = document.getElementById('case-name').textContent || '';
-      const period = `${tsToDateStr(plan.start_time)} → ${tsToDateStr(plan.end_time)}`;
-      const createdAt = tsToDateStr(plan.created_at);
+      const { plan } = data;
 
-      const lines = [];
-      lines.push('治療計畫匯出');
-      lines.push(`病患姓名：${patientName}`);
-      lines.push(`治療名稱：${plan.name}`);
-      lines.push(`治療期間：${period}`);
-      lines.push(`建立時間：${createdAt}`);
-      lines.push('');
-      lines.push('週次治療安排');
-
-      weekData.forEach((week, wi) => {
-        lines.push(`第${WEEK_ORD[wi] || wi + 1}週（${week.range}）`);
-        if (!week.items.length) {
-          lines.push('  本週尚未設定治療項目');
-        } else {
-          week.items.forEach(item => {
-            lines.push(`  - ${item.name}：${item.params}`);
-            if (item.esParams) lines.push(`    ${item.esParams}`);
-            if (item.days && item.days.length) lines.push(`    日期：${item.days.join('、')}`);
-          });
-        }
-        lines.push('');
-      });
-
-      const content = lines.join('\n');
-      const fileName = `${plan.name}_治療計畫.txt`;
+      const content = JSON.stringify(plan, null, 2);
+      const fileName = `${plan.name}_治療計畫.json`;
 
       const cap = window.Capacitor;
       const isNative = cap && cap.isNativePlatform && cap.isNativePlatform();
@@ -993,7 +967,7 @@
         return;
       }
 
-      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const blob = new Blob([content], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
